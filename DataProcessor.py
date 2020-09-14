@@ -13,10 +13,126 @@ class DataProcessor:
     def __init__(self):
         pass
 
-    def RandomVote(): 
     
+    
+    
+    
+    #Parameters: Pandas DataFrame 
+    #Returns: Clean ready to process Dataframe 
+    #Function: This is the main function that should be called for each object that takes in the dataframe, processes it and returns the clean dataframe 
+    def StartProcess(self, df:pd.DataFrame) -> pd.DataFrame:
+        #Get a deep copy of the dataframe 
+        df1 = copy.deepcopy(df)
+        #SEt the count to 0 
+        count = 0 
+        #For each of the columns in the dataframe 
+        for i in range(len(df.columns)): 
+            #If the count is at the last column in the dataframe end because this is the classifier 
+            if count == len(df.columns)-1: 
+                #Break 
+                break
+            #bin Integers
+           
+            #If the type of the dataframe is a float then we need to discretize 
+            if type(df1.iloc[0][i]) == np.float64: 
+                #Find which column needs to be discretized
+                df1 = self.discretize(df1,i)
+                #Increment the count 
+                count+=1
+                #Go to the next one
+                continue 
+            #If the data frame has missing attributes 
+            if self.has_missing_attrs(df1): 
+                #Remove the missing attributes 
+                df1 = self.fix_missing_attrs(df1)
+            #Increment the count 
+            count+=1
+        #Return the cleaned dataframe 
+        return df1
+    
+    #Parameters: Pandas DataFrame 
+    #Returns: A dataframe with all missing values filled in with a Y or N 
+    #Function: Take in a dataframe and randomly assigned a Y or a N to a missing value 
+    def RandomRollVotes(self, df: pd.DataFrame) -> pd.DataFrame: 
+        #Loop through each of the rows in the dataframe 
+         for i in range(len(df)):
+            #loop through all of the columns except the classification column
+            for j in range(len(df.columns)-1): 
+                #If the given value in the dataframe is missing a value 
+                if self.IsMissingAttribute(df.iloc[i][j]): 
+                    #Randomly assign a value from 1 - 100 
+                    roll = random.randint(0,99) + 1
+                    #If the roll is greater than 50 
+                    if roll >50: 
+                        #Assign the value to a Y 
+                        roll = 'y'
+                    #Otherwise 
+                    else: 
+                        #Assign the value to a N 
+                        roll = 'n'
+                    #Set the position in the dataframe equal to the value in the roll  
+                    df.iloc[i][j] = roll
+                #Go to the next  
+                continue  
+         #Return the dataframe 
+         return df 
 
+    #Parameters: Pandas DataFrame 
+    #Returns: Bool if the dataframe has a missing attribute in it 
+    #Function: Takes in a data frame and returns true if the data frame has  a ? value somewhere in the frame
+    def has_missing_attrs(self, df: pd.DataFrame) -> bool:
+        #For each row in the dataframe 
+        for row in range(self.CountTotalRows(df)): 
+            #For each column in the dataframe 
+            for col in range(self.NumberOfColumns(df)): 
+                #If the dataframe has a missing value in any of the cells
+                if self.IsMissingAttribute(df.iloc[row][col]): 
+                    #Return true 
+                    return True
+                #Go to the next value 
+                continue  
+        #We searched the entire list and never returned true so return false 
+        return False
+    
+    #Parameters: Pandas DataFrame 
+    #Returns: Cleaned Dataframe
+    #Function: Take in a dataframe and an index and return a new dataframe with the row corresponding to the index removed 
+    def KillRow(self, df: pd.DataFrame,index) -> pd.DataFrame: 
+        return df.drop(df.Index[index])
+          
+    #Parameters: Attribute Value 
+    #Returns: Bool -> True if the value is a missing value 
+    #Function: Take in a given value from a data frame and return true if the value is a missing value false otherwise 
+    def IsMissingAttribute(self, attribute) -> bool: 
+        #Return true if the value is ? or NaN else return false 
+        return attribute == "?" or attribute == np.nan
 
+    #Parameters: Pandas DataFrame 
+    #Returns: Clean Dataframe with not missing values 
+    #Function: This function takes in a dataframe and returns a dataframe with all rows contianing missing values removed 
+    def KillRows(self,df: pd.DataFrame) -> pd.DataFrame:
+        # For each of the rows missing a value in the dataframe 
+        for i in self.MissingRowIndexList: 
+            #Set the dataframe equal to the dataframe with the row missing a value removed 
+            df = df.drop(df.index[i])
+        #Clear out all of the data in the set as to not try and drop these values again 
+        self.MissingRowIndexList = set() 
+        #Return the dataframe 
+        return df
+
+    #Parameters: Pandas DataFrame 
+    #Returns: Dataframe with all columns with missing values dropped 
+    #Function: This function takes in a dataframe and drops all columns with missing attributes 
+    def KillColumns(self,df: pd.DataFrame) -> pd.DataFrame: 
+        #For each of the columns with missing attributes which is appending into a object list 
+        for i in self.MissingColumnNameList: 
+            #Set the dataframe equal to the dataframe with these values dropped 
+            df = df.drop(i,axis=1)
+        #Set the object list back to an empty set as to not try and drop these columns again 
+        self.MissingColumnNameList = set() 
+        #Returnn the dataframe 
+        return df
+ 
 
 
     #Takes in a dataframe and populates attributes based on the existing distribution of attribute values 
