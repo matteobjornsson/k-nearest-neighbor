@@ -11,12 +11,11 @@ class DataProcessor:
     
 
     def __init__(self):
-        pass
+        #Set the missing value row index to an empty set 
+        self.MissingRowIndexList = set() 
+        #SEt the missing value column index to an empty set 
+        self.MissingColumnNameList = set()
 
-    
-    
-    
-    
     #Parameters: Pandas DataFrame 
     #Returns: Clean ready to process Dataframe 
     #Function: This is the main function that should be called for each object that takes in the dataframe, processes it and returns the clean dataframe 
