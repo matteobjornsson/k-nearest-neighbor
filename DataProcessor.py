@@ -15,6 +15,7 @@ class DataProcessor:
         self.MissingRowIndexList = set() 
         #SEt the missing value column index to an empty set 
         self.MissingColumnNameList = set()
+        self.value = ""
 
     #Parameters: Pandas DataFrame 
     #Returns: Clean ready to process Dataframe 
