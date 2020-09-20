@@ -20,37 +20,23 @@ class DataProcessor:
     
 
     def __init__(self):
+        #Set the percentage of missing values to be dropped 
+        self.PercentBeforeDrop = 10.00 
         #Set the missing value row index to an empty set 
         self.MissingRowIndexList = set() 
         #SEt the missing value column index to an empty set 
         self.MissingColumnNameList = set()
-        #Value type of the dataset
-        self.value = ""
 
-    #Parameters: Pandas DataFrame 
-    #Returns: Clean ready to process Dataframe 
-    #Function: This is the main function that should be called for each object that takes in the dataframe, processes it and returns the clean dataframe 
-    def StartProcess(self, df:pd.DataFrame) -> pd.DataFrame:
+    def ReplaceMissingValue(self,df:pd.DataFrame) -> pd.DataFrame: 
+        count = 0 
         #Get a deep copy of the dataframe 
         df1 = copy.deepcopy(df)
-        #SEt the count to 0 
-        count = 0 
-        #For each of the columns in the dataframe 
         for i in range(len(df.columns)): 
             #If the count is at the last column in the dataframe end because this is the classifier 
             if count == len(df.columns)-1: 
                 #Break 
                 break
             #bin Integers
-           
-            #If the type of the dataframe is a float then we need to discretize 
-            if type(df1.iloc[0][i]) == np.float64: 
-                #Find which column needs to be discretized
-                df1 = self.discretize(df1,i)
-                #Increment the count 
-                count+=1
-                #Go to the next one
-                continue 
             #If the data frame has missing attributes 
             if self.has_missing_attrs(df1): 
                 #Remove the missing attributes 
@@ -59,7 +45,8 @@ class DataProcessor:
             count+=1
         #Return the cleaned dataframe 
         return df1
-    
+
+
     #Parameters: Pandas DataFrame 
     #Returns: A dataframe with all missing values filled in with a Y or N 
     #Function: Take in a dataframe and randomly assigned a Y or a N to a missing value 
@@ -294,6 +281,78 @@ class DataProcessor:
                 #Print the value in that position of the dataframe 
                 print(df.iloc[i][j])
 
+    #Parameters: Pandas DataFrame, Integer Column Number 
+    #Returns: DataFrame: New discretized values
+    #Function: Takes in a dataframe and a column number of the data frame and bins all values in that column to discretize them 
+    def discretize(self, df: pd.DataFrame,col) -> pd.DataFrame:
+            #Set a min variable to a large number 
+            Min = 100000
+            #Set a max number to a small value 
+            Max = -1
+            #For each of the rows in the data frame 
+            for i in range(self.CountTotalRows(df)):
+                #Store the value at the given position in the column of the dataframe  
+                Value = df.iloc[i][col]
+                #If the value is a missing attribute 
+                if self.IsMissingAttribute(Value): 
+                    #Do nothing 
+                    continue 
+                #Otherwise 
+                else: 
+                    #If the value is bigger than the max then we need to set the new max value 
+                    if Value  > Max: 
+                        #Max is equal to the new value 
+                        Max = Value 
+                        #Go back to the top of the loop
+                        continue 
+                    #If the value is less than the min set the new min value 
+                    elif Value < Min: 
+                        #Min is now equal to the value in the given dataframe 
+                        Min = Value
+                        #Go back to the top of the loop 
+                        continue 
+                    #Go back to the top of the loop 
+                    continue             
+            #Set the delta to be the difference between the max and the min 
+            Delta = Max - Min 
+            #Set the binrange to be the delta divided by the number of mins which is set in init 
+            BinRange = Delta / self.bin_count 
+            #Create an empty list 
+            Bins = list() 
+            #Loop through the number of bins 
+            for i in range(self.bin_count): 
+                #If we are at the first bin 
+                if i == 0: 
+                    #Set the bin value to be the min + the offset between each bin 
+                    Bins.append(Min + BinRange)
+                #Otherwise 
+                else: 
+                    #Set the bin to be the position in the bin list multiplied by the bin offset + the min value 
+                    Bins.append(((i+1) * BinRange) + Min)
+            #Loop through all of the rows in the given dataframe 
+            for row in range(self.CountTotalRows(df)): 
+                #Store the value of a given position in the dataframe 
+                Value = df.iloc[row][col]
+                #Loop through each of the bins 
+                for i in range(len(Bins)):
+                    value = df.at[row,df.columns[col]]
+                    #If we are at the last bin and have not been assigned a bin 
+                    if i == len(Bins)-1: 
+                        #Set the value to be the last bin 
+                        df.at[row,df.columns[col]] = i +1 
+                        #Break out 
+                        break 
+                    #Otherwise if the value is less than the value stored to be assigned a given bin 
+                    elif Value < Bins[i]: 
+                        #Set the row to be that bin value 
+                        df.at[row,df.columns[col]] = i + 1
+                        #Break 
+                        if row % 10 == 0:
+                            print("Value " +str( value) + " binned to value " + str(i+1), end="\r", flush=True)
+                        break 
+            print("Value ", value, " binned to value ", i+1)
+            #Return the new changed dataframe 
+            return df
 
 
 

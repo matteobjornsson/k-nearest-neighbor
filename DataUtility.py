@@ -17,20 +17,24 @@ import DataProcessor
 
 
 class DataUtility: 
-    def __init__(self, df: pd.DataFrame):
-        print("initializing the Data") 
-        ConvertDataStructure(df)
-        
+    def __init__(self):
+        print("initializing the Data")     
 
     def ConvertDatastructure(self,df: pd.DataFrame): 
+        #length = 3
+        #Create a dataprocessor object and convert the data in the csv and change all missing attribtues 
+        Dp = DataProcessor.DataProcessor()
+        #Start the process to change the integrity of the dataframe from within the data processor
+        data = Dp.ReplaceMissingValue(df) 
         #Convert the given Dataframe to a numpy array 
-        Numpy = df.to_numpy() 
-        print(Numpy)
+        Numpy = data.to_numpy() 
+        #print the type of the class above, shoudl be a numpy array for testing 
+        print(type(Numpy))
+        #Return the numpy array 
         return Numpy
 
     #Remove 10 % of the data to be used as tuning data 
     def TuningData(self,):
-
         pass 
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
@@ -48,10 +52,13 @@ class DataUtility:
 
 if __name__ == '__main__':
     print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "Project_2/Vote/Votes.data"
-    df = pd.read_csv(Vote_Data)
-    Df = DataUtility(df)
-    print(Df)
+    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
+    df = pd.read_csv(Vote_Data,index_col = False)
+    Df1 = DataUtility()
+    Numpys = Df1.ConvertDatastructure(df)
+    for i in Numpys: 
+        print(i)
+    print(Df1)
 
 
 
