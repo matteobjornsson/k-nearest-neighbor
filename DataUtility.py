@@ -24,18 +24,41 @@ class DataUtility:
         #length = 3
         #Create a dataprocessor object and convert the data in the csv and change all missing attribtues 
         Dp = DataProcessor.DataProcessor()
+        #print(df)
         #Start the process to change the integrity of the dataframe from within the data processor
         data = Dp.ReplaceMissingValue(df) 
+
+       # print(data)
         #Convert the given Dataframe to a numpy array 
         Numpy = data.to_numpy() 
-        #print the type of the class above, shoudl be a numpy array for testing 
-        print(type(Numpy))
+        #print(Numpy)
+              # print(Numpy)
         #Return the numpy array 
         return Numpy
 
     #Remove 10 % of the data to be used as tuning data 
-    def TuningData(self,):
-        pass 
+    def TuningData(self,NParray: np.array):
+        TuningArray = np.array([])
+        NParrays = np.array([]) 
+        print(TuningArray)
+        Data = list() 
+        #Grab 10 % of the data for tuning
+        TotalDataCount = len(NParray)
+        print("The number of entries in the 10 % of the daterset is ")
+        TotalDataCount += 1
+        TotalDataCount = TotalDataCount * .1 
+        print(NParray[1])
+        for i in range(int(TotalDataCount)): 
+            #Randomly Generate a random number and append it to a new Numoy Array 
+            RemoveIndex = random.randint(0,len(NParray))
+            print(RemoveIndex)
+            TuningArray =  np.append(TuningArray,NParray[RemoveIndex])
+            NParrays = np.delete(NParray,RemoveIndex,0)
+        print("LENGTH")
+        print(len(NParrays))
+        Data.append(NParray)
+        Data.append(TuningArray)
+        return Data
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
     def CrossValiedation(self): 
@@ -57,8 +80,14 @@ if __name__ == '__main__':
     Df1 = DataUtility()
     Numpys = Df1.ConvertDatastructure(df)
     for i in Numpys: 
-        print(i)
-    print(Df1)
+        print(i )
+    test = Df1.TuningData(Numpys)
+    #print(len(test))
+    for i in test: 
+        print("LENGTH")
+        print(len(i))
+    #print(Numpys)
+    #print(Df1)
 
 
 

@@ -21,16 +21,18 @@ class DataProcessor:
 
     def __init__(self):
         #Set the percentage of missing values to be dropped 
-        self.PercentBeforeDrop = 10.00 
+        self.PercentBeforeDrop = 4
         #Set the missing value row index to an empty set 
         self.MissingRowIndexList = set() 
         #SEt the missing value column index to an empty set 
         self.MissingColumnNameList = set()
 
     def ReplaceMissingValue(self,df:pd.DataFrame) -> pd.DataFrame: 
-        count = 0 
-        #Get a deep copy of the dataframe 
+         #Get a deep copy of the dataframe 
         df1 = copy.deepcopy(df)
+        #SEt the count to 0 
+        count = 0 
+        #For each of the columns in the dataframe 
         for i in range(len(df.columns)): 
             #If the count is at the last column in the dataframe end because this is the classifier 
             if count == len(df.columns)-1: 
@@ -43,6 +45,7 @@ class DataProcessor:
                 df1 = self.fix_missing_attrs(df1)
             #Increment the count 
             count+=1
+       
         #Return the cleaned dataframe 
         return df1
 
