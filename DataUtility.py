@@ -2,7 +2,7 @@
 #################################################################### MODULE COMMENTS ############################################################################
 # This program will run the data processor which will create the data processor to change the missing value of the data sets and return a pandas data frame     #
 # This program is meant to run every KNN algorithm on a single dataset and NOT every dataset that is given in the project.                                      #
-##
+# The data structure that will be passforward is a numpy array                                                                                                  #
 ##
 #################################################################### MODULE COMMENTS ############################################################################
 
@@ -17,13 +17,17 @@ import Dataprocessor as Dataprocessor
 
 
 
-class DataUtiliti: 
-    def __init__(self):
+class DataUtility: 
+    def __init__(self, df: pd.DataFrame):
         print("initializing the Data") 
+        
 
+    def ConvertDatastructure(self,): 
+        pass 
 
     #Remove 10 % of the data to be used as tuning data 
     def TuningData(self,):
+
         pass 
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
