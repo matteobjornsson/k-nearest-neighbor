@@ -12,18 +12,21 @@ import sys
 import random 
 import copy 
 import math 
-import TrainingAlgorithm 
-import Dataprocessor as Dataprocessor 
+import DataProcessor 
 
 
 
 class DataUtility: 
     def __init__(self, df: pd.DataFrame):
         print("initializing the Data") 
+        ConvertDataStructure(df)
         
 
-    def ConvertDatastructure(self,): 
-        pass 
+    def ConvertDatastructure(self,df: pd.DataFrame): 
+        #Convert the given Dataframe to a numpy array 
+        Numpy = df.to_numpy() 
+        print(Numpy)
+        return Numpy
 
     #Remove 10 % of the data to be used as tuning data 
     def TuningData(self,):
@@ -45,6 +48,11 @@ class DataUtility:
 
 if __name__ == '__main__':
     print("Testing the interface between pandas and numpy arrays")
+    Vote_Data = "Project 2/Vote/Votes.data"
+    df = pd.read_csv(Vote_Data)
+    Df = DataUtility(df)
+    print(Df)
+
 
 
     print("End of the tesitng interface")
