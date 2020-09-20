@@ -48,7 +48,7 @@ class DataUtility:
 
 if __name__ == '__main__':
     print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "Project 2/Vote/Votes.data"
+    Vote_Data = "Project_2/Vote/Votes.data"
     df = pd.read_csv(Vote_Data)
     Df = DataUtility(df)
     print(Df)
