@@ -1,8 +1,9 @@
 
 class kNN:
 
-    def __init__(self, k):
+    def __init__(self, k, real):
         self.k = k
+        self.realValued = real
 
     def classify(self, exampleData, testData):
         print("kNN algorithm is classifying test data")
