@@ -40,25 +40,13 @@ class DataUtility:
     def TuningData(self,NParray: np.array):
         TuningArray = np.array([])
         NParrays = np.array([]) 
-        print(TuningArray)
         Data = list() 
-        #Grab 10 % of the data for tuning
-        TotalDataCount = len(NParray)
-        print("The number of entries in the 10 % of the daterset is ")
-        TotalDataCount += 1
-        TotalDataCount = TotalDataCount * .1 
-        print(NParray[1])
-        for i in range(int(TotalDataCount)): 
-            #Randomly Generate a random number and append it to a new Numoy Array 
-            RemoveIndex = random.randint(0,len(NParray))
-            print(RemoveIndex)
-            TuningArray =  np.append(TuningArray,NParray[RemoveIndex])
-            NParrays = np.delete(NParray,RemoveIndex,0)
-        print("LENGTH")
-        print(len(NParrays))
-        Data.append(NParray)
-        Data.append(TuningArray)
-        return Data
+        #Grab 10% of the data to be removed for tuning 
+        TuningData = len(NParray) * .1
+        print(TuningData)
+        print(int(TuningData))
+
+        
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
     def CrossValiedation(self): 
@@ -76,19 +64,16 @@ class DataUtility:
 if __name__ == '__main__':
     print("Testing the interface between pandas and numpy arrays")
     Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
-    df = pd.read_csv(Vote_Data,index_col = False)
+    df = pd.read_csv(Vote_Data)
     Df1 = DataUtility()
     Numpys = Df1.ConvertDatastructure(df)
-    for i in Numpys: 
-        print(i )
+    print(len(df))
+    print(len(Numpys))
+    
+    #for i in Numpys: 
+    #    print(i )
     test = Df1.TuningData(Numpys)
-    #print(len(test))
-    for i in test: 
-        print("LENGTH")
-        print(len(i))
-    #print(Numpys)
-    #print(Df1)
-
+ 
 
 
     print("End of the tesitng interface")
