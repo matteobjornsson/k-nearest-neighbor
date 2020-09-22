@@ -36,9 +36,21 @@ class DataUtility:
 
     #Remove 10 % of the data to be used as tuning data and seperate them into a unique dataframe 
     def TuningData(self,df: pd.DataFrame):
-        Records = len(df)
-        print(Records)
-        pass
+        DataFrames = list() 
+        Records = int(len(df) * .1)
+        data = pd.DataFrame(columns = df.columns) 
+        for i in range(Records):
+            print(i)
+            Random =  random.randint(0,len(df)-1)
+            rec = df.iloc[[Random]]
+            print(rec)
+            data.append(rec,ignore_index = True)
+            
+            df = df.drop(df.index[Random])
+        print(data)
+        DataFrames.append(data)
+        DataFrames.append(df)
+        return DataFrames
         
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
@@ -89,13 +101,14 @@ if __name__ == '__main__':
     Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
     df = pd.read_csv(Vote_Data)
     Df1 = DataUtility()
-    df = Df1.ReplaceMissing(df)
-    print(df)
-    Df1.TuningData(df)
+    dfs = Df1.ReplaceMissing(df)
+    test = list() 
+    test = Df1.TuningData(dfs)
+    for i in test: 
+        print("LENGTH")
+        print(len(i))
     bins = [] 
-    bins = Df1.BinTestData(df)
     
-    test = Df1.TuningData(Numpys)
  
-    print("End of the tesitng interface")
+    print("End of the testing interface")
 
