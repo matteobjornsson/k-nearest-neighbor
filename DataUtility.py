@@ -27,7 +27,7 @@ class DataUtility:
         #Start the process to change the integrity of the dataframe from within the data processor
         data = Dp.ReplaceMissingValue(df) 
         return data 
-        
+
     def ConvertDatastructure(self,df: pd.DataFrame): 
         #Convert the given Dataframe to a numpy array 
         Numpy = df.to_numpy() 
@@ -35,7 +35,9 @@ class DataUtility:
         return Numpy
 
     #Remove 10 % of the data to be used as tuning data and seperate them into a unique dataframe 
-    def TuningData(self,NParray: np.array):
+    def TuningData(self,df: pd.DataFrame):
+        Records = len(df)
+        print(Records)
         pass
         
 
@@ -87,21 +89,13 @@ if __name__ == '__main__':
     Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
     df = pd.read_csv(Vote_Data)
     Df1 = DataUtility()
-    
-    
+    df = Df1.ReplaceMissing(df)
+    print(df)
+    Df1.TuningData(df)
     bins = [] 
     bins = Df1.BinTestData(df)
     
-    
-    
-    Numpys = Df1.ConvertDatastructure(df)
-    
-    
-    #for i in Numpys: 
-    #    print(i )
     test = Df1.TuningData(Numpys)
  
-
-
     print("End of the tesitng interface")
 
