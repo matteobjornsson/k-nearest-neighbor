@@ -38,7 +38,8 @@ class DataUtility:
     def TuningData(self,df: pd.DataFrame):
         DataFrames = list() 
         Records = int(len(df) * .1)
-        data = pd.DataFrame(columns = df.columns) 
+        data = copy.deepcopy(df)
+        data = data[0:0]
         for i in range(Records):
             print(i)
             Random =  random.randint(0,len(df)-1)
