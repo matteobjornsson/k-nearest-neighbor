@@ -115,5 +115,6 @@ if __name__ == '__main__':
     for i in bins: 
         print(type(i))
     
+    print("TTFN")
     print("End of the testing interface")
 
