@@ -20,32 +20,23 @@ class DataUtility:
     def __init__(self):
         print("initializing the Data")     
 
-    def ConvertDatastructure(self,df: pd.DataFrame): 
+    def ReplaceMissing(self,df: pd.DataFrame):
         #length = 3
         #Create a dataprocessor object and convert the data in the csv and change all missing attribtues 
         Dp = DataProcessor.DataProcessor()
-        #print(df)
         #Start the process to change the integrity of the dataframe from within the data processor
         data = Dp.ReplaceMissingValue(df) 
-
-       # print(data)
+        return data 
+        
+    def ConvertDatastructure(self,df: pd.DataFrame): 
         #Convert the given Dataframe to a numpy array 
-        Numpy = data.to_numpy() 
-        #print(Numpy)
-              # print(Numpy)
+        Numpy = df.to_numpy() 
         #Return the numpy array 
         return Numpy
 
-    #Remove 10 % of the data to be used as tuning data 
+    #Remove 10 % of the data to be used as tuning data and seperate them into a unique dataframe 
     def TuningData(self,NParray: np.array):
-        TuningArray = np.array([])
-        NParrays = np.array([]) 
-        Data = list() 
-        #Grab 10% of the data to be removed for tuning 
-        TuningData = len(NParray) * .1
-        print(TuningData)
-        print(int(TuningData))
-
+        pass
         
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
@@ -58,7 +49,37 @@ class DataUtility:
         pass
 
 
-
+    #Parameters: DataFrame
+    #Returns: List of dataframes 
+    #Function: Take in a dataframe and break dataframe into 10 similar sized sets and append each of these to a list to be returned 
+    def BinTestData(self, df: pd.DataFrame) -> list(): 
+        #Set the bin size to 10 
+        Binsize = 10
+        #Create a List of column names that are in the dataframe 
+        columnHeaders = list(df.columns.values)
+        #Create an empty list 
+        bins = []
+        #Loop through the size of the bins 
+        for i in range(Binsize):
+            #Append the dataframe columns to the list created above 
+            bins.append(pd.DataFrame(columns=columnHeaders))
+        #Set a list of all rows in the in the dataframe 
+        dataIndices = list(range(len(df)))
+        #Shuffle the data 
+        random.shuffle(dataIndices)
+        #Shuffle the count to 0 
+        count = 0
+        #For each of the indexs in the dataIndices 
+        for index in dataIndices:
+            #Set the bin number to count mod the bin size 
+            binNumber = count % Binsize
+            bins[binNumber] = bins[binNumber].append(df.iloc[index], ignore_index=True)
+            #Increment count 
+            count += 1
+            #Go to the next 
+            continue
+        #Return the list of Bins 
+        return bins
 
 
 if __name__ == '__main__':
@@ -66,9 +87,15 @@ if __name__ == '__main__':
     Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
     df = pd.read_csv(Vote_Data)
     Df1 = DataUtility()
+    
+    
+    bins = [] 
+    bins = Df1.BinTestData(df)
+    
+    
+    
     Numpys = Df1.ConvertDatastructure(df)
-    print(len(df))
-    print(len(Numpys))
+    
     
     #for i in Numpys: 
     #    print(i )
