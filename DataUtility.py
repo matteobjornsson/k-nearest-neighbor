@@ -41,14 +41,13 @@ class DataUtility:
         data = copy.deepcopy(df)
         data = data[0:0]
         for i in range(Records):
-            print(i)
             Random =  random.randint(0,len(df)-1)
-            rec = df.iloc[[Random]]
-            print(rec)
-            data.append(rec,ignore_index = True)
+            rec = df.iloc[Random]
+           
+            data = data.append(df.iloc[Random],ignore_index = True)
             
             df = df.drop(df.index[Random])
-        print(data)
+       
         DataFrames.append(data)
         DataFrames.append(df)
         return DataFrames
@@ -105,11 +104,16 @@ if __name__ == '__main__':
     dfs = Df1.ReplaceMissing(df)
     test = list() 
     test = Df1.TuningData(dfs)
-    for i in test: 
-        print("LENGTH")
-        print(len(i))
+    Tuning = test[0]
+    df = test[1]
     bins = [] 
+    bins = Df1.BinTestData(df)
+    Tuning = Df1.ConvertDatastructure(Tuning)
+    print(type(Tuning))
+    for i in range(len(bins)):
+        bins[i] = Df1.ConvertDatastructure(bins[i])
+    for i in bins: 
+        print(type(i))
     
- 
     print("End of the testing interface")
 
