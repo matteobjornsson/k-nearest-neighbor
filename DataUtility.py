@@ -17,7 +17,9 @@ import DataProcessor
 
 
 class DataUtility: 
-    def __init__(self):
+    def __init__(self, categorical_attribute_indices, regression_data_set):
+        self.categorical_attribute_indices = categorical_attribute_indices
+        self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
     def ReplaceMissing(self,df: pd.DataFrame):
@@ -95,8 +97,26 @@ class DataUtility:
             bins[i] = bins[i].to_numpy()
         return bins
 
-    def generate_experiment_data(self, filename):
-        df = pd.read_csv(filename)
+    def min_max_normalize_real_features(self, data_set: str) -> None:
+        df = pd.read_csv(f"./ProcessedData/{data_set}.csv")
+        print(df)
+        dfn = pd.DataFrame()
+        index = -1
+        headers = df.columns.values
+        for col in headers:
+            index += 1
+            if index in self.categorical_attribute_indices[data_set] or col == headers[-1]:
+                dfn[col] = df[col]
+                continue
+            min = df[col].min()
+            max = df[col].max()
+            dfn[col] = (df[col] - min)/(max - min)
+        print(dfn)
+        dfn.to_csv(f"./Data/{data_set}.csv", index=False)
+
+
+    def generate_experiment_data(self, data_set):
+        df = pd.read_csv(f"./Data/{data_set}.csv")
         headers = df.columns.values
         print("headers: ", headers)
         tuning_data, remainder = self.TuningData(df)
@@ -118,6 +138,25 @@ class DataUtility:
 
 
 if __name__ == '__main__':
+
+    categorical_attribute_indices = {
+        "segmentation": [],
+        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        "glass": [],
+        "fire": [0,1,2,3],
+        "machine": [0,1],
+        "abalone": [0]
+    }
+
+    regression_data_set = {
+        "segmentation": False,
+        "vote": False,
+        "glass": False,
+        "fire": True,
+        "machine": True,
+        "abalone": True
+    }
+
     print("Testing the interface between pandas and numpy arrays")
     # Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
     # df = pd.read_csv(Vote_Data)
@@ -134,12 +173,14 @@ if __name__ == '__main__':
     # for i in bins: 
     #     print(type(i))
     
-    du = DataUtility()
-    headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("./Data/vote.csv")
-    assert len(headers) == len(tuning_data[0])
-    count = 0
-    for fold in tenFolds:
-        count+= len(fold)
-    assert count == len(full_set)
-    print("End of the testing interface")
+    du = DataUtility(categorical_attribute_indices, regression_data_set)
+    for key in categorical_attribute_indices.keys():
+        du.min_max_normalize_real_features(key)
+    # headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("vote")
+    # assert len(headers) == len(tuning_data[0])
+    # count = 0
+    # for fold in tenFolds:
+    #     count+= len(fold)
+    # assert count == len(full_set)
+    # print("End of the testing interface")
 
