@@ -122,7 +122,7 @@ class DataUtility:
         normalized_df.to_csv(f"./Data/{data_set}.csv", index=False)
 
     # this function takes in experiment ready data and returns all forms of data required for the experiment 
-    def generate_experiment_data(self, data_set)-> list, np.ndarray, np.ndarray, list:
+    def generate_experiment_data(self, data_set)-> (list, np.ndarray, np.ndarray, list):
         # read in data set
         df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
         # save the column labels
