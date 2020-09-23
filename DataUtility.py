@@ -97,40 +97,45 @@ class DataUtility:
             bins[i] = bins[i].to_numpy()
         return bins
 
+    # this function takes in the name of a preprocessed data set and normalizes
+    # all continuous attributes within that dataset to the range 0-1.
     def min_max_normalize_real_features(self, data_set: str) -> None:
+        # read in processed dataset
         df = pd.read_csv(f"./ProcessedData/{data_set}.csv")
-        print(df)
-        dfn = pd.DataFrame()
+        # create new data frame to store normalized data
+        normalized_df = pd.DataFrame()
+        # keep track of which column index we are looking at
         index = -1
         headers = df.columns.values
+        # iterate over all columns
         for col in headers:
             index += 1
+            # check if the index is categorical or ground truth. in this case do not normalize
             if index in self.categorical_attribute_indices[data_set] or col == headers[-1]:
-                dfn[col] = df[col]
+                normalized_df[col] = df[col]
                 continue
+            # generate a normalized column and add it to the normalized dataframe
             min = df[col].min()
             max = df[col].max()
-            dfn[col] = (df[col] - min)/(max - min)
-        print(dfn)
-        dfn.to_csv(f"./Data/{data_set}.csv", index=False)
+            normalized_df[col] = (df[col] - min)/(max - min)
+        # save the new normalized dataset to file
+        normalized_df.to_csv(f"./Data/{data_set}.csv", index=False)
 
-
-    def generate_experiment_data(self, data_set):
-        df = pd.read_csv(f"./Data/{data_set}.csv")
+    # this function takes in experiment ready data and returns all forms of data required for the experiment 
+    def generate_experiment_data(self, data_set)-> list, np.ndarray, np.ndarray, list:
+        # read in data set
+        df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
+        # save the column labels
         headers = df.columns.values
-        print("headers: ", headers)
+        # extract data from dataset to tune parameters
         tuning_data, remainder = self.TuningData(df)
+        # convert the tuning data set to numpy array
         tuning_data = tuning_data.to_numpy()
-        print("tuning data type: ", type(tuning_data))
-        print(tuning_data)
+        # split the remaining data into 10 chunks for 10fold cros validation
         tenFolds = self.BinTestData(remainder)
-        print("tenfold type: ", type(tenFolds[1]))
-        for i in range(len(tenFolds)):
-            print (f"fold {i}: ")
-            print(tenFolds[i])
+        # save the full set as numpy array
         full_set = remainder.to_numpy()
-        print(full_set)
-
+        # return the headers, full set, tuning, and 10fold data
         return headers, full_set, tuning_data, tenFolds 
 
 
