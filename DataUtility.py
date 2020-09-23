@@ -36,21 +36,19 @@ class DataUtility:
 
     #Remove 10 % of the data to be used as tuning data and seperate them into a unique dataframe 
     def TuningData(self,df: pd.DataFrame):
-        DataFrames = list() 
+        remaining_data = copy.deepcopy(df)
         Records = int(len(df) * .1)
-        data = copy.deepcopy(df)
-        data = data[0:0]
+        tuning_data = copy.deepcopy(df)
+        tuning_data = tuning_data[0:0]
         for i in range(Records):
-            Random =  random.randint(0,len(df)-1)
-            rec = df.iloc[Random]
+            Random =  random.randint(0,len(remaining_data)-1)
+            rec = remaining_data.iloc[Random]
            
-            data = data.append(df.iloc[Random],ignore_index = True)
+            tuning_data = tuning_data.append(remaining_data.iloc[Random],ignore_index = True)
             
-            df = df.drop(df.index[Random])
-       
-        DataFrames.append(data)
-        DataFrames.append(df)
-        return DataFrames
+            remaining_data = remaining_data.drop(remaining_data.index[Random])
+            remaining_data.reset_index()
+        return tuning_data, remaining_data
         
 
     #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
@@ -93,28 +91,55 @@ class DataUtility:
             #Go to the next 
             continue
         #Return the list of Bins 
+        for i in range(Binsize):
+            bins[i] = bins[i].to_numpy()
         return bins
+
+    def generate_experiment_data(self, filename):
+        df = pd.read_csv(filename)
+        headers = df.columns.values
+        print("headers: ", headers)
+        tuning_data, remainder = self.TuningData(df)
+        tuning_data = tuning_data.to_numpy()
+        print("tuning data type: ", type(tuning_data))
+        print(tuning_data)
+        tenFolds = self.BinTestData(remainder)
+        print("tenfold type: ", type(tenFolds[1]))
+        for i in range(len(tenFolds)):
+            print (f"fold {i}: ")
+            print(tenFolds[i])
+        full_set = remainder.to_numpy()
+        print(full_set)
+
+        return headers, full_set, tuning_data, tenFolds 
+
+
+
 
 
 if __name__ == '__main__':
     print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
-    df = pd.read_csv(Vote_Data)
-    Df1 = DataUtility()
-    dfs = Df1.ReplaceMissing(df)
-    test = list() 
-    test = Df1.TuningData(dfs)
-    Tuning = test[0]
-    df = test[1]
-    bins = [] 
-    bins = Df1.BinTestData(df)
-    Tuning = Df1.ConvertDatastructure(Tuning)
-    print(type(Tuning))
-    for i in range(len(bins)):
-        bins[i] = Df1.ConvertDatastructure(bins[i])
-    for i in bins: 
-        print(type(i))
+    # Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
+    # df = pd.read_csv(Vote_Data)
+    # Df1 = DataUtility()
+    # dfs = Df1.ReplaceMissing(df)
+    # test = list() 
+    # Tuning, df = Df1.TuningData(dfs)
+    # bins = [] 
+    # bins = Df1.BinTestData(df)
+    # Tuning = Df1.ConvertDatastructure(Tuning)
+    # print(type(Tuning))
+    # for i in range(len(bins)):
+    #     bins[i] = Df1.ConvertDatastructure(bins[i])
+    # for i in bins: 
+    #     print(type(i))
     
-    print("TTFN")
+    du = DataUtility()
+    headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("./Data/vote.csv")
+    assert len(headers) == len(tuning_data[0])
+    count = 0
+    for fold in tenFolds:
+        count+= len(fold)
+    assert count == len(full_set)
     print("End of the testing interface")
 
