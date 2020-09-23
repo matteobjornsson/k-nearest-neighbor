@@ -4,7 +4,7 @@
 
 categorical_attribute_indices = {
     "segmentation": [],
-    "vote": [],
+    "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
     "glass": [],
     "fire": [0,1,2,3],
     "machine": [0,1],
