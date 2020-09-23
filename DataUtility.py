@@ -122,7 +122,7 @@ class DataUtility:
         normalized_df.to_csv(f"./Data/{data_set}.csv", index=False)
 
     # this function takes in experiment ready data and returns all forms of data required for the experiment 
-    def generate_experiment_data(self, data_set)-> (list, np.ndarray, np.ndarray, list):
+    def generate_experiment_data(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
         # read in data set
         df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
         # save the column labels
@@ -179,9 +179,9 @@ if __name__ == '__main__':
     #     print(type(i))
     
     du = DataUtility(categorical_attribute_indices, regression_data_set)
-    for key in categorical_attribute_indices.keys():
-        du.min_max_normalize_real_features(key)
-    # headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("vote")
+    # for key in categorical_attribute_indices.keys():
+    #     du.min_max_normalize_real_features(key)
+    headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("vote")
     # assert len(headers) == len(tuning_data[0])
     # count = 0
     # for fold in tenFolds:
