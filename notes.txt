@@ -1,0 +1,6 @@
+curious part of the Machine names file: 
+
+"6. Number of Attributes: 10 (6 predictive attributes, 2 non-predictive, 
+                             1 goal field, and the linear regression's guess)"
+
+those two columns are non-predictive. Should we delete them? 
