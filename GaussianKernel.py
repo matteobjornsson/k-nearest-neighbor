@@ -2,8 +2,7 @@ import math
 
 class GaussianKernel:
 
-    def __init__(self, d, sigma):
-        self.d = d
+    def __init__(self, sigma):
         self.sigma = sigma
 
     def estimate(self, neighborStats: list) -> float:
@@ -15,9 +14,10 @@ class GaussianKernel:
         for i in range(N):
             neighbor = neighborStats[i]
             distance, responseVariable = neighbor[0], neighbor [2]
+
             numerator += self.kernelSmoother(distance, self.sigma) * responseVariable
             denominator += self.kernelSmoother(distance, self.sigma)
         return numerator/denominator
 
     def kernelSmoother(self, distance, sigma) -> float:
-        return math.exp(-(distance**2)/(sigma**2))
+        return (1/(sigma * math.sqrt(2 * math.pi))) * math.exp(-.5 * (distance**2)/(sigma**2))

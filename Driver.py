@@ -34,7 +34,7 @@ def main():
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
         print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
-        test = copy.deepcopy(tenFolds[0][0:5])
+        test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
         print(len(test[0]))
         print(len(training))

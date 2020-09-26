@@ -25,8 +25,10 @@ class kNN:
         self.hd = HammingDistance.HammingDistance()
         # tunable parameter, weight of categorical distance value
         self.beta = 1
-        # tunable parameter
+        # tunable parameter for the gaussian kernel
         self.sigma = 2
+        self.kernel = GaussianKernel.GaussianKernel(self.sigma)
+
 
     # function determines the nature of the data set features: real, categorical, or mixed
     def feature_data_types(self, data_set: np.ndarray, categorical_features: list) -> str:
@@ -60,9 +62,9 @@ class kNN:
                 x_cat = [x[k] for k in range(len(x)) if k in self.categorical_features]
                 x_real = [x[l] for l in range(len(x)) if l not in self.categorical_features]
                 distance = self.alpha * self.rd.Distance(x_real, sample_real) + self.beta * self.hd.Distance(x_cat, sample_cat)
-                if n < 5:
-                    print("sample real: ", sample_real, "x real: ", x_real, "real distance: ", self.rd.Distance(x_real, sample_real))
-                    print("sample cat: ", sample_cat, "x cat: ", x_cat, "categorical distance: ", self.hd.Distance(x_cat,sample_cat))
+                # if n < 5:
+                #     print("sample real: ", sample_real, "x real: ", x_real, "real distance: ", self.rd.Distance(x_real, sample_real))
+                #     print("sample cat: ", sample_cat, "x cat: ", x_cat, "categorical distance: ", self.hd.Distance(x_cat,sample_cat))
             heapq.heappush(neighbors, (distance, n, responseVariable))
         kNeighbors = heapq.nsmallest(k, neighbors)
         return kNeighbors
@@ -88,8 +90,8 @@ class kNN:
             # print([exampleData[n[1]].tolist() for n in neighbors])
             # print(votes)
             if self.regression_data_set:
-                # SIMPLE AVERAGE. TODO: IMPLEMENT GAUSSIAN KERNEL HERE
-                estimate = sum(votes) / len(votes)
+                estimate = self.kernel.estimate(neighbors)
+                print("kernel estimate: ", estimate)
                 print()
             else:
                 most_common_class = self.most_common_class(votes)
