@@ -128,7 +128,6 @@ class DataUtility:
     def generate_experiment_data(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
         # read in data set
         df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
-        print("csv dtypes: ", df.dtypes)
         # save the column labels
         headers = df.columns.values
         # extract data from dataset to tune parameters

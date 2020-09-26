@@ -39,22 +39,13 @@ def main():
         print(len(test[0]))
         print(len(training))
 
-        knn = kNN(
+        knn = kNN.kNN(
             int(math.sqrt(len(full_set))), 
             full_set,
             categorical_attribute_indices[data_set],
             regression_data_set[data_set]
         )
         classifications = knn.classify(training, test)
-
-
-
-
-
     print("Program End")
-
-
-
-
 
 main()
