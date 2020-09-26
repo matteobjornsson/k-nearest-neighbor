@@ -31,8 +31,27 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
 
 """
 
-    def MSE(self): 
-        pass
+    def MSE(self,data_set: np.ndarray) -> float: 
+        SquaredError = list() 
+        #True Observation value is in the 2nd to last column 
+        #Prediction values are in the last column 
+        for i in range(len(data_set)): 
+            #Grab the second to last value in the data set since it is the True value
+            True_Value = data_set[len(i) - 2] 
+            #Grab the last value since it is the predicted value 
+            Pred_Value = data_set[len(i) - 1]
+            #Calculate the error by the difference of the two values above 
+            Error = True_Value - Pred_Value
+            #Square the error 
+            Error = Error * Error
+            #Store into the Squared Error list created above 
+            SquaredError.append(Error)
+        Mean = 0 
+        for i in SquaredError: 
+            Mean +=i 
+        Mean = Mean / len(SquaredError)
+        return Mean 
+         
 
     #Parameters: Dataframe 
     #Returns: DataFrame, Dictionary 
