@@ -30,6 +30,10 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
+
+
+    def MAE(self,Data_set: list())-> float: 
+        pass
     #Parameters: DataFrames
     #Returns: List 
     #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
