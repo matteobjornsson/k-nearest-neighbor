@@ -14,5 +14,6 @@ class RealDistance:
 
 if __name__ == '__main__':
     rd = RealDistance()
-    d = rd.Distance([1,2,3],[2,3,4])
+    d = rd.Distance([1,2,3],[2,9,4])
+    assert round(d, 9) == 7.141428429
     print(d)
