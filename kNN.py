@@ -141,3 +141,15 @@ if __name__ == '__main__':
         )
         classifications = knn.classify(training, test)
 
+    five = range(5)
+    test_array = []
+    class_array = ['c1', 'c2', 'c3', 'c4', 'c5']
+    for a in five:
+        for b in five:
+            for c in five:
+                for d in five:
+                    for e in five:
+                        ci = class_array[a]
+                        test_array.append([a,b,c,d,e,ci])
+    test_data = np.array(test_array)
+    print(test_data, test_data.shape)
