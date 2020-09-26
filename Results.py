@@ -31,7 +31,11 @@ class Results:
 
     """
 
-    
+    def StartLossFunction(self,Categorical): 
+        pass
+
+    def PipeToFile(self): 
+        pass 
 
     #Parameters: DataFrames
     #Returns: List 
