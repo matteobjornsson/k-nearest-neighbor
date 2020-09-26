@@ -31,8 +31,30 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
 
 """
 
-    def MSE(self): 
-        pass
+    def MSE(self,data_set: list()) -> float: 
+        SquaredError = list()  
+        for i in data_set: 
+            #First Value is the Ground truth 
+            True_Value = data_set[0] 
+            #Grab the last value since it is the predicted value 
+            Pred_Value = data_set[1]
+            #Calculate the error by the difference of the two values above 
+            Error = True_Value - Pred_Value
+            #Square the error 
+            Error = Error * Error
+            #Store into the Squared Error list created above 
+            SquaredError.append(Error)
+        #Set a counter variable 
+        Mean = 0 
+        #For each of the squared error vales we entered in the list above 
+        for i in SquaredError: 
+            #Add the value to the overall mean 
+            Mean +=i 
+        #Divide out by the total number of entries 
+        Mean = Mean / len(SquaredError)
+        #Return the mean 
+        return Mean 
+         
 
     #Parameters: Dataframe 
     #Returns: DataFrame, Dictionary 
@@ -355,6 +377,9 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
             continue
         #Return the dataframe 
         return matrix
+
+#[{},{},{}]
+
 
 
 #Unit Testing the object created above 
