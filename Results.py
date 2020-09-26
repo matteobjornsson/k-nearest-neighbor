@@ -46,10 +46,15 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
             Error = Error * Error
             #Store into the Squared Error list created above 
             SquaredError.append(Error)
+        #Set a counter variable 
         Mean = 0 
+        #For each of the squared error vales we entered in the list above 
         for i in SquaredError: 
+            #Add the value to the overall mean 
             Mean +=i 
+        #Divide out by the total number of entries 
         Mean = Mean / len(SquaredError)
+        #Return the mean 
         return Mean 
          
 
