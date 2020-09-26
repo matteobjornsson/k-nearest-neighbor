@@ -17,6 +17,7 @@ class kNN:
         self.categorical_features = categorical_features
         self.regression_data_set = regression_data_set
         self.data_type = self.feature_data_types(data_set, categorical_features)
+        print("data type: ", self.data_type)
         self.rd = RealDistance.RealDistance()
         # tunable parameter, weight of real distance value
         self.alpha = 1
@@ -67,7 +68,10 @@ class kNN:
         for new_sample in testData:
             new_vector = new_sample.tolist()[:-1]
             neighbors = self.get_k_neighbors(exampleData, new_vector, self.k)
-            print("neighbors: ", neighbors)
+            printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", f"vector: {exampleData[n[1]].tolist()}") for n in neighbors]
+            print("Neighbors:")
+            for x in printNeighbors: print(x[0], x[1], x[2])
+
             votes = [exampleData[n[1]].tolist()[-1] for n in neighbors]
             print("votes: ", votes)
             # print([exampleData[n[1]].tolist() for n in neighbors])
@@ -77,7 +81,7 @@ class kNN:
                 estimate = sum(votes) / len(votes)
             else:
                 most_common_class = self.most_common_class(votes)
-                print("most common classes: ", most_common_class)
+                print("most common classes: ", most_common_class, '\n')
                 if len(most_common_class) == 1:
                     estimate = most_common_class[0]
                 else:
@@ -90,7 +94,7 @@ class kNN:
                     estimate = neighbor_class
             ground_truth =  new_sample.tolist()[-1]
             classifications.append([ground_truth, estimate])
-        print(classifications)
+        for clss in classifications: print(f"Ground truth: {clss[0]}, Estimate: {clss[1]}")
         return classifications
 
 
@@ -140,16 +144,3 @@ if __name__ == '__main__':
             regression_data_set[data_set]
         )
         classifications = knn.classify(training, test)
-
-    five = range(5)
-    test_array = []
-    class_array = ['c1', 'c2', 'c3', 'c4', 'c5']
-    for a in five:
-        for b in five:
-            for c in five:
-                for d in five:
-                    for e in five:
-                        ci = class_array[a]
-                        test_array.append([a,b,c,d,e,ci])
-    test_data = np.array(test_array)
-    print(test_data, test_data.shape)
