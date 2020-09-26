@@ -19,7 +19,7 @@ test_data = np.array([
     [5,5,5, int(5/2)],
     [0,0,0,0],
     [9,9,9, int(9/2)],
-    [4.5,4.5,4.5, int(4.5/2)]
+    [4.9,4.9,4.9, int(4.5/2)]
 ])
 
 # savetxt('training_data.csv', training_data, delimiter=',')
@@ -35,10 +35,9 @@ test_data = np.array([
 # plt.show()
 
 knn = kNN(
-    # int(math.sqrt(len(training_data))), 
-    5,
+    int(math.sqrt(len(training_data))),
     training_data,
     [],
-    False
+    True
 )
 classifications = knn.classify(training_data, test_data)

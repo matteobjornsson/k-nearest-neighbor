@@ -68,9 +68,16 @@ class kNN:
         for new_sample in testData:
             new_vector = new_sample.tolist()[:-1]
             neighbors = self.get_k_neighbors(exampleData, new_vector, self.k)
-            printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", f"vector: {exampleData[n[1]].tolist()}") for n in neighbors]
-            print("Neighbors:")
-            for x in printNeighbors: print(x[0], x[1], x[2])
+            printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", exampleData[n[1]].tolist()) for n in neighbors]
+            print(f"Neighbors of {new_vector}:")
+            count = 0
+            for index in range(len(neighbors)): 
+                if index <= 3 or index >= len(neighbors)-3:
+                    x = printNeighbors[index]
+                    print(x[2], x[0], x[1])
+                if 3 < index < len(neighbors)-3 and len(neighbors) > 6 and count < 1:
+                    count += 1
+                    print("...")
 
             votes = [exampleData[n[1]].tolist()[-1] for n in neighbors]
             print("votes: ", votes)
@@ -79,9 +86,10 @@ class kNN:
             if self.regression_data_set:
                 # SIMPLE AVERAGE. TODO: IMPLEMENT GAUSSIAN KERNEL HERE
                 estimate = sum(votes) / len(votes)
+                print()
             else:
                 most_common_class = self.most_common_class(votes)
-                print("most common classes: ", most_common_class, '\n')
+                print("most common classes: ", most_common_class)
                 if len(most_common_class) == 1:
                     estimate = most_common_class[0]
                 else:
@@ -89,9 +97,10 @@ class kNN:
                         n_index = neighbors[i][1]
                         neighbor_class = exampleData[n_index][-1]
                         if  neighbor_class in most_common_class:
-                            print("defining neighbor, index # ", n_index)
+                            # print("defining neighbor, index # ", n_index)
                             break
                     estimate = neighbor_class
+                    print("Estimate: ", estimate, '\n')
             ground_truth =  new_sample.tolist()[-1]
             classifications.append([ground_truth, estimate])
         for clss in classifications: print(f"Ground truth: {clss[0]}, Estimate: {clss[1]}")
