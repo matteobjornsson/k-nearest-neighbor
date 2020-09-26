@@ -338,23 +338,23 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
     #Parameters: DataFrame 
     #Returns: DataFrame
     #Function: generate a matrix that checks classified test data against ground truth
-    def ConfusionMatrix(self, df: pd.DataFrame) -> pd.DataFrame:
+    def ConfusionMatrix(self, df: list()) -> pd.DataFrame:
         # identify column index of ground truth and classification
-        GroundTruthIndex = len(df.columns)- 2
-        ClassifierGuessIndex = len(df.columns)-1 
+        GroundTruthIndex = 0
+        ClassifierGuessIndex = 1 
 
         # generate a list of all unique classes
         UniqueClasses = list() 
         #Loop through all of the rows in the dataframe 
-        for i in range(len(df)): 
+        for i in df: 
             #If the Ground truth classification not in the unique classes list 
-            if str(df.iloc[i][GroundTruthIndex]) not in UniqueClasses:
+            if str(i[GroundTruthIndex]) not in UniqueClasses:
                 #Append the value to the list 
-                UniqueClasses.append(str(df.iloc[i][GroundTruthIndex]))
+                UniqueClasses.append(str(i[GroundTruthIndex]))
             #If the classifcation is not in the unique classes list 
-            if str(df.iloc[i][ClassifierGuessIndex]) not in UniqueClasses:
+            if str(i[ClassifierGuessIndex]) not in UniqueClasses:
                 #Add the value to the list 
-                UniqueClasses.append(str(df.iloc[i][ClassifierGuessIndex]))
+                UniqueClasses.append(str(i[ClassifierGuessIndex]))
             #Go to the next one 
             continue 
         #Set the class count to the length of unique classes 
