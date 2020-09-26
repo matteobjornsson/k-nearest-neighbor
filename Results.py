@@ -33,6 +33,7 @@ class Results:
 
 
     def MAE(self,Data_set: list())-> float: 
+        #Create an absolute value list
         MeanAbs = list() 
         for i in Data_set: 
             True_Value = i[0]
@@ -437,7 +438,7 @@ if __name__ == '__main__':
     #[[0.0, 2.162857142857143], [0.0, 63.20476190476192], [3.71, 3.8890476190476186], [0.0, 16.93285714285714], [0.0, 50.36952380952381]]
     re = Results()
     #print(ClassifiedDataFrame)
-    macroF1Average = re.ZeroOneLoss(ClassifiedDataFrame)
+    macroF1Average = re.MAE(ClassifiedDataFrame)
     print(macroF1Average)
     print("Program Finish")
 
