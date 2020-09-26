@@ -17,27 +17,51 @@ class Results:
         print("Starting the Results File")
 
 
-"""
-loss functions 
+    """
+    loss functions 
 
-multiclass confusion matrix 
-https://stats.stackexchange.com/questions/179835/how-to-build-a-confusion-matrix-for-a-multiclass-classifier
+    multiclass confusion matrix 
+    https://stats.stackexchange.com/questions/179835/how-to-build-a-confusion-matrix-for-a-multiclass-classifier
 
-multiclass precision and recall
-https://towardsdatascience.com/multi-class-metrics-made-simple-part-i-precision-and-recall-9250280bddc2
+    multiclass precision and recall
+    https://towardsdatascience.com/multi-class-metrics-made-simple-part-i-precision-and-recall-9250280bddc2
 
-multiclass f1 score
-https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
+    multiclass f1 score
+    https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
-"""
+    """
+    #Parameters: DataFrames
+    #Returns: List 
+    #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
+    def ZeroOneLoss(self, df: list())->float: 
+        #Store off the guessed classifier 
+        guessIndex = 1
+        #Store off the true classification 
+        groundTruthIndex = 0
+        #Set the count correct to 0 
+        countCorrect = 0
+        totalCount = 0
+        #For each of the rows in the dataframe 
+        for i in df: 
+            #If the classified true is equal to the guess classification 
+            if i[guessIndex] == i[groundTruthIndex]: 
+                #INcrement the correct value 
+                countCorrect += 1
+            totalCount+=1 
+        #The percent Correct divided by total count * 100 
+        percentCorrect = (countCorrect / totalCount) * 100 
+        #TotalWrong = (len(self.ClassificationWrong) / TotalTestSet) * 100 
+        #Return the percent correct 
+        return percentCorrect
+
 
     def MSE(self,data_set: list()) -> float: 
         SquaredError = list()  
         for i in data_set: 
             #First Value is the Ground truth 
-            True_Value = data_set[0] 
+            True_Value = i[0] 
             #Grab the last value since it is the predicted value 
-            Pred_Value = data_set[1]
+            Pred_Value = i[1]
             #Calculate the error by the difference of the two values above 
             Error = True_Value - Pred_Value
             #Square the error 
@@ -59,7 +83,7 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
     #Parameters: Dataframe 
     #Returns: DataFrame, Dictionary 
     #Function: Take in a given dataframe and get a series of statistics about the given dataframe 
-    def statsSummary(self, df: pd.DataFrame) -> (pd.DataFrame, dict, dict):
+    def statsSummary(self, df: list()) -> (pd.DataFrame, dict, dict):
         #Create a dataframe of the confusion matrix 
         cMatrix = self.ConfusionMatrix(df)
         #Create a Dataframe to get stats about the classes 
@@ -338,23 +362,23 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
     #Parameters: DataFrame 
     #Returns: DataFrame
     #Function: generate a matrix that checks classified test data against ground truth
-    def ConfusionMatrix(self, df: pd.DataFrame) -> pd.DataFrame:
+    def ConfusionMatrix(self, df: list()) -> pd.DataFrame:
         # identify column index of ground truth and classification
-        GroundTruthIndex = len(df.columns)- 2
-        ClassifierGuessIndex = len(df.columns)-1 
+        GroundTruthIndex = 0
+        ClassifierGuessIndex = 1 
 
         # generate a list of all unique classes
         UniqueClasses = list() 
         #Loop through all of the rows in the dataframe 
-        for i in range(len(df)): 
+        for i in df: 
             #If the Ground truth classification not in the unique classes list 
-            if str(df.iloc[i][GroundTruthIndex]) not in UniqueClasses:
+            if str(i[GroundTruthIndex]) not in UniqueClasses:
                 #Append the value to the list 
-                UniqueClasses.append(str(df.iloc[i][GroundTruthIndex]))
+                UniqueClasses.append(str(i[GroundTruthIndex]))
             #If the classifcation is not in the unique classes list 
-            if str(df.iloc[i][ClassifierGuessIndex]) not in UniqueClasses:
+            if str(i[ClassifierGuessIndex]) not in UniqueClasses:
                 #Add the value to the list 
-                UniqueClasses.append(str(df.iloc[i][ClassifierGuessIndex]))
+                UniqueClasses.append(str(i[ClassifierGuessIndex]))
             #Go to the next one 
             continue 
         #Set the class count to the length of unique classes 
@@ -367,10 +391,10 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
         #Print some data to the screen 
         # print("empty Cmatrix, cmatrix method: \n", matrix)
         #For each of the rows in the dataframe 
-        for i in range(len(df)):
+        for i in df:
             # for each example, increment a counter where row = truth, col = guess
-            truth = str(df.iloc[i][GroundTruthIndex])
-            guess = str(df.iloc[i][ClassifierGuessIndex])
+            truth = str(i[GroundTruthIndex])
+            guess = str(i[ClassifierGuessIndex])
             #Increment the count 
             matrix.at[truth, guess] += 1
             #Go to the next one 
@@ -386,8 +410,18 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
 #Code not run on creation of object just testing function calls and logic above 
 if __name__ == '__main__':
     print("Program Start")
+    ClassifiedDataFrame = list() 
+    temp = list()
+    temp.append(0.0)
+    temp.append(2.162857142857143)
+    ClassifiedDataFrame.append(temp)
 
-
+    
+    #[[0.0, 2.162857142857143], [0.0, 63.20476190476192], [3.71, 3.8890476190476186], [0.0, 16.93285714285714], [0.0, 50.36952380952381]]
+    re = Results()
+    #print(ClassifiedDataFrame)
+    macroF1Average = re.ZeroOneLoss(ClassifiedDataFrame)
+    print(macroF1Average)
     print("Program Finish")
 
 
