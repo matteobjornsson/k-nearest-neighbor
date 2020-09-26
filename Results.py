@@ -31,19 +31,31 @@ class Results:
 
     """
 
-
+    #Parameters: DataFrames
+    #Returns: List 
+    #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
     def MAE(self,Data_set: list())-> float: 
         #Create an absolute value list
         MeanAbs = list() 
+        #For each of the lists in the data setpassed in 
         for i in Data_set: 
+            #Store the true value
             True_Value = i[0]
+            #Store the predicted value 
             Predict_Value = i[1]
+            #Store the absolute value of the difference of the above values
             absolute = abs(True_Value - Predict_Value)
+            #Store the absolute value in the list 
             MeanAbs.append(absolute)
+        #SEt a mean variable to be 0 
         mean = 0 
+        #For each of the absolute values stored 
         for i in MeanAbs: 
+            #Add the value to the variable 
             mean += i
+        #Generate the mean from the list 
         mean = mean / len(MeanAbs)
+        #Return the mean 
         return mean 
 
 
