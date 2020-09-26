@@ -31,7 +31,8 @@ https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-sc
 
 """
 
-
+    def MSE(self): 
+        pass
 
     #Parameters: Dataframe 
     #Returns: DataFrame, Dictionary 
