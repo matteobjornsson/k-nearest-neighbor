@@ -30,6 +30,30 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
+    #Parameters: DataFrames
+    #Returns: List 
+    #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
+    def ZeroOneLoss(self, df: list())->float: 
+        #Store off the guessed classifier 
+        guessIndex = 1
+        #Store off the true classification 
+        groundTruthIndex = 0
+        #Set the count correct to 0 
+        countCorrect = 0
+        totalCount = 0
+        #For each of the rows in the dataframe 
+        for i in df: 
+            #If the classified true is equal to the guess classification 
+            if i[guessIndex] == i[groundTruthIndex]: 
+                #INcrement the correct value 
+                countCorrect += 1
+            totalCount+=1 
+        #The percent Correct divided by total count * 100 
+        percentCorrect = (countCorrect / totalCount) * 100 
+        #TotalWrong = (len(self.ClassificationWrong) / TotalTestSet) * 100 
+        #Return the percent correct 
+        return percentCorrect
+
 
     def MSE(self,data_set: list()) -> float: 
         SquaredError = list()  
@@ -396,7 +420,7 @@ if __name__ == '__main__':
     #[[0.0, 2.162857142857143], [0.0, 63.20476190476192], [3.71, 3.8890476190476186], [0.0, 16.93285714285714], [0.0, 50.36952380952381]]
     re = Results()
     #print(ClassifiedDataFrame)
-    macroF1Average = re.MSE(ClassifiedDataFrame)
+    macroF1Average = re.ZeroOneLoss(ClassifiedDataFrame)
     print(macroF1Average)
     print("Program Finish")
 
