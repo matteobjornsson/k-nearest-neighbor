@@ -35,9 +35,9 @@ class Results:
         SquaredError = list()  
         for i in data_set: 
             #First Value is the Ground truth 
-            True_Value = data_set[0] 
+            True_Value = i[0] 
             #Grab the last value since it is the predicted value 
-            Pred_Value = data_set[1]
+            Pred_Value = i[1]
             #Calculate the error by the difference of the two values above 
             Error = True_Value - Pred_Value
             #Square the error 
@@ -396,7 +396,7 @@ if __name__ == '__main__':
     #[[0.0, 2.162857142857143], [0.0, 63.20476190476192], [3.71, 3.8890476190476186], [0.0, 16.93285714285714], [0.0, 50.36952380952381]]
     re = Results()
     #print(ClassifiedDataFrame)
-    macroF1Average = re.statsSummary(ClassifiedDataFrame)
+    macroF1Average = re.MSE(ClassifiedDataFrame)
     print(macroF1Average)
     print("Program Finish")
 
