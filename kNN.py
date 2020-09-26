@@ -8,6 +8,7 @@ import heapq
 import pandas as pd
 import numpy as np
 import DataUtility
+import GaussianKernel
 
 class kNN:
 
@@ -24,6 +25,8 @@ class kNN:
         self.hd = HammingDistance.HammingDistance()
         # tunable parameter, weight of categorical distance value
         self.beta = 1
+        # tunable parameter
+        self.sigma = 2
 
     # function determines the nature of the data set features: real, categorical, or mixed
     def feature_data_types(self, data_set: np.ndarray, categorical_features: list) -> str:
@@ -47,6 +50,7 @@ class kNN:
         neighbors = []
         for n in range(len(exampleData)):
             x = exampleData[n].tolist()[:-1]
+            responseVariable = exampleData[n].tolist()[-1]
 
             if self.data_type == "real":
                 distance = self.rd.Distance(x, new_sample)
@@ -59,7 +63,7 @@ class kNN:
                 if n < 5:
                     print("sample real: ", sample_real, "x real: ", x_real, "real distance: ", self.rd.Distance(x_real, sample_real))
                     print("sample cat: ", sample_cat, "x cat: ", x_cat, "categorical distance: ", self.hd.Distance(x_cat,sample_cat))
-            heapq.heappush(neighbors, (distance, n))
+            heapq.heappush(neighbors, (distance, n, responseVariable))
         kNeighbors = heapq.nsmallest(k, neighbors)
         return kNeighbors
 
