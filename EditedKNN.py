@@ -4,8 +4,10 @@
 #################################################################### MODULE COMMENTS ############################################################################
 
 import kNN
+from Results import Results
 import numpy as np
 import copy
+from typing import Tuple
 
 
 class EditedKNN:
@@ -17,29 +19,32 @@ class EditedKNN:
         self.error = error
         # store if this data set is a regression data set (True) or not (False)
         self.regression_data_set = regression_data_set
+        self.results = Results()
 
     # top level function called to create an edited knn dataset
-    def reduce_data_set(self, data_set:np.ndarray) -> np.ndarray:
-        iter_count = 0
+    def reduce_data_set(self, data_set:np.ndarray) -> Tuple[np.ndarray, list, float]:
+        # array to keep track of edits
         reduction_record = []
-
+        
+        # run a first pass knn to classifiy examples in data set
         reduced_set = copy.deepcopy(data_set)
-
-
         results = self.knn.classify(reduced_set)
         performance = self.evaluate_performance(results, self.regression_data_set)
-        reduction_record.append([reduced_set, results, performance])
-        iter_count +=1
+        reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy(performance)])
 
+        # while performance continues to improve or maintain, keep editing out
+        # incorrect classifications from data set
         while True:
             reduced_set = self.remove_incorrect_estimates(reduced_set, results)
+
             results = self.knn.classify(reduced_set)
             performance = self.evaluate_performance(results, self.regression_data_set)
-            reduction_record.append([reduced_set, results, performance])
-            iter_count +=1
-            if reduction_record[-1] < reduction_record[-2]:
+            reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy(performance)])
+
+            if reduction_record[-1][2] < reduction_record[-2][2]:
                 break
-        return reduced_set
+
+        return reduction_record[-2]
 
     def remove_incorrect_estimates(self, data_set, results):
         # remove all missclassified examples
@@ -57,6 +62,6 @@ class EditedKNN:
                     data_set = np.delete(data_set, i, 0)
         return data_set
 
-    def evaluate_performance(self, classified_examples, data_set_type)-> float:
-        # calculate loss function here
-        return .95
+    def evaluate_performance(self, classified_examples: list, regression: bool)-> float:
+        loss= self.results.LossFunctionPerformance(regression, classified_examples)
+        return loss[0]
