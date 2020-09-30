@@ -5,8 +5,11 @@
 import copy
 import DataUtility
 import kNN
+import Results
 import math
 import numpy as np
+#TESTING LIBRARY 
+import time 
 
 categorical_attribute_indices = {
     "segmentation": [],
@@ -37,6 +40,7 @@ def main():
     for key in regression_data_set.keys():
         #store which dataset we are wroking on 
         data_set = key
+        #print(regression_data_set.get(key))
         #Create a data utility to track some metadata about the class being Examined
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         #Store off the following values in a particular order for tuning, and 10 fold cross validation 
@@ -48,9 +52,9 @@ def main():
         #Append all data folds to the training data set
         training = np.concatenate(tenFolds[1:])
         #Print the length of the first array for debugging
-        print(len(test[0]))
+        #print(len(test[0]))
         #Print the length of the training data set for testing 
-        print(len(training))
+        #print(len(training))
         #Create a KNN data object and insert the following data 
         knn = kNN.kNN(
             #Feed in the square root of the length 
@@ -64,9 +68,16 @@ def main():
         )
         #Store and run the classification associated with the KNN algorithm 
         classifications = knn.classify(training, test)
-
-
-
+        #Create a Results function to feed in the KNN Classification data and produce Loss Function Values 
+        ResultObject = Results.Results() 
+        #Create a list and gather some meta data for a given experiment, so that we can pipe all of the data to a file for evaluation
+        MetaData = list() 
+        MetaData.append(key)
+        MetaData.append("TRIAL: ")
+        #Create a list to store the Results that are generated above FOR TESTING 
+        ResultSet = ResultObject.StartLossFunction(classifications,regression_data_set.get(key), MetaData)
+        print(ResultSet)
+        time.sleep(10)
 
     #Print some meta data to the screen letting the user know the program is ending 
     print("Program End")

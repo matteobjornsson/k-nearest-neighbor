@@ -14,7 +14,7 @@ import csv
 class Results: 
     
     def __init__(self):
-        print("Starting the Results File")
+        print("Results Object Created")
 
 
     """
