@@ -26,9 +26,25 @@ regression_data_set = {
     "abalone": True
 }
 
+def PlotCSV():
+    pass
+
 
 def main(): 
     print("Program Start")
+   # Doj = DataUtility.DataUtility()
+    #Read in all of the data sets
+    """
+    vote = 
+    abalone = 
+    glass = 
+    machine = 
+    fire = 
+    image = 
+    """
+
+
+
     for key in regression_data_set.keys():
         data_set = key
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -46,6 +62,11 @@ def main():
             regression_data_set[data_set]
         )
         classifications = knn.classify(training, test)
+
+
+
+
+
     print("Program End")
 
 main()
