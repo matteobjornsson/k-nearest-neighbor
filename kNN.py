@@ -8,26 +8,29 @@ import heapq
 import pandas as pd
 import numpy as np
 import DataUtility
-import GaussianKernel
+import KernelSmoother
 
 class kNN:
 
-    def __init__(self, k, data_set, categorical_features, regression_data_set):
+    def __init__(self, k: int, data_set: np.ndarray, categorical_features: list, regression_data_set: bool):
         self.k = k
         self.data_set = data_set
         self.categorical_features = categorical_features
         self.regression_data_set = regression_data_set
         self.data_type = self.feature_data_types(data_set, categorical_features)
-        print("data type: ", self.data_type)
+
+        # tools for calculating distance and regression estimation:
+        # Real Distance
         self.rd = RealDistance.RealDistance()
         # tunable parameter, weight of real distance value
         self.alpha = 1
         self.hd = HammingDistance.HammingDistance()
         # tunable parameter, weight of categorical distance value
         self.beta = 1
-        # tunable parameter for the gaussian kernel
-        self.sigma = 2
-        self.kernel = GaussianKernel.GaussianKernel(self.sigma)
+        # bandwidth parameter for the gaussian kernel
+        self.h = .5
+        # kernel smoother, window size and data set dimensionality as inputs
+        self.kernel = KernelSmoother.KernelSmoother(self.h, data_set.shape[1] - 1)
 
 
     # function determines the nature of the data set features: real, categorical, or mixed
@@ -75,6 +78,8 @@ class kNN:
             new_vector = new_sample.tolist()[:-1]
             neighbors = self.get_k_neighbors(exampleData, new_vector, self.k)
             printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", exampleData[n[1]].tolist()) for n in neighbors]
+            
+            # code just for printout:
             print(f"Neighbors of {new_vector}:")
             count = 0
             for index in range(len(neighbors)): 
@@ -142,8 +147,9 @@ if __name__ == '__main__':
         "machine": True,
         "abalone": True
     }
-    for key in regression_data_set.keys():
-        data_set = key
+    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+    regression = [x for x in data_sets if regression_data_set[x]]
+    for data_set in regression:
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
         print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
