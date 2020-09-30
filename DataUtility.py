@@ -38,30 +38,29 @@ class DataUtility:
 
     #Remove 10 % of the data to be used as tuning data and seperate them into a unique dataframe 
     def TuningData(self,df: pd.DataFrame):
+        #Make a deep copy of the data frame that we are taking in 
         remaining_data = copy.deepcopy(df)
+        #Set the number of records to be 10 % of the data set we are taking in 
         Records = int(len(df) * .1)
+        #Make another copy of the data frame 
         tuning_data = copy.deepcopy(df)
+        #Store a blank copy of the data frame 
         tuning_data = tuning_data[0:0]
+        #Loop until we have extracted 10 % of the data set 
         for i in range(Records):
+            #Randomly remove a random record from the data set 
             Random =  random.randint(0,len(remaining_data)-1)
+            #Store the record at the given randomly assigned indexed
             rec = remaining_data.iloc[Random]
-           
+            #Add the record that we just generated to a dataframe 
             tuning_data = tuning_data.append(remaining_data.iloc[Random],ignore_index = True)
-            
+            #Drop the record from the overall total dataset
             remaining_data = remaining_data.drop(remaining_data.index[Random])
+            #Reset the indexs 
             remaining_data.reset_index()
+        #Return the tuning data set and the rest of the data set to the calling function 
         return tuning_data, remaining_data
         
-
-    #Break down the reminaing 90% of the data to be returned into 10 unique Numpy arrays for cross validation
-    def CrossValiedation(self): 
-        pass
-
-    #Run the dataprocessor on a given data set that will return a pandas dataframe, convert the dataframe to a numpy array and send this numpy array to be converted into a list of data 
-    #For the methods above to be called 
-    def Dataprocessing(self,): 
-        pass
-
 
     #Parameters: DataFrame
     #Returns: List of dataframes 
