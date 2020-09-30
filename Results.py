@@ -7,7 +7,7 @@
 #################################################################### MODULE COMMENTS ####################################################################
 import pandas as pd
 import numpy as np
-import csv 
+
 
 
 
@@ -62,7 +62,10 @@ class Results:
             Zero = self.ZeroOneLoss(Datalist)
             #Run the 0/1 Loss function and F1 SCore and store the value 
             F1 = self.statsSummary(Datalist)
+            F1 = F1 * 100 
+            DataPackage.append("Zero One ")
             DataPackage.append(Zero)
+            DataPackage.append("F1 Score")
             DataPackage.append(F1)
         #The value that is being tested is regression value  
         else:
@@ -70,7 +73,9 @@ class Results:
             MAE = self.MAE(Datalist)
             #Run The mean squared error and store the value to be piped to a file  
             MSE  = self.MSE(Datalist)
+            DataPackage.append("Mean Absolute Error")
             DataPackage.append(MAE)
+            DataPackage.append("Mean Squared Error")
             DataPackage.append(MSE)
         #Print all of the data generated in the loss functions to a csv file for programmer review 
         self.PipeToFile(DataPackage, MetaData)
@@ -81,16 +86,27 @@ class Results:
         try: 
             #Open the CSV file in append mode to be written to 
             with open("KNNResults.csv",mode = "a") as file: 
-                #Create a writer object 
-                file_writer = csv.writer(file,delimiter =',')
+                count = 0 
                 #For each of the data points stored in the metadata 
                 for i in MetaData: 
+                    if count == len(MetaData): 
+                        file.write(str(i))
+                        continue 
+                    print(i)
                     #Write a given input into a row in the file 
-                    file_writer.writerow(str(i))
+                    file.write(str(i) + ',')
+                    count += 1 
+                count = 0 
                 #For each of the loss functions calculated (2)
                 for j in DataPackage: 
+                    if count == len(DataPackage): 
+                        file.write(str(j))
+                        continue 
                     #Write the loss function data to the file 
-                    file_writer.writerow(str(j))
+                    file.write(str(j) + ',')
+                file.write("\n")
+                file.write("\n")
+                file.close() 
         #If we cannot print a message to the screen 
         except: 
             #Print some output to the user so they can check whether the file is in use 
@@ -144,7 +160,8 @@ class Results:
                 countCorrect += 1
             totalCount+=1 
         #The percent Correct divided by total count * 100 
-        percentCorrect = (countCorrect / totalCount) * 100 
+        percentCorrect = countCorrect / totalCount
+        percentCorrect = percentCorrect * 100 
         #TotalWrong = (len(self.ClassificationWrong) / TotalTestSet) * 100 
         #Return the percent correct 
         return percentCorrect
@@ -154,7 +171,7 @@ class Results:
         SquaredError = list()  
         for i in data_set: 
             #First Value is the Ground truth 
-            True_Value = i[0]) 
+            True_Value = i[0]
             #Grab the last value since it is the predicted value 
             Pred_Value = i[1]
             #Calculate the error by the difference of the two values above 

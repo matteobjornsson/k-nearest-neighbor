@@ -79,7 +79,7 @@ def main():
         #Create a list to store the Results that are generated above FOR TESTING 
         ResultSet = ResultObject.StartLossFunction(regression_data_set.get(key),classifications, MetaData)
         print(ResultSet)
-        time.sleep(10)
+        
 
     #Print some meta data to the screen letting the user know the program is ending 
     print("Program End")
