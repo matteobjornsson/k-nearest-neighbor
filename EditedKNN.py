@@ -20,34 +20,42 @@ class EditedKNN:
 
     # top level function called to create an edited knn dataset
     def reduce_data_set(self, data_set:np.ndarray) -> np.ndarray:
-        # true while performance improves or does not degrde
-        reduce = True
-        # new set of data from which we will remove examples
+        iter_count = 0
+        reduction_record = []
+
         reduced_set = copy.deepcopy(data_set)
-        
-        # generate a first pass of classification
-        results = self.knn.classify(data_set)
-        # evaluate first pass perfromance, F1 for classification, MAE for regression
-        performance = self.evaluate_performance(results, self.knn.regression_data_set)
-        # remove all missclassified examples
-        for i in range(len(results)):
-            outcome = results[i]
-            # if regression, remove examples outside of error threshold
-            if self.regression_data_set:
-                if (outcome[0] - self.error) <= outcome[1] <= (outcome[0] + self.error):
-                    continue
-                else:
-                    reduced_set = np.delete(reduced_set, i, 0)
-            # otherwise just remove any misclassified
-            else:
-                if outcome[0] != outcome[1]:
-                    reduced_set = np.delete(reduced_set, i, 0)
-        
-        while reduce:
-            print("whittle down data set here")
-            break
+
+
+        results = self.knn.classify(reduced_set)
+        performance = self.evaluate_performance(results, self.regression_data_set)
+        reduction_record.append([reduced_set, results, performance])
+        iter_count +=1
+
+        while True:
+            reduced_set = self.remove_incorrect_estimates(reduced_set, results)
+            results = self.knn.classify(reduced_set)
+            performance = self.evaluate_performance(results, self.regression_data_set)
+            reduction_record.append([reduced_set, results, performance])
+            iter_count +=1
+            if reduction_record[-1] < reduction_record[-2]:
+                break
         return reduced_set
 
+    def remove_incorrect_estimates(self, data_set, results):
+        # remove all missclassified examples
+        for i in range(len(results)):
+            ground_truth, estimate = results[i]
+            # if regression, remove examples outside of error threshold
+            if self.regression_data_set:
+                lower_bound = ground_truth - self.error
+                upper_bound = ground_truth + self.error
+                if not (lower_bound <= estimate <= upper_bound):
+                    data_set = np.delete(data_set, i, 0)
+            # otherwise just remove any misclassified
+            else:
+                if ground_truth != estimate:
+                    data_set = np.delete(data_set, i, 0)
+        return data_set
 
     def evaluate_performance(self, classified_examples, data_set_type)-> float:
         # calculate loss function here
