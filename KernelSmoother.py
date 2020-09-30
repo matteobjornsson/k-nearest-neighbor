@@ -1,9 +1,12 @@
 import math
 
-class GaussianKernel:
+class KernelSmoother:
 
-    def __init__(self, sigma):
-        self.sigma = sigma
+    def __init__(self, h, d):
+        # bandwidth h
+        self.h = h
+        # dimensionality of examples 
+        self.d = d
 
     def estimate(self, neighborStats: list) -> float:
         # neighbors must be a list of [distance from sample, index, response variable]
@@ -11,13 +14,14 @@ class GaussianKernel:
         N = len(neighborStats)
         numerator = 0
         denominator = 0
+
         for i in range(N):
             neighbor = neighborStats[i]
             distance, responseVariable = neighbor[0], neighbor [2]
 
-            numerator += self.kernelSmoother(distance, self.sigma) * responseVariable
-            denominator += self.kernelSmoother(distance, self.sigma)
+            numerator += self.gaussian_kernel(distance / self.h) * responseVariable
+            denominator += self.gaussian_kernel(distance / self.h)
         return numerator/denominator
 
-    def kernelSmoother(self, distance, sigma) -> float:
-        return (1/(sigma * math.sqrt(2 * math.pi))) * math.exp(-.5 * (distance**2)/(sigma**2))
+    def gaussian_kernel(self, u) -> float:
+        return (1/(math.sqrt(2 * math.pi)))**(self.d) * math.exp(-.5 * (u**2))
