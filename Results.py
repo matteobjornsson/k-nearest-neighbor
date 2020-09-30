@@ -105,9 +105,9 @@ class Results:
         #For each of the lists in the data setpassed in 
         for i in Data_set: 
             #Store the true value
-            True_Value = int(i[0])
+            True_Value = i[0]
             #Store the predicted value 
-            Predict_Value = int(i[1])
+            Predict_Value = i[1]
             #Store the absolute value of the difference of the above values
             absolute = abs(True_Value - Predict_Value)
             #Store the absolute value in the list 
@@ -154,9 +154,9 @@ class Results:
         SquaredError = list()  
         for i in data_set: 
             #First Value is the Ground truth 
-            True_Value = int(i[0]) 
+            True_Value = i[0]) 
             #Grab the last value since it is the predicted value 
-            Pred_Value = int(i[1])
+            Pred_Value = i[1]
             #Calculate the error by the difference of the two values above 
             Error = True_Value - Pred_Value
             #Square the error 
