@@ -34,7 +34,7 @@ class Results:
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 
-        if Categorical == True: 
+        if Categorical == False: 
             #Store the Zero/One loss function values
             Zero = self.ZeroOneLoss(Datalist)
             #Run the 0/1 Loss function and F1 SCore and store the value 
@@ -57,7 +57,7 @@ class Results:
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 
-        if Categorical == True: 
+        if Categorical == False: 
             #Store the Zero/One loss function values
             Zero = self.ZeroOneLoss(Datalist)
             #Run the 0/1 Loss function and F1 SCore and store the value 
@@ -73,7 +73,7 @@ class Results:
             DataPackage.append(MAE)
             DataPackage.append(MSE)
         #Print all of the data generated in the loss functions to a csv file for programmer review 
-        PipeToFile(DataPackage, MetaData)
+        self.PipeToFile(DataPackage, MetaData)
         return DataPackage
 
     def PipeToFile(self,DataPackage,MetaData): 
@@ -105,9 +105,9 @@ class Results:
         #For each of the lists in the data setpassed in 
         for i in Data_set: 
             #Store the true value
-            True_Value = i[0]
+            True_Value = int(i[0])
             #Store the predicted value 
-            Predict_Value = i[1]
+            Predict_Value = int(i[1])
             #Store the absolute value of the difference of the above values
             absolute = abs(True_Value - Predict_Value)
             #Store the absolute value in the list 
@@ -154,9 +154,9 @@ class Results:
         SquaredError = list()  
         for i in data_set: 
             #First Value is the Ground truth 
-            True_Value = i[0] 
+            True_Value = int(i[0]) 
             #Grab the last value since it is the predicted value 
-            Pred_Value = i[1]
+            Pred_Value = int(i[1])
             #Calculate the error by the difference of the two values above 
             Error = True_Value - Pred_Value
             #Square the error 

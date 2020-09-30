@@ -74,6 +74,8 @@ def main():
         MetaData = list() 
         MetaData.append(key)
         MetaData.append("TRIAL: ")
+        print(classifications)
+        print(regression_data_set.get(key))
         #Create a list to store the Results that are generated above FOR TESTING 
         ResultSet = ResultObject.StartLossFunction(regression_data_set.get(key),classifications, MetaData)
         print(ResultSet)
