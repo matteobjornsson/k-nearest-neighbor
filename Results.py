@@ -30,7 +30,7 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
-    def LossFunctionEdited(self,Categorical,Datalist):
+    def LossFunctionPerformance(self,Categorical,Datalist):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 
