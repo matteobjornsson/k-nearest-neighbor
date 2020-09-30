@@ -7,7 +7,7 @@
 #################################################################### MODULE COMMENTS ####################################################################
 import pandas as pd
 import numpy as np
-
+import csv 
 
 
 
@@ -31,11 +31,48 @@ class Results:
 
     """
 
-    def StartLossFunction(self,Categorical): 
-        pass
+    def StartLossFunction(self,Categorical,Datalist,MetaData):
+        #Create a list to hold data points to be written to a file  
+        DataPackage = list() 
+        #The data set is categorical in value run F1 and Zero one loss functions 
+        if Categorical == True: 
+            #Store the Zero/One loss function values
+            Zero = self.ZeroOneLoss(Datalist)
+            #Run the 0/1 Loss function and F1 SCore and store the value 
+            F1 = self.statsSummary(Datalist)
+            DataPackage.append(Zero)
+            DataPackage.append(F1)
+        #The value that is being tested is regression value  
+        else:
+            #Run Mean Absolute Error and store the value to piped to a file  
+            MAE = self.MAE(Datalist)
+            #Run The mean squared error and store the value to be piped to a file  
+            MSE  = self.MSE(Datalist)
+            DataPackage.append(MAE)
+            DataPackage.append(MSE)
+        #Print all of the data generated in the loss functions to a csv file for programmer review 
+        PipeToFile(DataPackage, MetaData)
+        return DataPackage
 
-    def PipeToFile(self): 
-        pass 
+    def PipeToFile(self,DataPackage,MetaData): 
+        #Try to access the file that we are trying to write too 
+        try: 
+            #Open the CSV file in append mode to be written to 
+            with open("KNNResults.csv",mode = "a") as file: 
+                #Create a writer object 
+                file_writer = csv.writer(file,delimiter =',')
+                #For each of the data points stored in the metadata 
+                for i in MetaData: 
+                    #Write a given input into a row in the file 
+                    file_writer.writerow(str(i))
+                #For each of the loss functions calculated (2)
+                for j in DataPackage: 
+                    #Write the loss function data to the file 
+                    file_writer.writerow(str(j))
+        #If we cannot print a message to the screen 
+        except: 
+            #Print some output to the user so they can check whether the file is in use 
+            print("An Error Occured Trying to read the File KNNResults.csv")
 
     #Parameters: DataFrames
     #Returns: List 
