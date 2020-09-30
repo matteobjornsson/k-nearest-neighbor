@@ -27,8 +27,8 @@ class EditedKNN:
         
         # generate a first pass of classification
         results = self.knn.classify(data_set)
-        # evaluate first pass perfromance
-        performance = self.evaluate(results, self.knn.regression_data_set)
+        # evaluate first pass perfromance, F1 for classification, MAE for regression
+        performance = self.evaluate_performance(results, self.knn.regression_data_set)
         # remove all missclassified examples
         for i in range(len(results)):
             outcome = results[i]
