@@ -12,40 +12,49 @@ import KernelSmoother
 
 class kNN:
 
-    def __init__(self, k: int, data_set: np.ndarray, categorical_features: list, regression_data_set: bool):
+    def __init__(
+            self,
+            k: int,
+            data_type: str,
+            categorical_features: list,
+            regression_data_set: bool,
+            alpha: float,
+            beta: float,
+            h: float,
+            d: int):
         self.k = k
-        self.data_set = data_set
         self.categorical_features = categorical_features
         self.regression_data_set = regression_data_set
-        self.data_type = self.feature_data_types(data_set, categorical_features)
+        self.data_type = data_type
 
         # tools for calculating distance and regression estimation:
         # Real Distance
         self.rd = RealDistance.RealDistance()
         # tunable parameter, weight of real distance value
-        self.alpha = 1
+        self.alpha = alpha
         self.hd = HammingDistance.HammingDistance()
         # tunable parameter, weight of categorical distance value
-        self.beta = 1
+        self.beta = beta
         # bandwidth parameter for the gaussian kernel
-        self.h = .5
+        self.h = h
         # kernel smoother, window size and data set dimensionality as inputs
-        self.kernel = KernelSmoother.KernelSmoother(self.h, data_set.shape[1] - 1)
+        self.kernel = KernelSmoother.KernelSmoother(self.h, d)
 
+    # this code block was replaced with a hardcoded dictionary indicating type of each set
 
-    # function determines the nature of the data set features: real, categorical, or mixed
-    def feature_data_types(self, data_set: np.ndarray, categorical_features: list) -> str:
-        feature_count = data_set.shape[1]-1
-        # if the number of features is the same as the number of columns that
-        # are categorical, the entire feature set is categorical
-        if len(categorical_features) == feature_count:
-            return "categorical"
-        # else if the list of categorical features is non-zero, feature set is mixed
-        elif len(categorical_features) > 0:
-            return "mixed"
-        # last remaining option, all features are real
-        else:
-            return "real"
+    # # function determines the nature of the data set features: real, categorical, or mixed
+    # def feature_data_types(self, data_set: np.ndarray, categorical_features: list) -> str:
+    #     feature_count = data_set.shape[1]-1
+    #     # if the number of features is the same as the number of columns that
+    #     # are categorical, the entire feature set is categorical
+    #     if len(categorical_features) == feature_count:
+    #         return "categorical"
+    #     # else if the list of categorical features is non-zero, feature set is mixed
+    #     elif len(categorical_features) > 0:
+    #         return "mixed"
+    #     # last remaining option, all features are real
+    #     else:
+    #         return "real"
 
     def get_k_neighbors(self, exampleData: np.ndarray, new_sample: list, k) -> list:
         if self.data_type == "mixed":
@@ -77,30 +86,30 @@ class kNN:
         for new_sample in testData:
             new_vector = new_sample.tolist()[:-1]
             neighbors = self.get_k_neighbors(exampleData, new_vector, self.k)
-            printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", exampleData[n[1]].tolist()) for n in neighbors]
+            # printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", exampleData[n[1]].tolist()) for n in neighbors]
             
-            # code just for printout:
-            print(f"Neighbors of {new_vector}:")
-            count = 0
-            for index in range(len(neighbors)): 
-                if index <= 3 or index >= len(neighbors)-3:
-                    x = printNeighbors[index]
-                    print(x[2], x[0], x[1])
-                if 3 < index < len(neighbors)-3 and len(neighbors) > 6 and count < 1:
-                    count += 1
-                    print("...")
+            # # code just for printout:
+            # print(f"Neighbors of {new_vector}:")
+            # count = 0
+            # for index in range(len(neighbors)): 
+            #     if index <= 3 or index >= len(neighbors)-3:
+            #         x = printNeighbors[index]
+            #         print(x[2], x[0], x[1])
+            #     if 3 < index < len(neighbors)-3 and len(neighbors) > 6 and count < 1:
+            #         count += 1
+            #         print("...")
 
             votes = [exampleData[n[1]].tolist()[-1] for n in neighbors]
-            print("votes: ", votes)
+            # print("votes: ", votes)
             # print([exampleData[n[1]].tolist() for n in neighbors])
             # print(votes)
             if self.regression_data_set:
                 estimate = self.kernel.estimate(neighbors)
-                print("kernel estimate: ", estimate)
-                print()
+                # print("kernel estimate: ", estimate)
+                # print()
             else:
                 most_common_class = self.most_common_class(votes)
-                print("most common classes: ", most_common_class)
+                # print("most common classes: ", most_common_class)
                 if len(most_common_class) == 1:
                     estimate = most_common_class[0]
                 else:
@@ -111,10 +120,10 @@ class kNN:
                             # print("defining neighbor, index # ", n_index)
                             break
                     estimate = neighbor_class
-                    print("Estimate: ", estimate, '\n')
+                    # print("Estimate: ", estimate, '\n')
             ground_truth =  new_sample.tolist()[-1]
             classifications.append([ground_truth, estimate])
-        for clss in classifications: print(f"Ground truth: {clss[0]}, Estimate: {clss[1]}")
+        # for clss in classifications: print(f"Ground truth: {clss[0]}, Estimate: {clss[1]}")
         return classifications
 
 
@@ -148,7 +157,9 @@ if __name__ == '__main__':
         "abalone": True
     }
     data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
     regression = [x for x in data_sets if regression_data_set[x]]
+
     for data_set in regression:
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
@@ -159,9 +170,10 @@ if __name__ == '__main__':
         print(len(training))
 
         knn = kNN(
-            int(math.sqrt(len(full_set))), 
-            full_set,
+            int(math.sqrt(len(training))),
+            training,
             categorical_attribute_indices[data_set],
-            regression_data_set[data_set]
+            regression_data_set[data_set],
+            1,2,.5
         )
         classifications = knn.classify(training, test)
