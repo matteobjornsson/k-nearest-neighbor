@@ -3,6 +3,7 @@
 #################################################################### MODULE COMMENTS ############################################################################
 
 import copy
+from numpy.lib.type_check import real
 import DataUtility
 import kNN
 import Results
@@ -29,6 +30,17 @@ regression_data_set = {
     "abalone": True
 }
 
+feature_data_types = {
+    "segmentation": 'real',
+    "vote": 'categorical',
+    "glass": 'real',
+    "fire": 'mixed',
+    "machine": 'mixed',
+    "abalone": 'mixed'
+}
+
+data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
 def PlotCSV():
     pass
 
@@ -37,9 +49,7 @@ def main():
     #Print some data to the screen to let the user know we are starting the program 
     print("Program Start")
     #For ecah of the data set names that we have stored in a global variable 
-    for key in regression_data_set.keys():
-        #store which dataset we are wroking on 
-        data_set = key
+    for data_set in data_sets:
         #print(regression_data_set.get(key))
         #Create a data utility to track some metadata about the class being Examined
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -59,12 +69,18 @@ def main():
         knn = kNN.kNN(
             #Feed in the square root of the length 
             int(math.sqrt(len(full_set))), 
-            #Feed in the full set 
-            full_set,
+            # supply mixed, real, categorical nature of features
+            feature_data_types[data_set],
             #Feed in the categorical attribute indicies stored in a global array 
             categorical_attribute_indices[data_set],
             #Store the data set key for the dataset name 
-            regression_data_set[data_set]
+            regression_data_set[data_set],
+            # weight for real distance
+            alpha=1,
+            # weight for categorical distance
+            beta=1,
+            # kernel window size
+            h=.5
         )
         #Store and run the classification associated with the KNN algorithm 
         classifications = knn.classify(training, test)
@@ -72,12 +88,12 @@ def main():
         ResultObject = Results.Results() 
         #Create a list and gather some meta data for a given experiment, so that we can pipe all of the data to a file for evaluation
         MetaData = list() 
-        MetaData.append(key)
+        MetaData.append(data_set)
         MetaData.append("TRIAL: ")
         print(classifications)
-        print(regression_data_set.get(key))
+        print(regression_data_set.get(data_set))
         #Create a list to store the Results that are generated above FOR TESTING 
-        ResultSet = ResultObject.StartLossFunction(regression_data_set.get(key),classifications, MetaData)
+        ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
         print(ResultSet)
         
 
