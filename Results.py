@@ -52,6 +52,7 @@ class Results:
             DataPackage.append(MSE)
         #Print all of the data generated in the loss functions to a csv file for programmer review 
         PipeToFile(DataPackage, MetaData)
+        return DataPackage
 
     def PipeToFile(self,DataPackage,MetaData): 
         #Try to access the file that we are trying to write too 
