@@ -30,6 +30,28 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
+    def LossFunctionEdited(self,Categorical,Datalist):
+        #Create a list to hold data points to be written to a file  
+        DataPackage = list() 
+        #The data set is categorical in value run F1 and Zero one loss functions 
+        if Categorical == True: 
+            #Store the Zero/One loss function values
+            Zero = self.ZeroOneLoss(Datalist)
+            #Run the 0/1 Loss function and F1 SCore and store the value 
+            F1 = self.statsSummary(Datalist)
+            DataPackage.append(Zero)
+            DataPackage.append(F1)
+        #The value that is being tested is regression value  
+        else:
+            #Run Mean Absolute Error and store the value to piped to a file  
+            MAE = self.MAE(Datalist)
+            #Run The mean squared error and store the value to be piped to a file  
+            MSE  = self.MSE(Datalist)
+            DataPackage.append(MAE)
+            DataPackage.append(MSE)
+        #Print all of the data generated in the loss functions to a csv file for programmer review 
+        return DataPackage
+
 
     def StartLossFunction(self,Categorical,Datalist,MetaData):
         #Create a list to hold data points to be written to a file  
