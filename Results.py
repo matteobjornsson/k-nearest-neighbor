@@ -81,18 +81,25 @@ class Results:
         #Try to access the file that we are trying to write too 
         try: 
             #Open the CSV file in append mode to be written to 
-            with open("KNNResults.txt",mode = "a") as file: 
+            with open("KNNResults.csv",mode = "a") as file: 
+                count = 0 
                 #For each of the data points stored in the metadata 
                 for i in MetaData: 
+                    if count == len(MetaData): 
+                        file.write(str(i))
+                        continue 
                     print(i)
                     #Write a given input into a row in the file 
-                    file.write(str(i))
-                    file.write("\n")
+                    file.write(str(i) + ',')
+                    count += 1 
+                count = 0 
                 #For each of the loss functions calculated (2)
                 for j in DataPackage: 
+                    if count == len(DataPackage): 
+                        file.write(str(j))
+                        continue 
                     #Write the loss function data to the file 
-                    file.write(str(j))
-                    file.write("\n")
+                    file.write(str(j) + ',')
                 file.write("\n")
                 file.write("\n")
                 file.close() 
