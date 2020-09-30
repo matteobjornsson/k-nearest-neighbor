@@ -3,51 +3,66 @@
 ##
 #################################################################### MODULE COMMENTS ############################################################################
 
-import kNN
-from Results import Results
+import kNN, Results, DataUtility
 import numpy as np
-import copy
-from typing import Tuple
+import copy, math
 
 
 class EditedKNN:
 
-    def __init__(self, error: float, k: int, data_set: np.ndarray, categorical_features: list, regression_data_set: bool):
+    def __init__(self, error: float, k: int, data_type: str, categorical_features: list, regression_data_set: bool, alpha:float, beta:float, h:float, d:int):
         # initialize a knn object
-        self.knn = kNN.kNN(self, k, data_set, categorical_features, regression_data_set)
+        self.knn = kNN.kNN(k, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
         # error threshhold for regression classification
         self.error = error
         # store if this data set is a regression data set (True) or not (False)
         self.regression_data_set = regression_data_set
-        self.results = Results()
+        self.results = Results.Results()
+
+    def classify_in_place(self, data: np.ndarray):
+        results = []
+        for i in range(len(data)):
+            sample = np.array([data[i,:].tolist()])
+            set_minus_sample = np.delete(data,i,0)
+            # print("sample: ", sample, type(sample), '\n', "Remainder: ", set_minus_sample, type(set_minus_sample))
+            results.append(self.knn.classify(set_minus_sample, sample )[0])
+        return results
 
     # top level function called to create an edited knn dataset
-    def reduce_data_set(self, data_set:np.ndarray) -> Tuple[np.ndarray, list, float]:
+    def reduce_data_set(self, data_set:np.ndarray) -> np.ndarray:
         # array to keep track of edits
         reduction_record = []
         
         # run a first pass knn to classifiy examples in data set
         reduced_set = copy.deepcopy(data_set)
-        results = self.knn.classify(reduced_set)
+        results = self.classify_in_place(reduced_set)
         performance = self.evaluate_performance(results, self.regression_data_set)
-        reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy(performance)])
+        reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy.copy(performance)])
 
         # while performance continues to improve or maintain, keep editing out
         # incorrect classifications from data set
         while True:
+            # remove all examples that were incorrectly estimated
             reduced_set = self.remove_incorrect_estimates(reduced_set, results)
 
-            results = self.knn.classify(reduced_set)
+            # re-estimate data set and save results
+            results = self.classify_in_place(reduced_set)
             performance = self.evaluate_performance(results, self.regression_data_set)
-            reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy(performance)])
-
-            if reduction_record[-1][2] < reduction_record[-2][2]:
+            reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy.copy(performance)])
+            print("number of samples: ", len(reduced_set))
+            #print for debugging
+            print("performance: ", reduction_record[-1][-1])
+            
+            # if the most recent knn performance is worse than the last one,
+            # stop editing data set
+            if reduction_record[-1][2] < reduction_record[-2][2] or len(reduction_record[-1][0]) == len(reduction_record[-2][0]):
                 break
-
-        return reduction_record[-2]
+        # return the next-to-last edited data set
+        return copy.deepcopy(reduction_record[-2][0])
 
     def remove_incorrect_estimates(self, data_set, results):
         # remove all missclassified examples
+        indices_to_remove = []
         for i in range(len(results)):
             ground_truth, estimate = results[i]
             # if regression, remove examples outside of error threshold
@@ -55,13 +70,89 @@ class EditedKNN:
                 lower_bound = ground_truth - self.error
                 upper_bound = ground_truth + self.error
                 if not (lower_bound <= estimate <= upper_bound):
-                    data_set = np.delete(data_set, i, 0)
+                    indices_to_remove.append(i)
             # otherwise just remove any misclassified
             else:
                 if ground_truth != estimate:
-                    data_set = np.delete(data_set, i, 0)
+                    indices_to_remove.append(i)
+
+        data_set = np.delete(data_set, indices_to_remove, 0)
         return data_set
 
     def evaluate_performance(self, classified_examples: list, regression: bool)-> float:
         loss= self.results.LossFunctionPerformance(regression, classified_examples)
         return loss[0]
+    
+    def classify(self, training, test):
+        edited_training = self.reduce_data_set(training)
+        return self.knn.classify(edited_training, test)
+
+if __name__ == '__main__':
+    categorical_attribute_indices = {
+        "segmentation": [],
+        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        "glass": [],
+        "fire": [0,1,2,3],
+        "machine": [0,1],
+        "abalone": [0]
+    }
+
+    regression_data_set = {
+        "segmentation": False,
+        "vote": False,
+        "glass": False,
+        "fire": True,
+        "machine": True,
+        "abalone": True
+    }
+    
+    feature_data_types = {
+        "segmentation": 'real',
+        "vote": 'categorical',
+        "glass": 'real',
+        "fire": 'mixed',
+        "machine": 'mixed',
+        "abalone": 'mixed'
+    }
+
+    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
+
+    data_set = 'machine'
+    #print(regression_data_set.get(key))
+    #Create a data utility to track some metadata about the class being Examined
+    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+    headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+    #Print the data to the screen for the user to see 
+    # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
+    #Create and store a copy of the first dataframe of data 
+    test = copy.deepcopy(tenFolds[0])
+    #Append all data folds to the training data set
+    training = np.concatenate(tenFolds[1:])
+
+    k = int(math.sqrt(len(training)))
+    # dimensionality of data set
+    d = len(headers) - 1
+    # is this data set a regression data set? 
+    regression = regression_data_set[data_set]
+
+    if regression:
+        regression_error = np.mean(training[:,-1], dtype=np.float64)
+    else:
+        regression_error = 0
+
+    eknn = EditedKNN(
+        error=regression_error,
+        k=k,
+        data_type=feature_data_types[data_set],
+        categorical_features=categorical_attribute_indices[data_set],
+        regression_data_set=regression,
+        alpha=1,
+        beta=1,
+        h=.5, 
+        d=d
+    )
+
+    classifications = eknn.classify(training, test)
+    print(classifications)
