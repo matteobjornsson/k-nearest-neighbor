@@ -1,0 +1,12 @@
+segmentation,TRIAL: ,Zero One ,73.68421052631578,F1 Score,72.28070175438596,
+
+vote,TRIAL: ,Zero One ,92.5,F1 Score,92.70440251572329,
+
+glass,TRIAL: ,Zero One ,70.0,F1 Score,65.9090909090909,
+
+fire,TRIAL: ,Mean Absolute Error,13.391363129318488,Mean Squared Error,504.7660271873938,
+
+machine,TRIAL: ,Mean Absolute Error,37.30293221975437,Mean Squared Error,4704.420537973738,
+
+abalone,TRIAL: ,Mean Absolute Error,1.5194813283052275,Mean Squared Error,5.124677505702681,
+
