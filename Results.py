@@ -63,7 +63,9 @@ class Results:
             #Run the 0/1 Loss function and F1 SCore and store the value 
             F1 = self.statsSummary(Datalist)
             F1 = F1 * 100 
+            DataPackage.append("Zero One ")
             DataPackage.append(Zero)
+            DataPackage.append("F1 Score")
             DataPackage.append(F1)
         #The value that is being tested is regression value  
         else:
@@ -71,7 +73,9 @@ class Results:
             MAE = self.MAE(Datalist)
             #Run The mean squared error and store the value to be piped to a file  
             MSE  = self.MSE(Datalist)
+            DataPackage.append("Mean Absolute Error")
             DataPackage.append(MAE)
+            DataPackage.append("Mean Squared Error")
             DataPackage.append(MSE)
         #Print all of the data generated in the loss functions to a csv file for programmer review 
         self.PipeToFile(DataPackage, MetaData)
