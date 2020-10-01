@@ -128,16 +128,30 @@ class kNN:
 
 
     def most_common_class(self, votes: list) -> list:
+        #Get a dictionary of most common classes based on the list that we are passed in 
         freqDict = Counter(votes)
+        #Order the list to be by the most common classes 
         ordered_frequency = freqDict.most_common()
+        #Set the most common list to hold the neigbor that appeared the most frequently
         most_common = [ordered_frequency[0]]
+        #Loop through the number of individual neighbor classes there are 
         for i in range(1, len(ordered_frequency)):
+            #Find the next most common neighbor depending on the position in the loop   
             next_most_common = ordered_frequency[i]
+            #If there are less neighbors with the class we are looking at then previously stored 
             if next_most_common[1] < most_common[-1][1]:
+                #Break out of the loop 
                 break
+            #Append the next most common neighbor to the list of neighbors
             most_common.append(next_most_common)
+        #Return the most common Neighbor
         return [x[0] for x in most_common]
 
+
+
+
+
+#TESTING THE KNN DATA OBJECT 
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],

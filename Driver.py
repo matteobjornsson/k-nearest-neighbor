@@ -55,6 +55,8 @@ def main():
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         #Store off the following values in a particular order for tuning, and 10 fold cross validation 
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+        # dimensionality of data set
+        ds = len(headers) - 1
         #Print the data to the screen for the user to see 
         print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
         #Create and store a copy of the first dataframe of data 
@@ -80,7 +82,9 @@ def main():
             # weight for categorical distance
             beta=1,
             # kernel window size
-            h=.5
+            h=.5,
+            #Set the dimensionality of the data set in KNN
+            d=ds
         )
         #Store and run the classification associated with the KNN algorithm 
         classifications = knn.classify(training, test)
