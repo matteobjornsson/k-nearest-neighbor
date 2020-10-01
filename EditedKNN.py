@@ -34,9 +34,13 @@ class EditedKNN:
         reduction_record = []
         
         # run a first pass knn to classifiy examples in data set
+        # initialize set as the input data set
         reduced_set = copy.deepcopy(data_set)
-        results = self.classify_in_place(reduced_set)
+        # classify all examples in the data set
+        results = self.classify_in_place(data_set)
+        # evaluate the estimation performance
         performance = self.evaluate_performance(results, self.regression_data_set)
+        # save data set, results, and performance to array
         reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy.copy(performance)])
 
         # while performance continues to improve or maintain, keep editing out
@@ -49,10 +53,7 @@ class EditedKNN:
             results = self.classify_in_place(reduced_set)
             performance = self.evaluate_performance(results, self.regression_data_set)
             reduction_record.append([copy.deepcopy(reduced_set), copy.deepcopy(results), copy.copy(performance)])
-            print("number of samples: ", len(reduced_set))
-            #print for debugging
-            print("performance: ", reduction_record[-1][-1])
-            
+
             # if the most recent knn performance is worse than the last one,
             # stop editing data set
             if reduction_record[-1][2] < reduction_record[-2][2] or len(reduction_record[-1][0]) == len(reduction_record[-2][0]):
@@ -60,9 +61,11 @@ class EditedKNN:
         # return the next-to-last edited data set
         return copy.deepcopy(reduction_record[-2][0])
 
-    def remove_incorrect_estimates(self, data_set, results):
-        # remove all missclassified examples
+    # remove all missclassified examples until performance degrades or no more examples are removed
+    def remove_incorrect_estimates(self, data_set: np.ndarray, results: list) -> np.ndarray:
         indices_to_remove = []
+        # inspect every example. If it is incorrectly classified (or not estimated
+        # correctly within a margin of error) record its index for deletion.
         for i in range(len(results)):
             ground_truth, estimate = results[i]
             # if regression, remove examples outside of error threshold
@@ -75,14 +78,17 @@ class EditedKNN:
             else:
                 if ground_truth != estimate:
                     indices_to_remove.append(i)
-
+        # remove all the examples marked for deletion
         data_set = np.delete(data_set, indices_to_remove, 0)
         return data_set
 
+    # given a set of estimates, evaluate the performance with F1 for classification
+    # or MAE for regression. 
     def evaluate_performance(self, classified_examples: list, regression: bool)-> float:
         loss= self.results.LossFunctionPerformance(regression, classified_examples)
         return loss[0]
     
+    # simple classify method that mirrors KNN, exept with an edited training set
     def classify(self, training, test):
         edited_training = self.reduce_data_set(training)
         return self.knn.classify(edited_training, test)
@@ -162,4 +168,4 @@ if __name__ == '__main__':
         print("final stats:" )
         stats = eknn.results.LossFunctionPerformance(regression, classifications)
         total_stats.append([data_set, stats])
-print(total_stats)
+    print(total_stats)
