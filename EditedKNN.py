@@ -22,7 +22,7 @@ class EditedKNN:
     def classify_in_place(self, data: np.ndarray):
         results = []
         for i in range(len(data)):
-            sample = np.array([data[i,:].tolist()])
+            sample = data[i,:].reshape(1,data.shape[1])
             set_minus_sample = np.delete(data,i,0)
             # print("sample: ", sample, type(sample), '\n', "Remainder: ", set_minus_sample, type(set_minus_sample))
             results.append(self.knn.classify(set_minus_sample, sample )[0])
@@ -115,46 +115,51 @@ if __name__ == '__main__':
         "abalone": 'mixed'
     }
 
-    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+    data_sets = ["segmentation", "vote", "glass", "fire", "machine"]
 
+    total_stats = []
+    for data_set in data_sets:
+        print(data_set)
+        #print(regression_data_set.get(key))
+        #Create a data utility to track some metadata about the class being Examined
+        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+        #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+        headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+        #Print the data to the screen for the user to see 
+        # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
+        #Create and store a copy of the first dataframe of data 
+        test = copy.deepcopy(tenFolds[0])
+        #Append all data folds to the training data set
+        training = np.concatenate(tenFolds[1:])
 
-    data_set = 'machine'
-    print(data_set)
-    #print(regression_data_set.get(key))
-    #Create a data utility to track some metadata about the class being Examined
-    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-    headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
-    #Print the data to the screen for the user to see 
-    # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
-    #Create and store a copy of the first dataframe of data 
-    test = copy.deepcopy(tenFolds[0])
-    #Append all data folds to the training data set
-    training = np.concatenate(tenFolds[1:])
+        k = int(math.sqrt(len(training)))
+        # dimensionality of data set
+        d = len(headers) - 1
+        # is this data set a regression data set? 
+        regression = regression_data_set[data_set]
 
-    k = int(math.sqrt(len(training)))
-    # dimensionality of data set
-    d = len(headers) - 1
-    # is this data set a regression data set? 
-    regression = regression_data_set[data_set]
+        if regression:
+            regression_error = np.mean(training[:,-1], dtype=np.float64)
+        else:
+            regression_error = 0
 
-    if regression:
-        regression_error = np.mean(training[:,-1], dtype=np.float64)
-    else:
-        regression_error = 0
+        eknn = EditedKNN(
+            error=regression_error,
+            k=k,
+            data_type=feature_data_types[data_set],
+            categorical_features=categorical_attribute_indices[data_set],
+            regression_data_set=regression,
+            alpha=1,
+            beta=1,
+            h=.5, 
+            d=d
+        )
 
-    eknn = EditedKNN(
-        error=regression_error,
-        k=k,
-        data_type=feature_data_types[data_set],
-        categorical_features=categorical_attribute_indices[data_set],
-        regression_data_set=regression,
-        alpha=1,
-        beta=1,
-        h=.5, 
-        d=d
-    )
-
-    classifications = eknn.classify(training, test)
-    for c in classifications:
-        print(c)
+        classifications = eknn.classify(training, test)
+        for c in classifications:
+            print(c)
+        print("Regression:", regression)
+        print("final stats:" )
+        stats = eknn.results.LossFunctionPerformance(regression, classifications)
+        total_stats.append([data_set, stats])
+print(total_stats)
