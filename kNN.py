@@ -82,9 +82,13 @@ class kNN:
         return kNeighbors
 
     def classify(self, exampleData: np.ndarray, testData: np.ndarray) -> list:
+        #Create a new list 
         classifications = []
+        #For each of the datapoints in the test data set we take in 
         for new_sample in testData:
+            #Create a list from the data source that we take in 
             new_vector = new_sample.tolist()[:-1]
+            #Set the number of neighbors to the K neighbors function 
             neighbors = self.get_k_neighbors(exampleData, new_vector, self.k)
             # printNeighbors = [(f"Distance: {n[0]}", f"example: {n[1]}", exampleData[n[1]].tolist()) for n in neighbors]
             
@@ -98,32 +102,48 @@ class kNN:
             #     if 3 < index < len(neighbors)-3 and len(neighbors) > 6 and count < 1:
             #         count += 1
             #         print("...")
-
+            #Create a list of votes for each of the neighbors above 
             votes = [exampleData[n[1]].tolist()[-1] for n in neighbors]
             # print("votes: ", votes)
             # print([exampleData[n[1]].tolist() for n in neighbors])
             # print(votes)
+            #If the data set is a regression data set 
             if self.regression_data_set:
+                #Use a guassian kernel to generate a kernel estimate 
                 estimate = self.kernel.estimate(neighbors)
                 # print("kernel estimate: ", estimate)
-                # print()
+                # print()\
+            #If it is a categorical dataset 
             else:
+                #Get the most common class depending on the vote data above 
                 most_common_class = self.most_common_class(votes)
                 # print("most common classes: ", most_common_class)
+                #If their is only one common class 
                 if len(most_common_class) == 1:
+                    #Set the estimate to be the most common class occurence in votes 
                     estimate = most_common_class[0]
+                #More than one most common class 
                 else:
+                    #Loop through all of the neighbors 
                     for i in range(len(neighbors)):
+                        #Set the index to grab information about the neighbor 
                         n_index = neighbors[i][1]
+                        #Get the neighbors class 
                         neighbor_class = exampleData[n_index][-1]
+                        #If the class is in that of the most common class 
                         if  neighbor_class in most_common_class:
                             # print("defining neighbor, index # ", n_index)
+                            #Break out of th eloop 
                             break
+                    #Set the estimate to the neighbor class 
                     estimate = neighbor_class
                     # print("Estimate: ", estimate, '\n')
+            #Store off the ground truth value 
             ground_truth =  new_sample.tolist()[-1]
+            #Add the ground tryth and estimate to list to be returned 
             classifications.append([ground_truth, estimate])
         # for clss in classifications: print(f"Ground truth: {clss[0]}, Estimate: {clss[1]}")
+        #Return the classification list of ground truth and the estimate 
         return classifications
 
 
