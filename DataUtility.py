@@ -21,6 +21,49 @@ class DataUtility:
         self.categorical_attribute_indices = categorical_attribute_indices
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
+    
+    def StatifyTenFold(self, df: pd.DataFrame): 
+        #Set the bin size to 10 
+        Binsize = 10
+        #Create a List of column names that are in the dataframe 
+        columnHeaders = list(df.columns.values)
+        Classes = list() 
+        for row in range(len(df)): 
+            if df.iloc[row][len(df.columns)-1] not in Classes: 
+                Classes.append(df.iloc[row][len(df.columns)-1])
+            continue 
+        ClassOccurence = list() 
+        for i in Classes: 
+            occurence = 0 
+            for j in range(len(df)): 
+                if df.iloc[j][len(df.columns)-1] == i: 
+                    occurence +=1 
+            ClassOccurence.append(occurence)
+        bins= [] 
+        for i in range(Binsize):
+            #Append the dataframe columns to the list created above 
+            bins.append(pd.DataFrame(columns=columnHeaders))
+        binnum = 0 
+        for i in Classes: 
+            binnum = random.randint(0,Binsize-1)
+            for j in range(len(df)): 
+                if df.iloc[j][len(df.columns)-1] == i: 
+                    bins[binnum] = bins[binnum].append(df.loc[j],ignore_index=True)
+                    binnum += 1 
+                    if binnum == 10: 
+                        binnum = 0 
+        return bins 
+            
+
+
+        #Generate a list of every unique Class 
+        #Generate the occurence of each Class 
+        #Break down each class occurence into 10
+        #Bin each value accordingly 
+
+
+
+        
 
     def ReplaceMissing(self,df: pd.DataFrame):
         #length = 3
@@ -165,12 +208,33 @@ if __name__ == '__main__':
     }
 
     print("Testing the interface between pandas and numpy arrays")
-    # Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
-    # df = pd.read_csv(Vote_Data)
-    # Df1 = DataUtility()
-    # dfs = Df1.ReplaceMissing(df)
+    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
+    Glass_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/ProcessedData/glass.csv"
+    Seg_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/ProcessedData/segmentation.csv"
+    df = pd.read_csv(Vote_Data)
+    Df1 = DataUtility([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],False)
+    dfs = Df1.ReplaceMissing(df)
+    #print(dfs)
     # test = list() 
-    # Tuning, df = Df1.TuningData(dfs)
+    Tuning = Df1.StatifyTenFold(dfs)
+    for i in Tuning: 
+        print(len(i))
+    df = pd.read_csv(Glass_Data)
+    Df1 = DataUtility([],False)
+    dfs = Df1.ReplaceMissing(df)
+    #print(dfs)
+    # test = list() 
+    Tuning = Df1.StatifyTenFold(dfs)
+    for i in Tuning: 
+        print(len(i))
+    df = pd.read_csv(Seg_Data)
+    Df1 = DataUtility([],False)
+    dfs = Df1.ReplaceMissing(df)
+    #print(dfs)
+    # test = list() 
+    Tuning = Df1.StatifyTenFold(dfs)
+    for i in Tuning: 
+        print(len(i))
     # bins = [] 
     # bins = Df1.BinTestData(df)
     # Tuning = Df1.ConvertDatastructure(Tuning)
@@ -180,9 +244,9 @@ if __name__ == '__main__':
     # for i in bins: 
     #     print(type(i))
     
-    du = DataUtility(categorical_attribute_indices, regression_data_set)
-    for key in categorical_attribute_indices.keys():
-        du.min_max_normalize_real_features(key)
+    #du = DataUtility(categorical_attribute_indices, regression_data_set)
+    #for key in categorical_attribute_indices.keys():
+    #    du.min_max_normalize_real_features(key)
     # headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("vote")
     # assert len(headers) == len(tuning_data[0])
     # count = 0
