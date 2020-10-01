@@ -57,28 +57,43 @@ class kNN:
     #         return "real"
 
     def get_k_neighbors(self, exampleData: np.ndarray, new_sample: list, k) -> list:
+        #If the dataset has both categorical and real values 
         if self.data_type == "mixed":
+            #Store off those values which are cetegorical and real into 2 sperate lists 
             sample_cat = [new_sample[i] for i in range(len(new_sample)) if i in self.categorical_features]
             sample_real = [new_sample[j] for j in range(len(new_sample)) if j not in self.categorical_features]
-
+        #Create an empty new list 
         neighbors = []
+        #For each of those values in the exaple data set that we take in 
         for n in range(len(exampleData)):
+            #Set the value to be x 
             x = exampleData[n].tolist()[:-1]
+            #Store off the response variable 
             responseVariable = exampleData[n].tolist()[-1]
-
+            #If the data is real 
             if self.data_type == "real":
+                #Calculate Real distance distance 
                 distance = self.rd.Distance(x, new_sample)
+            #If the data is categorical 
             elif self.data_type == "categorical":
+                #Use hamming distance to calculate distance 
                 distance = self.hd.Distance(x, new_sample)
+            #Otherwise 
             else:
+                #Set a list of categorical values 
                 x_cat = [x[k] for k in range(len(x)) if k in self.categorical_features]
+                #Set the list of real values
                 x_real = [x[l] for l in range(len(x)) if l not in self.categorical_features]
+                #Set the distance and store the value 
                 distance = self.alpha * self.rd.Distance(x_real, sample_real) + self.beta * self.hd.Distance(x_cat, sample_cat)
                 # if n < 5:
                 #     print("sample real: ", sample_real, "x real: ", x_real, "real distance: ", self.rd.Distance(x_real, sample_real))
                 #     print("sample cat: ", sample_cat, "x cat: ", x_cat, "categorical distance: ", self.hd.Distance(x_cat,sample_cat))
+            #Push the distance and neighbors onto the heap 
             heapq.heappush(neighbors, (distance, n, responseVariable))
+        #Store off the neighbors with the smallest distance 
         kNeighbors = heapq.nsmallest(k, neighbors)
+        #Return the neighbors with the smallest distance 
         return kNeighbors
 
     def classify(self, exampleData: np.ndarray, testData: np.ndarray) -> list:
