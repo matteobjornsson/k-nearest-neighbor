@@ -119,6 +119,7 @@ if __name__ == '__main__':
 
 
     data_set = 'machine'
+    print(data_set)
     #print(regression_data_set.get(key))
     #Create a data utility to track some metadata about the class being Examined
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -155,4 +156,5 @@ if __name__ == '__main__':
     )
 
     classifications = eknn.classify(training, test)
-    print(classifications)
+    for c in classifications:
+        print(c)

@@ -170,24 +170,37 @@ if __name__ == '__main__':
         "machine": True,
         "abalone": True
     }
+
+    feature_data_types = {
+        "segmentation": 'real',
+        "vote": 'categorical',
+        "glass": 'real',
+        "fire": 'mixed',
+        "machine": 'mixed',
+        "abalone": 'mixed'
+    }
+
     data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
 
     regression = [x for x in data_sets if regression_data_set[x]]
 
     for data_set in regression:
+        print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
         print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
-        test = copy.deepcopy(tenFolds[0][0:5])
+        test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
         print(len(test[0]))
         print(len(training))
 
         knn = kNN(
             int(math.sqrt(len(training))),
-            training,
+            feature_data_types[data_set],
             categorical_attribute_indices[data_set],
             regression_data_set[data_set],
-            1,2,.5
+            alpha=1, beta=2, h=.5, d=(len(headers)-1)
         )
         classifications = knn.classify(training, test)
+        for c in classifications:
+            print(c)
