@@ -22,3 +22,15 @@ machine,TRIAL: ,Mean Absolute Error,26.47623241434288,Mean Squared Error,1213.57
 
 abalone,TRIAL: ,Mean Absolute Error,1.4788288814708057,Mean Squared Error,4.401224725476522,
 
+segmentation,TRIAL: ,Zero One ,89.47368421052632,F1 Score,87.23171565276829,
+
+vote,TRIAL: ,Zero One ,95.0,F1 Score,95.06666666666668,
+
+glass,TRIAL: ,Zero One ,70.0,F1 Score,69.5,
+
+fire,TRIAL: ,Mean Absolute Error,19.187573852628887,Mean Squared Error,2301.4620071635113,
+
+machine,TRIAL: ,Mean Absolute Error,23.750807099842785,Mean Squared Error,1329.2958104226323,
+
+abalone,TRIAL: ,Mean Absolute Error,1.5841145263650165,Mean Squared Error,5.870356601244051,
+
