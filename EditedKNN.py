@@ -11,11 +11,6 @@ import copy, math
 class EditedKNN:
 
     def __init__(self, error: float, k: int, data_type: str, categorical_features: list, regression_data_set: bool, alpha:float, beta:float, h:float, d:int):
-        # print(
-        #     "k", k, '\n',
-        #     "error", error, '\n',
-        #     ""
-        # )
         # initialize a knn object
         self.knn = kNN.kNN(k, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
         # error threshhold for regression classification
@@ -29,7 +24,7 @@ class EditedKNN:
         for i in range(len(data)):
             sample = data[i,:].reshape(1,data.shape[1])
             set_minus_sample = np.delete(data,i,0)
-            print("sample: ", sample, type(sample), '\n', "Remainder: ", set_minus_sample, type(set_minus_sample))
+            # print("sample: ", sample, type(sample), '\n', "Remainder: ", set_minus_sample, type(set_minus_sample))
             results.append(self.knn.classify(set_minus_sample, sample )[0])
         return results
 
@@ -120,7 +115,7 @@ if __name__ == '__main__':
         "abalone": 'mixed'
     }
 
-    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+    data_sets = ["segmentation", "vote", "glass", "fire", "machine"]
 
     total_stats = []
     for data_set in data_sets:
