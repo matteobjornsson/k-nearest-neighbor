@@ -53,11 +53,11 @@ class Results:
         return DataPackage
 
 
-    def StartLossFunction(self,Categorical,Datalist,MetaData):
+    def StartLossFunction(self,Regression,Datalist,MetaData):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 
-        if Categorical == False: 
+        if Regression == False: 
             #Store the Zero/One loss function values
             Zero = self.ZeroOneLoss(Datalist)
             #Run the 0/1 Loss function and F1 SCore and store the value 
