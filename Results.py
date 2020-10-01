@@ -39,6 +39,7 @@ class Results:
             Zero = self.ZeroOneLoss(Datalist)
             #Run the 0/1 Loss function and F1 SCore and store the value 
             F1 = self.statsSummary(Datalist)
+            F1 = F1 * 100 
             DataPackage.append(F1)
             DataPackage.append(Zero)
         #The value that is being tested is regression value  
