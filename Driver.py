@@ -108,7 +108,7 @@ def main():
         #Print the Results to a file 
         Eknn = EditedKNN.EditedKNN( 
             #Error
-            error = ResultSet[0] , 
+            ResultSet[0], 
             #Feed in the square root of the length 
             int(math.sqrt(len(full_set))), 
             # supply mixed, real, categorical nature of features
@@ -138,7 +138,28 @@ def main():
         MetaData.append(data_set)
         MetaData.append("TRIAL: ")
         MetaData.append("CONDENSED KNN")
-
+        Cknn = CondensedKNN.CondensedKNN(
+            #Error
+            error = ResultSet[0] , 
+            #Feed in the square root of the length 
+            int(math.sqrt(len(full_set))), 
+            # supply mixed, real, categorical nature of features
+            feature_data_types[data_set],
+            #Feed in the categorical attribute indicies stored in a global array 
+            categorical_attribute_indices[data_set],
+            #Store the data set key for the dataset name 
+            regression_data_set[data_set],
+            # weight for real distance
+            alpha=1,
+            # weight for categorical distance
+            beta=1,
+            # kernel window size
+            h=.5,
+            #Set the dimensionality of the data set in KNN
+            d=ds
+        )
+        classifications = Cknn.classify(training, test)
+        ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
         
 
         
