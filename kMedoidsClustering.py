@@ -75,8 +75,18 @@ class kMedoidsClustering:
         # return the list of indices
         return medoid_assignments
 
+    def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> float:
+        distortion = 0
+        for i in range(len(medoids)):
+            m = medoids[i]
+            points_in_cluster = np.concatenate([data[x].reshape(1, data.shape[1]) for x, j in enumerate(medoid_assignments) if j == i])
+            self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
+            for point in points_in_cluster:
+
+
+
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
-        #TODO: write medoid update method (drop categorical values?)
+        
         return medoids
 
     def generate_cluster_medoids(self):
