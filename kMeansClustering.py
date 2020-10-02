@@ -2,7 +2,7 @@
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
 import numpy as np
-import DataUtility, Results
+import DataUtility, kNN, Results
 import copy, random
 
 
@@ -32,6 +32,7 @@ class kMeansClustering:
             feature_values[j] = [min, max]
             print("min:", min, "max:", max)
         points = []
+
         for k in range(self.kValue):
             new_point = [None] * self.d
             for l in self.categorical_features:
@@ -41,9 +42,8 @@ class kMeansClustering:
             points.append(new_point)
         return points
 
+    def closest_centroid_to_point(self, point: list, centroids: np.ndarray):
 
-        print("generating the cluster points")
-        return (1, 2, 3)
 
 if __name__ == '__main__':
     categorical_attribute_indices = {
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     for i in range(1):
         data_set = "vote"
-        
+
         print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
