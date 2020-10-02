@@ -151,7 +151,7 @@ class kMeansClustering:
         for i in range(len(centroids)): 
             #Loop through Medoid assignments and store each index that belongs to an associated medoids 
             centroidTuples = list() 
-            for j in centroi_assignment: 
+            for j in centroid_assignment: 
                 if centroids[i] == j: 
                     centroidTuples.append(i)
             #Now we have a list of all records in the data array that belong to a specific medoid 
