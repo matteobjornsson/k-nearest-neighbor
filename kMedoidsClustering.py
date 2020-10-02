@@ -75,15 +75,30 @@ class kMedoidsClustering:
         # return the list of indices
         return medoid_assignments
 
-    def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
+    def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> list():
         #TODO: write medoid update method (drop categorical values?)
-        print(medoids)
-        print(medoid_assignments)
-        print(data) 
-             
+        New_Medoid = list() 
+        #For each of the medoids 
+        for i in range(len(medoids)): 
+            #Loop through Medoid assignments and store each index that belongs to an associated medoids 
+            MedoidTuples = list() 
+            for j in medoid_assignment: 
+                if medoids[i] == j: 
+                    MedoidTuples.append(i)
+            #Now we have a list of all records in the data array that belong to a specific medoid 
+            #Get the total number of rows in each of the data points 
+            Rows = len(data[0])
+            Row_Mean = list()
+            for j in Rows: 
+                rowcount = 0 
+                total = len(MedoidTuples)
+                for z in range(len(MedoidTuples)): 
+                    rowcount += data[MedoidTuples[z]][j]
+                rowcount = rowcount / total 
+                Row_Mean.append(rowcount)
+            New_Medoid.append(Row_Mean)
 
-
-        return medoids
+        return New_Medoid
 
     def generate_cluster_medoids(self):
         medoids = self.choose_random_medoids()
@@ -147,6 +162,6 @@ if __name__ == '__main__':
 
         d = len(headers)-1
         kMC = kMedoidsClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
-        
+
 
     print("program end ")
