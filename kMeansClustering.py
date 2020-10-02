@@ -8,7 +8,18 @@ import copy, random
 
 class kMeansClustering:
     
-    def __init__(self, kValue: int, dataSet: np.ndarray, categorical_features: list, d: int):
+    def __init__(self,
+        kValue: int,
+        dataSet: np.ndarray,
+        data_type: str,
+        categorical_features: list,
+        regression_data_set: bool,
+        alpha: int,
+        beta: int,
+        h: float,
+        d: int):
+
+        self.nn = kNN.kNN(1, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
         self.categorical_features = categorical_features
         real_features = list(range(d))
         for i in categorical_features:
@@ -19,7 +30,7 @@ class kMeansClustering:
         # dimensionality of data set
         self.d = d
 
-    def generateClusterPoints(self):
+    def create_random_centroids(self) -> np.ndarray:
         feature_values = [None] * self.d
         for i in self.categorical_features:
             print(self.dataSet[:,i])
@@ -40,10 +51,33 @@ class kMeansClustering:
             for m in self.real_features:
                 new_point[m] = random.uniform(feature_values[m][0],feature_values[m][1])
             points.append(new_point)
-        return points
+        return np.array(points)
 
     def closest_centroid_to_point(self, point: list, centroids: np.ndarray):
+        centroid = self.nn.get_k_neighbors(centroids, point, k=1)
+        return centroid[1]
+    
+    def assign_all_points_to_closest_centroid(self, centriods: np.ndarray, data: np.ndarray):
+        centroid_assignments = []
+        for i in range(len(data)):
+            x = data[i].tolist()[:-1]
+            centroid_assignments[i] = self.closest_centroid_to_point(x, centriods)
+        return centroid_assignments
 
+    def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
+        #TODO: write centroid update method
+        return centroids
+
+    def generate_cluster_centroids(self):
+        centroids = self.create_random_centroids()
+        first_assignment = self.assign_all_points_to_closest_centroid(centroids, self.dataSet)
+        updated_centroids = self.update_centroid_positions(centroids, first_assignment, self.dataSet)
+        while True:
+            second_assignment = self.assign_all_points_to_closest_centroid(updated_centroids, self.dataSet)
+            updated_centroids = self.update_centroid_positions(updated_centroids, second_assignment, self.dataSet)
+            if first_assignment == second_assignment:
+                break
+        return updated_centroids
 
 if __name__ == '__main__':
     categorical_attribute_indices = {
