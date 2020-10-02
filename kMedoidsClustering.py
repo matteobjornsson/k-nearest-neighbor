@@ -1,4 +1,4 @@
-#Written by 
+#Written by Nick Stone and Matteo Bjornsson 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, math, random
@@ -77,6 +77,12 @@ class kMedoidsClustering:
 
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
         #TODO: write medoid update method (drop categorical values?)
+        print(medoids)
+        print(medoid_assignments)
+        print(data) 
+             
+
+
         return medoids
 
     def generate_cluster_medoids(self):
@@ -92,3 +98,9 @@ class kMedoidsClustering:
                 break
             first_assignment = second_assignment
         return updated_medoids
+
+if __name__ == '__main__':
+    print("program Start")
+    
+
+    print("program end ")
