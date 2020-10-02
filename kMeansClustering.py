@@ -41,6 +41,55 @@ class kMeansClustering:
         # dimensionality of data set
         self.d = d
 
+
+    def ConvertVoteData(self,Data_set):
+        for i in range(len(Data_set)): 
+            if Data_set[i] == 'N' or Data_set[i] == 'n': 
+                Data_set[i] = 1
+            if Data_set[i] == 'Y' or Data_set[i] == 'y': 
+                Data_set[i] = 0 
+            if Data_set[i] == 'jan': 
+                Data_set[i] = 1 
+            if Data_set[i] == 'feb' : 
+                Data_set[i] = 2
+            if Data_set[i] == 'mar': 
+                Data_set[i] = 3
+            if Data_set[i] == 'apr': 
+                Data_set[i] = 4
+            if Data_set[i] == 'may': 
+                Data_set[i] = 5
+            if Data_set[i] == 'jun': 
+                Data_set[i] = 6
+            if Data_set[i] == 'jul': 
+                Data_set[i] = 7 
+            if Data_set[i] == 'aug': 
+                Data_set[i] = 8 
+            if Data_set[i] == 'sep': 
+                Data_set[i] = 9 
+            if Data_set[i] == 'oct': 
+                Data_set[i] = 10 
+            if Data_set[i] == 'nov': 
+                Data_set[i] = 11
+            if Data_set[i] == 'dec': 
+                Data_set[i] = 12
+            if Data_set[i] == 'mon' : 
+                Data_set[i] = 1
+            if Data_set[i] == 'tue': 
+                Data_set[i] = 2
+            if Data_set[i] == 'wed': 
+                Data_set[i] = 3
+            if Data_set[i] == 'thu': 
+                Data_set[i] = 4
+            if Data_set[i] == 'fri': 
+                Data_set[i] = 5
+            if Data_set[i] == 'sat': 
+                Data_set[i] = 6 
+            if Data_set[i] == 'sun': 
+                Data_set[i] = 7 
+
+        return Data_set
+
+
     # randomly generate kvalue centroids by randomly generating an appropriate value per feature
     def create_random_centroids(self) -> np.ndarray:
         # first save all the unique values in the categorical features
