@@ -37,64 +37,67 @@ class kMeansClustering:
             real_features.remove(i)
         self.real_features = real_features
         self.kValue = kValue
+
+        for j in range(len(dataSet)):
+            dataSet[j] = self.ConvertData(dataSet[j])
         self.dataSet = dataSet
         # dimensionality of data set
         self.d = d
 
 
-    def ConvertVoteData(self,Data_set):
-        for i in range(len(Data_set)): 
-            if Data_set[i] == 'N' or Data_set[i] == 'n': 
-                Data_set[i] = 1
-            if Data_set[i] == 'Y' or Data_set[i] == 'y': 
-                Data_set[i] = 0 
-            if Data_set[i] == 'jan': 
-                Data_set[i] = 0/11
-            if Data_set[i] == 'feb' : 
-                Data_set[i] = 1/11
-            if Data_set[i] == 'mar': 
-                Data_set[i] = 2/11
-            if Data_set[i] == 'apr': 
-                Data_set[i] = 3/11
-            if Data_set[i] == 'may': 
-                Data_set[i] = 4/11
-            if Data_set[i] == 'jun': 
-                Data_set[i] = 5/11
-            if Data_set[i] == 'jul': 
-                Data_set[i] = 6 /11
-            if Data_set[i] == 'aug': 
-                Data_set[i] = 7 /11
-            if Data_set[i] == 'sep': 
-                Data_set[i] = 8 /11
-            if Data_set[i] == oct': 
-                Data_set[i] = 9 /11
-            if Data_set[i] == 'nov': 
-                Data_set[i] = 10/11
-            if Data_set[i] == 'dec': 
-                Data_set[i] = 11/11
-            if Data_set[i] == 'mon' : 
-                Data_set[i] = 0/6
-            if Data_set[i] == 'tue': 
-                Data_set[i] = 1/6
-            if Data_set[i] == 'wed': 
-                Data_set[i] = 2/6
-            if Data_set[i] == 'thu': 
-                Data_set[i] = 3/6
-            if Data_set[i] == 'fri': 
-                Data_set[i] = 4/6
-            if Data_set[i] == 'sat': 
-                Data_set[i] = 5 /6
-            if Data_set[i] == 'sun': 
-                Data_set[i] = 6 /6
-            if Data_set[i] == 'M':
-                Data_set[i] = 1 /2
-            if Data_set[i] == 'F': 
-                Data_set[i] = 2 /2
-            if Data_set[i] == 'I': 
-                Data_set[i] = 0  /2
+    def ConvertData(self,data_set_row):
+        for i in range(len(data_set_row)): 
+            if data_set_row[i] == 'N' or data_set_row[i] == 'n': 
+                data_set_row[i] = 1
+            if data_set_row[i] == 'Y' or data_set_row[i] == 'y': 
+                data_set_row[i] = 0 
+            if data_set_row[i] == 'jan': 
+                data_set_row[i] = 0/11
+            if data_set_row[i] == 'feb' : 
+                data_set_row[i] = 1/11
+            if data_set_row[i] == 'mar': 
+                data_set_row[i] = 2/11
+            if data_set_row[i] == 'apr': 
+                data_set_row[i] = 3/11
+            if data_set_row[i] == 'may': 
+                data_set_row[i] = 4/11
+            if data_set_row[i] == 'jun': 
+                data_set_row[i] = 5/11
+            if data_set_row[i] == 'jul': 
+                data_set_row[i] = 6 /11
+            if data_set_row[i] == 'aug': 
+                data_set_row[i] = 7 /11
+            if data_set_row[i] == 'sep': 
+                data_set_row[i] = 8 /11
+            if data_set_row[i] == 'oct':
+                data_set_row[i] = 9 /11
+            if data_set_row[i] == 'nov': 
+                data_set_row[i] = 10/11
+            if data_set_row[i] == 'dec': 
+                data_set_row[i] = 11/11
+            if data_set_row[i] == 'mon' : 
+                data_set_row[i] = 0/6
+            if data_set_row[i] == 'tue': 
+                data_set_row[i] = 1/6
+            if data_set_row[i] == 'wed': 
+                data_set_row[i] = 2/6
+            if data_set_row[i] == 'thu': 
+                data_set_row[i] = 3/6
+            if data_set_row[i] == 'fri': 
+                data_set_row[i] = 4/6
+            if data_set_row[i] == 'sat': 
+                data_set_row[i] = 5 /6
+            if data_set_row[i] == 'sun': 
+                data_set_row[i] = 6 /6
+            if data_set_row[i] == 'M':
+                data_set_row[i] = 1 /2
+            if data_set_row[i] == 'F': 
+                data_set_row[i] = 2 /2
+            if data_set_row[i] == 'I': 
+                data_set_row[i] = 0  /2
 
 
-        return Data_set
+        return data_set_row
 
 
     # randomly generate kvalue centroids by randomly generating an appropriate value per feature
@@ -126,12 +129,13 @@ class kMeansClustering:
         # use the knn get_neighor class method to find the closest centroid 
         centroid = self.nn.get_k_neighbors(centroids, point, k=1)
         # return the centroid index, element 1 of [distance, index, response var]
-        return centroid[1]
+        # print(centroid)
+        return centroid[0][1]
     
     # assign each data point in data set to the nearest centroid. This is stored in an array
     # as an integer representing the centroid index at the index of the point belonging to it. 
     def assign_all_points_to_closest_centroid(self, centriods: np.ndarray, data: np.ndarray) -> list:
-        centroid_assignments = []
+        centroid_assignments = [None] * len(data)
         # for each data point
         for i in range(len(data)):
             x = data[i].tolist()[:-1]
@@ -142,6 +146,19 @@ class kMeansClustering:
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
         #TODO: write centroid update method (drop categorical values?)
+        # for each centroid
+            # identify the members of the cluster ()
+            #centroids:
+            #    0       1       2
+            #[ (1,2), (1, 5), (4,5)]
+
+            #centroid assignments
+            # 0  1  2  3 ...n 
+            #[0, 1, 0, 2, 2, 1, 0, 1, 2, 1, 0, 2, 0]
+
+            # index 3 having value 2 in centroid assignments means data point 3 belongs to cluster 2
+
+            
         return centroids
 
     def generate_cluster_centroids(self):
@@ -201,5 +218,6 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
 
         d = len(headers)-1
-        kMC = kMeansClustering(kValue=d, dataSet=training, categorical_features=categorical_attribute_indices[data_set], d=d)
-        print(kMC.generateClusterPoints())
+        kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
+        print(kMC.generate_cluster_centroids())
+        print(kMC.dataSet)
