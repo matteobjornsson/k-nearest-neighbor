@@ -54,7 +54,10 @@ def main():
         #Create a data utility to track some metadata about the class being Examined
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-        headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+        if regression_data_set.get(data_set) == False: 
+            headers, full_set, tuning_data, tenFolds = du.generate_experiment_data_Categorical(data_set)
+        else:
+            headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
         # dimensionality of data set
         ds = len(headers) - 1
         #Print the data to the screen for the user to see 
