@@ -130,17 +130,17 @@ def main():
         MetaData.append(data_set)
         MetaData.append("TRIAL: ")
         MetaData.append("EDITED KNN")
+
         ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
-        
+        print("EDITED FINISHED") 
         #Now test the dataset on Condensed KNN 
         #Print the Results to a file 
         MetaData = list() 
         MetaData.append(data_set)
         MetaData.append("TRIAL: ")
         MetaData.append("CONDENSED KNN")
-        Cknn = CondensedKNN.CondensedKNN(
-            #Error
-            error = ResultSet[0] , 
+        Cknn = CondensedKNN.CondensedKNN( 
+            ResultSet[0],
             #Feed in the square root of the length 
             int(math.sqrt(len(full_set))), 
             # supply mixed, real, categorical nature of features
