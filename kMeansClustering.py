@@ -146,6 +146,28 @@ class kMeansClustering:
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
         #TODO: write centroid update method (drop categorical values?)
+        New_centroid = list() 
+        #For each of the medoids 
+        for i in range(len(centroids)): 
+            #Loop through Medoid assignments and store each index that belongs to an associated medoids 
+            centroidTuples = list() 
+            for j in centroi_assignment: 
+                if centroids[i] == j: 
+                    centroidTuples.append(i)
+            #Now we have a list of all records in the data array that belong to a specific medoid 
+            #Get the total number of rows in each of the data points 
+            Rows = len(data[0])
+            Row_Mean = list()
+            for j in Rows: 
+                rowcount = 0 
+                total = len(centroidTuples)
+                for z in range(len(centroidTuples)): 
+                    rowcount += data[centroidTuples[z]][j]
+                rowcount = rowcount / total 
+                Row_Mean.append(rowcount)
+            New_centroid.append(Row_Mean)
+
+        return New_centroid
         # for each centroid
             # identify the members of the cluster ()
             #centroids:
