@@ -80,13 +80,20 @@ class kMedoidsClustering:
         for i in range(len(medoids)):
             m = medoids[i]
             points_in_cluster = np.concatenate([data[x].reshape(1, data.shape[1]) for x, j in enumerate(medoid_assignments) if j == i])
-            self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
-            for point in points_in_cluster:
-
-
-
+            point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
+            for point in point_distances:
+                distortion += (point[0])**2
+        return distortion
+            
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
-        
+        for i in range(len(medoids)):
+            distortion = self.distortion(medoids, medoid_assignments, data)
+            for x in data:
+                new_medoids = copy.deepcopy(medoids)
+                new_medoids[i] = copy.deepcopy(x)
+                new_distortion = self.distortion(new_medoids, medoid_assignments, data)
+                if new_distortion < distortion:
+                    medoids[i] = copy.deepcopy(x)
         return medoids
 
     def generate_cluster_medoids(self):
