@@ -1,4 +1,4 @@
-#Written by 
+#Written by Nick Stone and Matteo Bjornsson 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, math, random
@@ -109,3 +109,55 @@ class kMedoidsClustering:
                 break
             first_assignment = second_assignment
         return updated_medoids
+
+
+
+
+if __name__ == '__main__':
+    print("program Start")
+    categorical_attribute_indices = {
+        "segmentation": [],
+        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        "glass": [],
+        "fire": [0,1,2,3],
+        "machine": [0,1],
+        "abalone": [0]
+    }
+
+    regression_data_set = {
+        "segmentation": False,
+        "vote": False,
+        "glass": False,
+        "fire": True,
+        "machine": True,
+        "abalone": True
+    }
+
+    feature_data_types = {
+        "segmentation": 'real',
+        "vote": 'categorical',
+        "glass": 'real',
+        "fire": 'mixed',
+        "machine": 'mixed',
+        "abalone": 'mixed'
+    }
+
+    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
+    regression = [x for x in data_sets if regression_data_set[x]]
+
+    for i in range(1):
+        data_set = "vote"
+
+        print("Data set: ", data_set)
+        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+        headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+        # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
+        test = copy.deepcopy(tenFolds[0])
+        training = np.concatenate(tenFolds[1:])
+
+        d = len(headers)-1
+        kMC = kMedoidsClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
+
+
+    print("program end ")

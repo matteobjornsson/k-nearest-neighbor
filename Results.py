@@ -1,4 +1,5 @@
-#################################################################### MODULE COMMENTS ####################################################################
+#Written by Nick Stone and edited by Matteo Bjornsson 
+##################################################################### MODULE COMMENTS ####################################################################
 # The following Python object is responsible for calculating two loss functions to identify a series of statistical data points for a programmer to view #
 # In order to see how 'Well' the Naive bayes program is functioning. The two loss functions that Nick Stone and Matteo Bjornsson implemented for this pr-#
 # -oject were the 0/1 loss function which we will use to calculate the algorithms precision and the F1 score for a multidimensional data set.            #
