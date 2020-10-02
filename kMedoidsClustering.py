@@ -41,6 +41,17 @@ class kMedoidsClustering:
         # dimensionality of data set
         self.d = d
 
+
+    def ConvertVoteData(self,Data_set):
+        for i in range(len(Data_set)): 
+            if Data_set[i] == 'N' or Data_set[i] == 'n': 
+                Data_set[i] = 1
+            if Data_set[i] == 'Y' or Data_set[i] == 'y': 
+                Data_set[i] = 0 
+        return Data_set
+ 
+
+
     def choose_random_medoids(self):
         indices = []
         for k in range(self.kValue):
