@@ -22,7 +22,7 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
     
-    def StatifyTenFold(self, df: pd.DataFrame): 
+    def StratifyTenFold(self, df: pd.DataFrame): 
         #Set the bin size to 10 
         Binsize = 10
         #Create a List of column names that are in the dataframe 
@@ -48,10 +48,13 @@ class DataUtility:
             binnum = random.randint(0,Binsize-1)
             for j in range(len(df)): 
                 if df.iloc[j][len(df.columns)-1] == i: 
-                    bins[binnum] = bins[binnum].append(df.loc[j],ignore_index=True)
+                    bins[binnum] = bins[binnum].append(df.iloc[j],ignore_index=True)
                     binnum += 1 
                     if binnum == 10: 
                         binnum = 0 
+        #Return the list of Bins 
+        for i in range(Binsize):
+            bins[i] = bins[i].to_numpy()
         return bins 
             
 
@@ -182,7 +185,22 @@ class DataUtility:
         full_set = remainder.to_numpy()
         # return the headers, full set, tuning, and 10fold data
         return headers, full_set, tuning_data, tenFolds 
-
+    # this function takes in experiment ready data and returns all forms of data required for the experiment 
+    def generate_experiment_data_Categorical(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
+        # read in data set
+        df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
+        # save the column labels
+        headers = df.columns.values
+        # extract data from dataset to tune parameters
+        tuning_data, remainder = self.TuningData(df)
+        # convert the tuning data set to numpy array
+        tuning_data = tuning_data.to_numpy()
+        # split the remaining data into 10 chunks for 10fold cros validation
+        tenFolds = self.StratifyTenFold(remainder)
+        # save the full set as numpy array
+        full_set = remainder.to_numpy()
+        # return the headers, full set, tuning, and 10fold data
+        return headers, full_set, tuning_data, tenFolds 
 
 
 
@@ -208,15 +226,15 @@ if __name__ == '__main__':
     }
 
     print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/Vote/Votes.data"
-    Glass_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/ProcessedData/glass.csv"
-    Seg_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/ProcessedData/segmentation.csv"
+    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/vote.csv"
+    Glass_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/glass.csv"
+    Seg_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/segmentation.csv"
     df = pd.read_csv(Vote_Data)
     Df1 = DataUtility([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],False)
     dfs = Df1.ReplaceMissing(df)
     #print(dfs)
     # test = list() 
-    Tuning = Df1.StatifyTenFold(dfs)
+    Tuning = Df1.StratifyTenFold(dfs)
     for i in Tuning: 
         print(len(i))
     df = pd.read_csv(Glass_Data)
@@ -224,7 +242,7 @@ if __name__ == '__main__':
     dfs = Df1.ReplaceMissing(df)
     #print(dfs)
     # test = list() 
-    Tuning = Df1.StatifyTenFold(dfs)
+    Tuning = Df1.StratifyTenFold(dfs)
     for i in Tuning: 
         print(len(i))
     df = pd.read_csv(Seg_Data)
@@ -232,7 +250,7 @@ if __name__ == '__main__':
     dfs = Df1.ReplaceMissing(df)
     #print(dfs)
     # test = list() 
-    Tuning = Df1.StatifyTenFold(dfs)
+    Tuning = Df1.StratifyTenFold(dfs)
     for i in Tuning: 
         print(len(i))
     # bins = [] 
