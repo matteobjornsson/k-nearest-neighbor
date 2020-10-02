@@ -49,43 +49,43 @@ class kMeansClustering:
             if Data_set[i] == 'Y' or Data_set[i] == 'y': 
                 Data_set[i] = 0 
             if Data_set[i] == 'jan': 
-                Data_set[i] = 1/12
+                Data_set[i] = 0/11
             if Data_set[i] == 'feb' : 
-                Data_set[i] = 2/12
+                Data_set[i] = 1/11
             if Data_set[i] == 'mar': 
-                Data_set[i] = 3/12
+                Data_set[i] = 2/11
             if Data_set[i] == 'apr': 
-                Data_set[i] = 4/12
+                Data_set[i] = 3/11
             if Data_set[i] == 'may': 
-                Data_set[i] = 5/12
+                Data_set[i] = 4/11
             if Data_set[i] == 'jun': 
-                Data_set[i] = 6/12
+                Data_set[i] = 5/11
             if Data_set[i] == 'jul': 
-                Data_set[i] = 7 /12
+                Data_set[i] = 6 /11
             if Data_set[i] == 'aug': 
-                Data_set[i] = 8 /12
+                Data_set[i] = 7 /11
             if Data_set[i] == 'sep': 
-                Data_set[i] = 9 /12
-            if Data_set[i] == 'oct': 
-                Data_set[i] = 10 /12
+                Data_set[i] = 8 /11
+            if Data_set[i] == oct': 
+                Data_set[i] = 9 /11
             if Data_set[i] == 'nov': 
-                Data_set[i] = 11/12
+                Data_set[i] = 10/11
             if Data_set[i] == 'dec': 
-                Data_set[i] = 12/12
+                Data_set[i] = 11/11
             if Data_set[i] == 'mon' : 
-                Data_set[i] = 1/7
+                Data_set[i] = 0/6
             if Data_set[i] == 'tue': 
-                Data_set[i] = 2/7
+                Data_set[i] = 1/6
             if Data_set[i] == 'wed': 
-                Data_set[i] = 3/7
+                Data_set[i] = 2/6
             if Data_set[i] == 'thu': 
-                Data_set[i] = 4/7
+                Data_set[i] = 3/6
             if Data_set[i] == 'fri': 
-                Data_set[i] = 5/7
+                Data_set[i] = 4/6
             if Data_set[i] == 'sat': 
-                Data_set[i] = 6 /7
+                Data_set[i] = 5 /6
             if Data_set[i] == 'sun': 
-                Data_set[i] = 7 /7
+                Data_set[i] = 6 /6
             if Data_set[i] == 'M':
                 Data_set[i] = 1 /2
             if Data_set[i] == 'F': 
