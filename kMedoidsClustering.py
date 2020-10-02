@@ -146,5 +146,7 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
 
         d = len(headers)-1
+        kMC = kMedoidsClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
+        
 
     print("program end ")
