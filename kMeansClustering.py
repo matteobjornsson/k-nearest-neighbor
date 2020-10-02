@@ -3,7 +3,7 @@
 #################################################################### MODULE COMMENTS ############################################################################
 import numpy as np
 import DataUtility, Results
-import copy
+import copy, random
 
 
 class kMeansClustering:
@@ -22,13 +22,24 @@ class kMeansClustering:
     def generateClusterPoints(self):
         feature_values = [None] * self.d
         for i in self.categorical_features:
-            feature_values[i] = np.unique(self.dataSet[:,i])
+            print(self.dataSet[:,i])
+            feature_values[i] = np.unique(self.dataSet[:,i]).tolist()
             print("distinct features:", feature_values[i])
         for j in self.real_features:
+            print(self.dataSet[:,j])
             min = np.min(self.dataSet[:,j])
             max = np.max(self.dataSet[:,1])
             feature_values[j] = [min, max]
+            print("min:", min, "max:", max)
         points = []
+        for k in range(self.kValue):
+            new_point = [None] * self.d
+            for l in self.categorical_features:
+                new_point[l] = random.choice(feature_values[l])
+            for m in self.real_features:
+                new_point[m] = random.uniform(feature_values[m][0],feature_values[m][1])
+            points.append(new_point)
+        return points
 
 
         print("generating the cluster points")
@@ -66,8 +77,9 @@ if __name__ == '__main__':
 
     regression = [x for x in data_sets if regression_data_set[x]]
 
-    for i in range(len(data_sets)):
-        data_set = data_sets[i]
+    for i in range(1):
+        data_set = "vote"
+        
         print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
@@ -75,6 +87,6 @@ if __name__ == '__main__':
         test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
 
-        d = len(headers)
+        d = len(headers)-1
         kMC = kMeansClustering(kValue=d, dataSet=training, categorical_features=categorical_attribute_indices[data_set], d=d)
-        kMC.generateClusterPoints()
+        print(kMC.generateClusterPoints())
