@@ -9,6 +9,8 @@ import kNN
 import Results
 import math
 import numpy as np
+import EditedKNN
+import CondensedKNN
 #TESTING LIBRARY 
 import time 
 
@@ -98,11 +100,47 @@ def main():
         MetaData = list() 
         MetaData.append(data_set)
         MetaData.append("TRIAL: ")
-        print(classifications)
-        print(regression_data_set.get(data_set))
+        MetaData.append("KNN")
         #Create a list to store the Results that are generated above FOR TESTING 
         ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
-        print(ResultSet)
+       
+        #Now test the dataset on Edited KNN 
+        #Print the Results to a file 
+        Eknn = EditedKNN.EditedKNN( 
+            #Error
+            error = ResultSet[0] , 
+            #Feed in the square root of the length 
+            int(math.sqrt(len(full_set))), 
+            # supply mixed, real, categorical nature of features
+            feature_data_types[data_set],
+            #Feed in the categorical attribute indicies stored in a global array 
+            categorical_attribute_indices[data_set],
+            #Store the data set key for the dataset name 
+            regression_data_set[data_set],
+            # weight for real distance
+            alpha=1,
+            # weight for categorical distance
+            beta=1,
+            # kernel window size
+            h=.5,
+            #Set the dimensionality of the data set in KNN
+            d=ds)
+        classifications = Eknn.classify(training, test)
+        MetaData = list() 
+        MetaData.append(data_set)
+        MetaData.append("TRIAL: ")
+        MetaData.append("EDITED KNN")
+        ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
+        
+        #Now test the dataset on Condensed KNN 
+        #Print the Results to a file 
+        MetaData = list() 
+        MetaData.append(data_set)
+        MetaData.append("TRIAL: ")
+        MetaData.append("CONDENSED KNN")
+
+        
+
         
 
     #Print some meta data to the screen letting the user know the program is ending 

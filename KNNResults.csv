@@ -60,3 +60,9 @@ fire,TRIAL: ,Mean Absolute Error,13.844187870999836,Mean Squared Error,1209.7515
 
 machine,TRIAL: ,Mean Absolute Error,46.39576128571276,Mean Squared Error,4881.213241262634,
 
+abalone,TRIAL: ,Mean Absolute Error,1.487726171982406,Mean Squared Error,4.364772129881643,
+
+segmentation,TRIAL: ,KNN,Zero One ,90.47619047619048,F1 Score,90.34013605442178,
+
+segmentation,TRIAL: ,KNN,Zero One ,78.94736842105263,F1 Score,78.15789473684211,
+
