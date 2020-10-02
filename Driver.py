@@ -58,6 +58,7 @@ def main():
             headers, full_set, tuning_data, tenFolds = du.generate_experiment_data_Categorical(data_set)
         else:
             headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
+
         # dimensionality of data set
         ds = len(headers) - 1
         #Print the data to the screen for the user to see 

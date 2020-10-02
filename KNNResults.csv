@@ -34,3 +34,29 @@ machine,TRIAL: ,Mean Absolute Error,23.750807099842785,Mean Squared Error,1329.2
 
 abalone,TRIAL: ,Mean Absolute Error,1.5841145263650165,Mean Squared Error,5.870356601244051,
 
+fire,TRIAL: ,Mean Absolute Error,14.977005892790974,Mean Squared Error,958.8711994468836,
+
+machine,TRIAL: ,Mean Absolute Error,30.08954360680992,Mean Squared Error,1752.9961399212402,
+
+fire,TRIAL: ,Mean Absolute Error,17.730871972766042,Mean Squared Error,1475.95050535317,
+
+machine,TRIAL: ,Mean Absolute Error,40.5035244952375,Mean Squared Error,7080.105493458561,
+
+segmentation,TRIAL: ,Zero One ,82.35294117647058,F1 Score,81.37254901960785,
+
+vote,TRIAL: ,Zero One ,87.17948717948718,F1 Score,87.33488733488734,
+
+glass,TRIAL: ,Zero One ,68.42105263157895,F1 Score,62.55060728744939,
+
+fire,TRIAL: ,Mean Absolute Error,33.43696405263141,Mean Squared Error,25085.017177072288,
+
+segmentation,TRIAL: ,Zero One ,78.94736842105263,F1 Score,78.0701754385965,
+
+vote,TRIAL: ,Zero One ,82.05128205128204,F1 Score,82.26884226884226,
+
+glass,TRIAL: ,Zero One ,68.42105263157895,F1 Score,62.406015037593974,
+
+fire,TRIAL: ,Mean Absolute Error,13.844187870999836,Mean Squared Error,1209.7515721856487,
+
+machine,TRIAL: ,Mean Absolute Error,46.39576128571276,Mean Squared Error,4881.213241262634,
+

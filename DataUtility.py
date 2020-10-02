@@ -52,6 +52,9 @@ class DataUtility:
                     binnum += 1 
                     if binnum == 10: 
                         binnum = 0 
+        #Return the list of Bins 
+        for i in range(Binsize):
+            bins[i] = bins[i].to_numpy()
         return bins 
             
 
@@ -190,7 +193,6 @@ class DataUtility:
         headers = df.columns.values
         # extract data from dataset to tune parameters
         tuning_data, remainder = self.TuningData(df)
-        print(remainder)
         # convert the tuning data set to numpy array
         tuning_data = tuning_data.to_numpy()
         # split the remaining data into 10 chunks for 10fold cros validation
