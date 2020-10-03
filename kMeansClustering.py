@@ -46,57 +46,105 @@ class kMeansClustering:
 
 
     def ConvertData(self,data_set_row):
+        #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
+            #if the value is a N or an n from the vote data cast to a 1 
             if data_set_row[i] == 'N' or data_set_row[i] == 'n': 
+                #Conver the value to 1 
                 data_set_row[i] = 1
+            #If the value that we are taking in from the vote data is a y 
             if data_set_row[i] == 'Y' or data_set_row[i] == 'y': 
+                #Set the value to be a 0 
                 data_set_row[i] = 0 
+            #If the data from the forest fire is jan 
             if data_set_row[i] == 'jan': 
+                #Set the value to 0 
                 data_set_row[i] = 0/11
+            #If the data from the forest fire is feb
             if data_set_row[i] == 'feb' : 
+                #Set the value to be the value of the month divided by the total number of months starting from 0 
                 data_set_row[i] = 1/11
+            #If the data from the forest fire is mar
             if data_set_row[i] == 'mar': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 2/11
+            #If the data from the forest fire is apr
             if data_set_row[i] == 'apr': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 3/11
+            #If the data from the forest fire is may
             if data_set_row[i] == 'may': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 4/11
+            #If the data from the forest fire is jun
             if data_set_row[i] == 'jun': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 5/11
+            #If the data from the forest fire is jul
             if data_set_row[i] == 'jul': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 6 /11
+            #If the data from the forest fire is aug
             if data_set_row[i] == 'aug': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 7 /11
+            #If the data from the forest fire is sep
             if data_set_row[i] == 'sep': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 8 /11
+            #If the data from the forest fire is oct
             if data_set_row[i] == 'oct':
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 9 /11
+            #If the data from the forest fire is nov
             if data_set_row[i] == 'nov': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 10/11
+            #If the data from the forest fire is dec
             if data_set_row[i] == 'dec': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 11/11
+            #If the day of the week is Monday
             if data_set_row[i] == 'mon' : 
+                #Set the value to be 0  
                 data_set_row[i] = 0/6
+            #If the day of the week is Tuesday
             if data_set_row[i] == 'tue': 
+                #Set the value to be the 1st day divide by 6 days 
                 data_set_row[i] = 1/6
+            #If the day of the week is Wednesdayu
             if data_set_row[i] == 'wed': 
+                #Set the value to be the 2nd day divide by 6 days 
                 data_set_row[i] = 2/6
+            #If the day of the week is Thursday
             if data_set_row[i] == 'thu': 
+                #Set the value to be the 3rd day divide by 6 days 
                 data_set_row[i] = 3/6
+            #If the day of the week is Friday
             if data_set_row[i] == 'fri': 
+                #Set the value to be the 4th day divide by 6 days 
                 data_set_row[i] = 4/6
-            if data_set_row[i] == 'sat': 
+            #If the day of the week is Saturday
+            if data_set_row[i] == 'sat':
+                #Set the value to be the 5th day divide by 6 days  
                 data_set_row[i] = 5 /6
-            if data_set_row[i] == 'sun': 
+            #If the value is sunday 
+            if data_set_row[i] == 'sun':
+                #Set the value to 1  
                 data_set_row[i] = 6 /6
+            #If the value is male 
             if data_set_row[i] == 'M':
+                #Set the value to be .5
                 data_set_row[i] = 1 /2
-            if data_set_row[i] == 'F': 
+            #If the value if female 
+            if data_set_row[i] == 'F':
+                #Set the value to be 1  
                 data_set_row[i] = 2 /2
-            if data_set_row[i] == 'I': 
+            #if the value is infant 
+            if data_set_row[i] == 'I':
+                #Set the value to 0  
                 data_set_row[i] = 0  /2
-
-
+        #Return the updated dataset 
         return data_set_row
 
 
