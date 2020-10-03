@@ -26,7 +26,8 @@ class kMeansClustering:
         # bin width for gaussian kernel smoother
         h: float,
         # dimensionality of data set (# features)
-        d: int):
+        d: int,
+        name: str):
 
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
@@ -37,28 +38,19 @@ class kMeansClustering:
             real_features.remove(i)
         self.real_features = real_features
         self.kValue = kValue
-
+       
         for j in range(len(dataSet)):
-            dataSet[j] = self.ConvertData(dataSet[j])
+            dataSet[j] = self.ConvertData(dataSet[j],name)
         self.dataSet = dataSet
+        if name == "machine": 
+            self.dataSet = np.delete(dataSet,0,axis=1)
+            self.dataSet = np.delete(dataSet,0,axis=1)
+
         # dimensionality of data set
         self.d = d
 
 
     def ConvertData(self,data_set_row, Name):
-
-        #If the dataset is machine 
-        if Name == 'machine': 
-            #Drop the first 2 columns
-            data_sets = deepcopy(data_set_row)
-            temp = list() 
-            temp = data_set_row.tolist() 
-            temp.remove(temp[0])
-            temp.remove(temp[0])
-            data_sets = np.array(temp)
-            data_set_row = data_sets 
-
-
         #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
             #if the value is a N or an n from the vote data cast to a 1 
@@ -305,7 +297,8 @@ if __name__ == '__main__':
     regression = [x for x in data_sets if regression_data_set[x]]
 
     for i in range(1):
-        data_set = "vote"
+        data_set = "machine"
+        name = "machine"
 
         print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -315,7 +308,7 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
 
         d = len(headers)-1
-        kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
+        kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name)
         print(kMC.generate_cluster_centroids())
         print(kMC.dataSet)
 
