@@ -197,6 +197,12 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
+        # centroids    
+        #[c0, c1, c2, c3]
+        # centroid assignments ex 1
+        #[0, 2, 3, 1, 0, 1, 2, 3]
+        # ex 2
+        #[0, 0, 0, 0, 0, 0, 1]
 
         #Create a new list for mediod mean values 
         New_centroid = list() 
@@ -205,7 +211,7 @@ class kMeansClustering:
         for i in centroid_assignments: 
             if i not in Centroid_total: 
                 Centroid_total.append(i)
-    
+        # iterate through centroids with data points assigned to it
         for i in Centroid_total: 
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
@@ -218,31 +224,30 @@ class kMeansClustering:
                     centroidTuples.append(j)
             #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
-            Rows = len(data[0])-1
+            # Rows = len(data[0])-1
            
             #Create a new list to store row mean 
-            Row_Mean = list()
-            #For each of the rows in the dataset 
-            for j in range(Rows): 
+            Mean = list()
+            #For each of the features in the dataset 
+            for j in range(self.d): 
                 
                 #Set the row count to 0 
-                rowcount = 0 
+                count = 0 
                 #Store the total number of rows in the dataset 
                 total = len(centroidTuples)
                 #Loop through all of the rows in the data set 
                 for z in range(len(centroidTuples)): 
                     #Add the value to the row count
-                    rowcount += data[centroidTuples[z]][j]
-                    print(rowcount)
-                print(rowcount)
+                    count += data[centroidTuples[z]][j]
+                
                 #Take the row count and divide by the total number of rows in the data set
-                rowcount = rowcount / total 
+                count = count / total 
 
                 #Append the value to the list to store 
-                Row_Mean.append(rowcount)
+                Mean.append(rowcount)
 
             #Add the entire mediods mean data to a centroid value
-            New_centroid.append(Row_Mean)
+            New_centroid.append(Mean)
         #Return the mean values for each feature for each centroid its a lists of lists of lists 
         numps = np.array(New_centroid)
         return numps
