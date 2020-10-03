@@ -45,15 +45,25 @@ class kMedoidsClustering:
 
 
     def choose_random_medoids(self):
+        #Create a new empty array 
         indices = []
+        #Loop through the number of neighbros we are looking at 
         for k in range(self.kValue):
+            #SEt te index to be a random value within the dataset 
             index = random.randint(0, len(self.dataSet)-1)
+            #Loop through each of the indexs in the indices list 
             while index in indices:
+                #Set the index to a random value in the data set 
                 index = random.randint(0, len(self.dataSet)-1)
+            #Append the index to the arary 
             indices.append(index)
+        #Create an empty list 
         medoids = []
+        #For each of the indices 
         for i in indices:
+            #Append to medoids the value of the indicies 
             medoids.append([i, self.dataSet[i]].reshape(1, self.dataSet.shape[1]))
+        #Return the numpy array 
         return np.concatenate(medoids)
 
     # find the nearest medoid to given sample, return the medoid index
@@ -76,13 +86,21 @@ class kMedoidsClustering:
         return medoid_assignments
 
     def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> float:
+        #Set the distortion value to 0
         distortion = 0
+        #Loop through the number of indices in the medoids array 
         for i in range(len(medoids)):
+            #Store the current medoid we are looking at 
             m = medoids[i]
+            #Set a value to be the NP array of the data points that are in the medoids cluster 
             points_in_cluster = np.concatenate([data[x].reshape(1, data.shape[1]) for x, j in enumerate(medoid_assignments) if j == i])
+            #Set the point distances from the neighbors that the given point is looking at 
             point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
+            #For each of the points above 
             for point in point_distances:
+                #Add the distortion value to the variable for each of the points 
                 distortion += (point[0])**2
+        #Return the distortion 
         return distortion
             
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
