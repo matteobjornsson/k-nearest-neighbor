@@ -51,7 +51,9 @@ class kMeansClustering:
         if Name == 'machine': 
             #Drop the first 2 columns
             data_sets = deepcopy(data_set_row)
-            data_sets = [None * len(data_set_row)]
+            temp = list() 
+            temp = data_set_row.tolist() 
+            data_sets = np.array(temp)
             count = 0 
             for i in range(len(data_set_row)): 
                 if count == 0 or count == 1: 
