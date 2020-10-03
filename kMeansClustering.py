@@ -32,7 +32,7 @@ class kMeansClustering:
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, [], regression_data_set, alpha, beta, h, d)
         self.categorical_features = []
-
+        self.itermax = 5
         self.kValue = kValue
         
 
@@ -190,23 +190,28 @@ class kMeansClustering:
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
         #Create a new list for mediod mean values 
         New_centroid = list() 
-        #For each of the centroid 
-        for i in range(len(centroids)): 
+        #For each of the centroid
+        Centroid_total = list()  
+        for i in centroid_assignments: 
+            if i not in Centroid_total: 
+                Centroid_total.append(i)
+        for i in Centroid_total: 
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
             #For each of the centroids 
             for j in centroid_assignments:
+               
                 #If the assignment is in a given centroid  
-                if centroids[i] == j: 
+                if i == j: 
                     #Append the value to the list 
-                    centroidTuples.append(i)
+                    centroidTuples.append(j)
             #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
             Rows = len(data[0])
             #Create a new list to store row mean 
             Row_Mean = list()
             #For each of the rows in the dataset 
-            for j in Rows: 
+            for j in range(Rows): 
                 #Set the row count to 0 
                 rowcount = 0 
                 #Store the total number of rows in the dataset 
@@ -222,7 +227,8 @@ class kMeansClustering:
             #Add the entire mediods mean data to a centroid value
             New_centroid.append(Row_Mean)
         #Return the mean values for each feature for each centroid its a lists of lists of lists 
-        return New_centroid
+        numps = np.array(New_centroid)
+        return numps
 
     def generate_cluster_centroids(self):
         #Store the centroid from a random centroid value generated 
