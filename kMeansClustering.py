@@ -9,6 +9,8 @@ import copy, random
 class kMeansClustering:
     
     def __init__(self,
+        # number of neighbors in knn
+        kNeighbors: int,
         # number of clusters
         kValue: int,
         # data to cluster
@@ -31,6 +33,7 @@ class kMeansClustering:
 
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, [], regression_data_set, alpha, beta, h, d)
+        self.knn = kNN.kNN(kNeighbors, data_type, [], regression_data_set, alpha, beta, h, d)
         self.categorical_features = []
         self.itermax = 5
         self.kValue = kValue
@@ -247,6 +250,7 @@ class kMeansClustering:
             updated_centroids = self.update_centroid_positions(updated_centroids, second_assignment, self.dataSet)
             #Increment Count 
             count += 1
+            print(count)
             #If the frist assignment is equal to the second assignment or the count is greater than the iteration limit set for a given object
             if first_assignment == second_assignment or count > self.itermax:
                 #Break out of the loop
@@ -256,7 +260,10 @@ class kMeansClustering:
         #Return the updated centroids 
         return updated_centroids
 
-
+    # simple classify method that mirrors KNN, exept with the centroids as training set
+    def classify(self, test):
+        centroids = self.generate_cluster_centroids()
+        return self.knn.classify(centroids, test)
 
 
 ####################################### UNIT TESTING #################################################
