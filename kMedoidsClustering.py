@@ -152,11 +152,16 @@ class kMedoidsClustering:
 
             # code for indicating if the medoid assignments are changing
             count += 1
+            #Create an empty array 
             changing_assignments = []
+            #For each of the values until the first assignment 
             for i in range(len(first_assignment)):
+                #If the first assignment is not equal to the second assignment value 
                 if first_assignment[i] != second_assignment[i]:
+                    #Store thevalue off 
                     changing_assignments.append(i)
             print("medoid assignments that are changing", changing_assignments)
+            #If the first is equal to the second or we are beyond the iteration limit set 
             if first_assignment == second_assignment or count > self.itermax:
                 #Break 
                 break
