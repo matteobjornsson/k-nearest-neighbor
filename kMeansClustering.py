@@ -170,6 +170,7 @@ class kMeansClustering:
         for k in range(self.kValue):
             # generate a new vector of dimension d, values randomly assigned between 0 and 1
             new_point = [random.uniform(0,1) for f in range(self.d)]
+            new_point.append(1.1)
             # append that new centroid vector to the list of points
             points.append(new_point)
         # return all points as a numpy array    
@@ -178,7 +179,7 @@ class kMeansClustering:
     # find the nearest centroid to given sample, return the centroid index
     def closest_centroid_to_point(self, point: list, centroids: np.ndarray) -> list:
         # use the knn get_neighor class method to find the closest centroid 
-        centroid = self.nn.get_k_neighbors(centroids, point, k=1)
+        centroid = self.nn.get_k_neighbors(centroids, point, 1)
         # return the centroid index, element 1 of [distance, index, response var]
         # print(centroid)
         return centroid[0][1]
@@ -326,7 +327,7 @@ if __name__ == '__main__':
         test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
         d = len(headers)-1
-        kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
+        kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
         print(kMC.generate_cluster_centroids())
         #print(kMC.dataSet)
 
