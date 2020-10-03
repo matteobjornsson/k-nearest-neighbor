@@ -216,10 +216,9 @@ class kMeansClustering:
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
             #For each of the centroids 
-            for j in centroid_assignments:
-               
-                #If the assignment is in a given centroid  
-                if i == j: 
+            for j in range(len(centroid_assignments)):
+                #If the assignment is in a given range  
+                if i == centroid_assignments[j]: 
                     #Append the value to the list 
                     centroidTuples.append(j)
             #Now we have a list of all records in the data array that belong to a specific centroid 
@@ -236,15 +235,15 @@ class kMeansClustering:
                 #Store the total number of rows in the dataset 
                 total = len(centroidTuples)
                 #Loop through all of the rows in the data set 
-                for z in range(len(centroidTuples)): 
-                    #Add the value to the row count
-                    count += data[centroidTuples[z]][j]
-                
+                for z in centroidTuples: 
+                    count += data[z][j]
+            
                 #Take the row count and divide by the total number of rows in the data set
                 count = count / total 
 
                 #Append the value to the list to store 
                 Mean.append(count)
+            Mean.append(1)
             Mean = np.array(Mean)
             #Add the entire mediods mean data to a centroid value
             centroids[i] = Mean
@@ -286,6 +285,9 @@ class kMeansClustering:
         for i in centroids: 
             print(i)
         return self.knn.classify(centroids, self.Testdata)
+    def CentroidClass(self,centroids):
+        pass
+
 
 
 ####################################### UNIT TESTING #################################################
