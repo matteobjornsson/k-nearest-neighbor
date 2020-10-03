@@ -244,13 +244,12 @@ class kMeansClustering:
                 count = count / total 
 
                 #Append the value to the list to store 
-                Mean.append(rowcount)
-
+                Mean.append(count)
+            Mean = np.array(Mean)
             #Add the entire mediods mean data to a centroid value
-            New_centroid.append(Mean)
-        #Return the mean values for each feature for each centroid its a lists of lists of lists 
-        numps = np.array(New_centroid)
-        return numps
+            centroids[i] = Mean
+        #Return the mean values for each feature for each centroid its a lists of lists of lists         
+        return centroids
 
     def generate_cluster_centroids(self):
         #Store the centroid from a random centroid value generated 
