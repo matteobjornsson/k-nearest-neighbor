@@ -105,8 +105,9 @@ class kMedoidsClustering:
             point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
             #For each of the points above 
             for point in point_distances:
+                distance_from_m = point[0]
                 #Add the distortion value to the variable for each of the points 
-                distortion += (point[0])**2
+                distortion += (distance_from_m)**2
         #Return the distortion 
         return distortion
             
