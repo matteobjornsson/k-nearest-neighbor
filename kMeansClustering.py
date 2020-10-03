@@ -255,6 +255,10 @@ class kMeansClustering:
         #Return the updated centroids 
         return updated_centroids
 
+
+
+
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],
@@ -301,3 +305,5 @@ if __name__ == '__main__':
         kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
         print(kMC.generate_cluster_centroids())
         print(kMC.dataSet)
+
+####################################### UNIT TESTING #################################################

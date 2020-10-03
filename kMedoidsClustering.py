@@ -104,14 +104,23 @@ class kMedoidsClustering:
         return distortion
             
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
+        #Loop through the nunmber of indicies in the medoids array (Total number of medoids )
         for i in range(len(medoids)):
+            #Store off the distortion value calculated in the above functions 
             distortion = self.distortion(medoids, medoid_assignments, data)
+            #For each of the data points 
             for x in data:
+                #Set a copy of the medoids above 
                 new_medoids = copy.deepcopy(medoids)
+                #Story off a given array to be a copy of the value x in data 
                 new_medoids[i] = copy.deepcopy(x)
+                #Calculate a new distortion from the copies above 
                 new_distortion = self.distortion(new_medoids, medoid_assignments, data)
+                #If the new distortion is less than the distortion calculated above 
                 if new_distortion < distortion:
+                    #Store off a deep copy of the dataset 
                     medoids[i] = copy.deepcopy(x)
+        #Return the medoids array 
         return medoids
 
     def generate_cluster_medoids(self):
@@ -130,6 +139,7 @@ class kMedoidsClustering:
 
 
 
+####################################### UNIT TESTING #################################################
 
 if __name__ == '__main__':
     print("program Start")
@@ -179,3 +189,4 @@ if __name__ == '__main__':
 
 
     print("program end ")
+    ####################################### UNIT TESTING #################################################
