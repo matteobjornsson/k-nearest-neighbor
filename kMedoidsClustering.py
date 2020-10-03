@@ -40,6 +40,7 @@ class kMedoidsClustering:
         self.dataSet = dataSet
         # dimensionality of data set
         self.d = d
+        self.itermax = 5 
 
  
 
@@ -73,13 +74,13 @@ class kMedoidsClustering:
     
     # assign each data point in data set to the nearest medoid. This is stored in an array
     # as an integer representing the medoid index at the index of the point belonging to it. 
-    def assign_all_points_to_closest_medoid(self, centriods: np.ndarray, data: np.ndarray) -> list:
+    def assign_all_points_to_closest_medoid(self, medoids: np.ndarray, data: np.ndarray) -> list:
         medoid_assignments = [None] * len(data)
         # for each data point
         for i in range(len(data)):
             x = data[i].tolist()[:-1]
             # store the index of the medoid at the index corresponding to the sample position
-            medoid_assignments[i] = self.closest_medoid_to_point(x, centriods)
+            medoid_assignments[i] = self.closest_medoid_to_point(x, medoids)
         # return the list of indices
         return medoid_assignments
 
@@ -101,13 +102,15 @@ class kMedoidsClustering:
                 if x_assignment == i:
                     # get the point and reshape it into a np array that can be concatenated together
                     points_in_cluster.append(data[n].reshape(1, data.shape[1]))
-            # use the knn method "get_k_neighbors" to calculate the distance from current medoid m to all points in the cluster
-            point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
-            #For each of the points above 
-            for point in point_distances:
-                distance_from_m = point[0]
-                #Add the distortion value to the variable for each of the points 
-                distortion += (distance_from_m)**2
+            if len(points_in_cluster) > 0:    
+                points_in_cluster = np.concatenate(points_in_cluster)
+                # use the knn method "get_k_neighbors" to calculate the distance from current medoid m to all points in the cluster
+                point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
+                #For each of the points above 
+                for point in point_distances:
+                    distance_from_m = point[0]
+                    #Add the distortion value to the variable for each of the points 
+                    distortion += (distance_from_m)**2
         #Return the distortion 
         return distortion
             
@@ -126,8 +129,7 @@ class kMedoidsClustering:
                 new_distortion = self.distortion(new_medoids, medoid_assignments, data)
                 #If the new distortion is less than the distortion calculated above 
                 if new_distortion < distortion:
-                    #Store off a deep copy of the sample x that is the new medoid 
-                    print("updating medoid for cluster", i)
+                    #Store off a deep copy of the sample x that is the new medoid
                     print("old medoid:", medoids[i])
                     print("new medoid:", x)
                     medoids[i] = copy.deepcopy(x)
