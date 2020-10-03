@@ -196,7 +196,6 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
-        
         #Create a new list for mediod mean values 
         New_centroid = list() 
         #For each of the centroid
@@ -204,6 +203,7 @@ class kMeansClustering:
         for i in centroid_assignments: 
             if i not in Centroid_total: 
                 Centroid_total.append(i)
+        print(Centroid_total)
         for i in Centroid_total: 
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
@@ -217,10 +217,12 @@ class kMeansClustering:
             #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
             Rows = len(data[0])-1
+           
             #Create a new list to store row mean 
             Row_Mean = list()
             #For each of the rows in the dataset 
             for j in range(Rows): 
+                
                 #Set the row count to 0 
                 rowcount = 0 
                 #Store the total number of rows in the dataset 
@@ -229,13 +231,17 @@ class kMeansClustering:
                 for z in range(len(centroidTuples)): 
                     #Add the value to the row count
                     rowcount += data[centroidTuples[z]][j]
+
                 #Take the row count and divide by the total number of rows in the data set
                 rowcount = rowcount / total 
                 #Append the value to the list to store 
                 Row_Mean.append(rowcount)
+                
             #Add the entire mediods mean data to a centroid value
             New_centroid.append(Row_Mean)
         #Return the mean values for each feature for each centroid its a lists of lists of lists 
+        print("NEW CENTROID")
+        print(New_centroid)
         numps = np.array(New_centroid)
         return numps
 
@@ -246,6 +252,7 @@ class kMeansClustering:
         first_assignment = self.assign_all_points_to_closest_centroid(centroids, self.dataSet)
         #Store the updated centroids for later recall 
         updated_centroids = self.update_centroid_positions(centroids, first_assignment, self.dataSet)
+        print(updated_centroids)
         #Set a counter variable to 0 
         count = 0
         #Continue to loop until we explicitly say break 
@@ -269,6 +276,9 @@ class kMeansClustering:
     # simple classify method that mirrors KNN, exept with the centroids as training set
     def classify(self):
         centroids = self.generate_cluster_centroids()
+        print("CLASSIFICATION RESULTS ======================================")
+        for i in centroids: 
+            print(i)
         return self.knn.classify(centroids, self.Testdata)
 
 
@@ -315,10 +325,9 @@ if __name__ == '__main__':
         # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
         test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
-
         d = len(headers)-1
         kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
         print(kMC.generate_cluster_centroids())
-        print(kMC.dataSet)
+        #print(kMC.dataSet)
 
 ####################################### UNIT TESTING #################################################
