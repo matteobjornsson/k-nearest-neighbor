@@ -125,7 +125,10 @@ class kMedoidsClustering:
                 new_distortion = self.distortion(new_medoids, medoid_assignments, data)
                 #If the new distortion is less than the distortion calculated above 
                 if new_distortion < distortion:
-                    #Store off a deep copy of the dataset 
+                    #Store off a deep copy of the sample x that is the new medoid 
+                    print("updating medoid for cluster", i)
+                    print("old medoid:", medoids[i])
+                    print("new medoid:", x)
                     medoids[i] = copy.deepcopy(x)
             print("updating medoid for cluster", i)
         return medoids
@@ -146,6 +149,8 @@ class kMedoidsClustering:
             #Store the updated medoids from the second assignment values calculated above 
             updated_medoids = self.update_medoids(updated_medoids, second_assignment, self.dataSet)
             #Increment count 
+
+            # code for indicating if the medoid assignments are changing
             count += 1
             changing_assignments = []
             for i in range(len(first_assignment)):
