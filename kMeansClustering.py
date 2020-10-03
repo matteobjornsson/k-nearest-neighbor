@@ -277,6 +277,7 @@ class kMeansClustering:
             #Set the frist assignment to the second assignment 
             first_assignment = second_assignment
         #Return the updated centroids 
+        updated_centroids = self.CentroidClassify(updated_centroids, second_assignment, self.dataSet)
         return updated_centroids
 
     # simple classify method that mirrors KNN, exept with the centroids as training set
@@ -288,10 +289,30 @@ class kMeansClustering:
         return self.knn.classify(centroids, self.Testdata)
 
 
-    def CentroidClassify(centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
+    def CentroidClassify(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
+        # for c in centroids:
+        #     centroid = c.tolist()[:-1]
+        #     assert len(centroid == self.d)
+        #     neighbor = self.nn.get_k_neighbors(self.dataSet, centroid, 1)
         
-        
+        #get all centroid members
+        centroid_members = [[] for i in range(len(centroids))]
+        for i in range(len(centroids)):
+            for j in range(len(centroid_assignments)):
+                owner = centroid_assignments[j]
+                centroid_members[owner].append(data[j])
+        for k in range(len(centroids)):
+            centroids[k] = np.array(centroids[k])
 
+        for i in range(len(centroids)):
+            centroid = centroids[i] 
+            members = centroid_members[i]
+
+            member_knn = copy.deepcopy(self.knn)
+            member_knn.k = len(members)
+            classifications = member_knn.classify(members, centroid)
+            ground_truth, guess = classifications[0]
+            centroids[i][-1] = guess
         return centroids
 
 
