@@ -30,11 +30,11 @@ class kMedoidsClustering:
         # dimensionality of data set (# features)
         d: int,
         # pass in the test data set at init 
-        testData: np.ndarray):
+        Testdata: np.ndarray):
 
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
-        self.knn = kNN.kNN(self.kNeighbors, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
+        self.knn = kNN.kNN(kNeighbors, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
         self.categorical_features = categorical_features
         # save which features are real as well by deleting categorical indices from a new list
         real_features = list(range(d))
@@ -46,7 +46,7 @@ class kMedoidsClustering:
         # dimensionality of data set
         self.d = d
         self.itermax = 5 
-        self.testData = testData
+        self.Testdata = Testdata
 
  
 
@@ -181,7 +181,7 @@ class kMedoidsClustering:
 
     def classify(self):
         medoids = self.generate_cluster_medoids()
-        return self.knn.classify(medoids, self.testData)
+        return self.knn.classify(medoids, self.Testdata)
 
 ####################################### UNIT TESTING #################################################
 

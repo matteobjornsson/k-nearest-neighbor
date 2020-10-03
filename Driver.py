@@ -76,7 +76,7 @@ def main():
             #Append all data folds to the training data set
             training = np.concatenate(tenFolds[1:])
             if k >= len(training)/2:
-                k = k 
+                k = 0 
             else: 
                 k +=1
             #Print the length of the first array for debugging
@@ -111,6 +111,8 @@ def main():
             MetaData.append(data_set)
             MetaData.append("TRIAL: ")
             MetaData.append("KNN")
+            MetaData.append("K Value: ")
+            MetaData.append(k)
             #Create a list to store the Results that are generated above FOR TESTING 
             ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
             #Now test the dataset on Edited KNN 
@@ -139,6 +141,8 @@ def main():
             MetaData.append(data_set)
             MetaData.append("TRIAL: ")
             MetaData.append("EDITED KNN")
+            MetaData.append("K Value: ")
+            MetaData.append(k)
             ResultSet = list() 
             ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
             print("EDITED FINISHED") 
@@ -148,6 +152,8 @@ def main():
             MetaData.append(data_set)
             MetaData.append("TRIAL: ")
             MetaData.append("CONDENSED KNN")
+            MetaData.append("K Value: ")
+            MetaData.append(k)
             Cknn = CondensedKNN.CondensedKNN( 
                 ResultSet[1],
                 #Feed in the square root of the length 
@@ -174,6 +180,8 @@ def main():
             MetaData.append(data_set)
             MetaData.append("TRIAL:")
             MetaData.append("KMEANS CLUSTERING")
+            MetaData.append("K Value: ")
+            MetaData.append(k)
             kmean = kMeansClustering.kMeansClustering(k,kValue=k, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=ds,name=data_set,Testdata= test)
 
             classifications = kmean.classify()
@@ -183,27 +191,10 @@ def main():
             MetaData.append(data_set)
             MetaData.append("TRIAL:")
             MetaData.append("KMEDOIDS CLUSTERING")
-            medoids = kMedoidsClustering.kMedoidsClustering(
-                ResultSet[1],
-                #Feed in the square root of the length 
-                int(math.sqrt(len(full_set))), 
-                # supply mixed, real, categorical nature of features
-                feature_data_types[data_set],
-                #Feed in the categorical attribute indicies stored in a global array 
-                categorical_attribute_indices[data_set],
-                #Store the data set key for the dataset name 
-                regression_data_set[data_set],
-                # weight for real distance
-                alpha=1,
-                # weight for categorical distance
-                beta=1,
-                # kernel window size
-                h=.5,
-                #Set the dimensionality of the data set in KNN
-                d=ds
-
-            )
-            classifications = medoids.classify(training, test)
+            MetaData.append("K Value: ")
+            MetaData.append(k)
+            medoids = kMedoidsClustering.kMedoidsClustering(kNeighbors=k,kValue=k, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=ds,Testdata= test)
+            classifications = medoids.classify()
             ResultSet = list() 
             ResultSet = ResultObject.StartLossFunction(regression_data_set.get(data_set),classifications, MetaData)
 
