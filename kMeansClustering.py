@@ -197,6 +197,8 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
+        print("TOTAL NUMBER OF Data points we are looking at ")
+        print(len(data))
         #Create a new list for mediod mean values 
         New_centroid = list() 
         #For each of the centroid
@@ -204,6 +206,7 @@ class kMeansClustering:
         for i in centroid_assignments: 
             if i not in Centroid_total: 
                 Centroid_total.append(i)
+        print("CENTROID ARRAY UNIQUE VALUES ")
         print(Centroid_total)
         for i in Centroid_total: 
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
@@ -232,7 +235,6 @@ class kMeansClustering:
                 for z in range(len(centroidTuples)): 
                     #Add the value to the row count
                     rowcount += data[centroidTuples[z]][j]
-
                 #Take the row count and divide by the total number of rows in the data set
                 rowcount = rowcount / total 
                 #Append the value to the list to store 
@@ -241,7 +243,7 @@ class kMeansClustering:
             #Add the entire mediods mean data to a centroid value
             New_centroid.append(Row_Mean)
         #Return the mean values for each feature for each centroid its a lists of lists of lists 
-        print("NEW CENTROID")
+        print("NEW CENTROID Means")
         print(New_centroid)
         numps = np.array(New_centroid)
         return numps
@@ -329,6 +331,7 @@ if __name__ == '__main__':
         d = len(headers)-1
         kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
         print(kMC.generate_cluster_centroids())
+        print(kMC.classify())
         #print(kMC.dataSet)
 
 ####################################### UNIT TESTING #################################################
