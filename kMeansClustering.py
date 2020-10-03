@@ -56,12 +56,6 @@ class kMeansClustering:
             temp.remove(temp[0])
             temp.remove(temp[0])
             data_sets = np.array(temp)
-            count = 0 
-            for i in range(len(data_set_row)): 
-                if count == 0 or count == 1: 
-                    count+=1 
-                    continue
-                data_sets[i] = data_set_row[i]
             data_set_row = data_sets 
 
 
