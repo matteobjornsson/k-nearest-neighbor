@@ -29,7 +29,8 @@ class kMeansClustering:
         h: float,
         # dimensionality of data set (# features)
         d: int,
-        name: str):
+        name: str, 
+        Testdata: np.ndarray):
 
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, [], regression_data_set, alpha, beta, h, d)
@@ -38,6 +39,9 @@ class kMeansClustering:
         self.itermax = 5
         self.kValue = kValue
         
+        for j in range(len(Testdata)): 
+            Testdata[j] = self.ConvertData(Testdata[j],name)
+        self.Testdata = Testdata
 
         for j in range(len(dataSet)):
             dataSet[j] = self.ConvertData(dataSet[j],name)
@@ -46,6 +50,7 @@ class kMeansClustering:
         if name == "machine": 
             print(self.dataSet, self.dataSet.shape)
             self.dataSet = self.dataSet[:,2:]
+            self.Testdata = self.Testdata[:,2:]
             print(self.dataSet, self.dataSet.shape)
             self.d = d-2
         # dimensionality of data set
@@ -191,6 +196,7 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
+        
         #Create a new list for mediod mean values 
         New_centroid = list() 
         #For each of the centroid
@@ -210,7 +216,7 @@ class kMeansClustering:
                     centroidTuples.append(j)
             #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
-            Rows = len(data[0])
+            Rows = len(data[0])-1
             #Create a new list to store row mean 
             Row_Mean = list()
             #For each of the rows in the dataset 
@@ -261,9 +267,9 @@ class kMeansClustering:
         return updated_centroids
 
     # simple classify method that mirrors KNN, exept with the centroids as training set
-    def classify(self, test):
+    def classify(self):
         centroids = self.generate_cluster_centroids()
-        return self.knn.classify(centroids, test)
+        return self.knn.classify(centroids, self.Testdata)
 
 
 ####################################### UNIT TESTING #################################################
@@ -300,8 +306,8 @@ if __name__ == '__main__':
     regression = [x for x in data_sets if regression_data_set[x]]
 
     for i in range(1):
-        data_set = "machine"
-        name = "machine"
+        data_set = "vote"
+        name = "vote"
 
         print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -311,7 +317,7 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
 
         d = len(headers)-1
-        kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name)
+        kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
         print(kMC.generate_cluster_centroids())
         print(kMC.dataSet)
 
