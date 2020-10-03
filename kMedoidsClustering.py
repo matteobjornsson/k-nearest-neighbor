@@ -61,13 +61,7 @@ class kMedoidsClustering:
         medoids = []
         #For each of the indices 
         for i in indices:
-<<<<<<< HEAD
             medoids.append(self.dataSet[i].reshape(1, self.dataSet.shape[1]))
-=======
-            #Append to medoids the value of the indicies 
-            medoids.append([i, self.dataSet[i]].reshape(1, self.dataSet.shape[1]))
-        #Return the numpy array 
->>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         return np.concatenate(medoids)
 
     # find the nearest medoid to given sample, return the medoid index
@@ -96,17 +90,18 @@ class kMedoidsClustering:
         for i in range(len(medoids)):
             #Store the current medoid we are looking at 
             m = medoids[i]
-<<<<<<< HEAD
             points_in_cluster = []
+            # for the current medoid, look up all examples x that are assigned
+            # to that medoid (have a value at their index position in the medoid
+            # assignment list that matches the current medoid)
             for n in range(len(medoid_assignments)):
+                #store the medoid that point x is assigned to
                 x_assignment = medoid_assignments[n]
+                # if x is assigned to medoid i (current medoid), append the actual data point to a list
                 if x_assignment == i:
+                    # get the point and reshape it into a np array that can be concatenated together
                     points_in_cluster.append(data[n].reshape(1, data.shape[1]))
-=======
-            #Set a value to be the NP array of the data points that are in the medoids cluster 
-            points_in_cluster = np.concatenate([data[x].reshape(1, data.shape[1]) for x, j in enumerate(medoid_assignments) if j == i])
-            #Set the point distances from the neighbors that the given point is looking at 
->>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
+            # use the knn method "get_k_neighbors" to calculate the distance from current medoid m to all points in the cluster
             point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
             #For each of the points above 
             for point in point_distances:
@@ -132,11 +127,7 @@ class kMedoidsClustering:
                 if new_distortion < distortion:
                     #Store off a deep copy of the dataset 
                     medoids[i] = copy.deepcopy(x)
-<<<<<<< HEAD
             print("updating medoid for cluster", i)
-=======
-        #Return the medoids array 
->>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         return medoids
 
     def generate_cluster_medoids(self):
@@ -148,11 +139,7 @@ class kMedoidsClustering:
         updated_medoids = self.update_medoids(medoids, first_assignment, self.dataSet)
         #Set a count to be 0
         count = 0
-<<<<<<< HEAD
         print("count: ", count)
-=======
-        #Continue to loop until we specify to stop 
->>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         while True:
             #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)
@@ -160,15 +147,11 @@ class kMedoidsClustering:
             updated_medoids = self.update_medoids(updated_medoids, second_assignment, self.dataSet)
             #Increment count 
             count += 1
-<<<<<<< HEAD
             changing_assignments = []
             for i in range(len(first_assignment)):
                 if first_assignment[i] != second_assignment[i]:
                     changing_assignments.append(i)
-            print(changing_assignments)
-=======
-            #IF the first assignemnt is equal to the second assignment or the count is greater than the limited count 
->>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
+            print("medoid assignments that are changing", changing_assignments)
             if first_assignment == second_assignment or count > self.itermax:
                 #Break 
                 break
@@ -226,8 +209,9 @@ if __name__ == '__main__':
 
         d = len(headers)-1
         kMC = kMedoidsClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
-        print(kMC.generate_cluster_medoids())
-        print(kMC.dataSet)
+        medoids = kMC.generate_cluster_medoids()
+        print("dataset medoids: ", medoids, f"(length: {len(medoids)})")
+        print("original dataset: ", kMC.dataSet, f"(length: {len(kMC.dataSet)}")
 
     print("program end ")
     ####################################### UNIT TESTING #################################################
