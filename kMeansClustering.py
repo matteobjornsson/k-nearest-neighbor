@@ -53,6 +53,8 @@ class kMeansClustering:
             data_sets = deepcopy(data_set_row)
             temp = list() 
             temp = data_set_row.tolist() 
+            temp.remove(temp[0])
+            temp.remove(temp[0])
             data_sets = np.array(temp)
             count = 0 
             for i in range(len(data_set_row)): 
