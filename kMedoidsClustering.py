@@ -51,7 +51,7 @@ class kMedoidsClustering:
         for k in range(self.kValue):
             #SEt te index to be a random value within the dataset 
             index = random.randint(0, len(self.dataSet)-1)
-            #Loop through each of the indexs in the indices list 
+            #make sure the inde is unique by generating a new value if the inde already exists
             while index in indices:
                 #Set the index to a random value in the data set 
                 index = random.randint(0, len(self.dataSet)-1)
