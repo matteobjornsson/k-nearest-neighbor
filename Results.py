@@ -55,7 +55,7 @@ class Results:
         return DataPackage
 
 
-    def StartLossFunction(self,Regression,Datalist,MetaData):
+    def StartLossFunction(self,Regression,Datalist,MetaData, filename):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 
@@ -65,9 +65,9 @@ class Results:
             #Run the 0/1 Loss function and F1 SCore and store the value 
             F1 = self.statsSummary(Datalist)
             F1 = F1 * 100 
-            DataPackage.append("Zero One ")
+            # DataPackage.append("Zero One ")
             DataPackage.append(Zero)
-            DataPackage.append("F1 Score")
+            # DataPackage.append("F1 Score")
             DataPackage.append(F1)
         #The value that is being tested is regression value  
         else:
@@ -75,19 +75,19 @@ class Results:
             MAE = self.MAE(Datalist)
             #Run The mean squared error and store the value to be piped to a file  
             MSE  = self.MSE(Datalist)
-            DataPackage.append("Mean Absolute Error")
+            # DataPackage.append("Mean Absolute Error")
             DataPackage.append(MAE)
-            DataPackage.append("Mean Squared Error")
+            # DataPackage.append("Mean Squared Error")
             DataPackage.append(MSE)
         #Print all of the data generated in the loss functions to a csv file for programmer review 
-        self.PipeToFile(DataPackage, MetaData)
+        self.PipeToFile(DataPackage, MetaData, filename)
         return DataPackage
 
-    def PipeToFile(self,DataPackage,MetaData): 
+    def PipeToFile(self,DataPackage,MetaData, filename): 
         #Try to access the file that we are trying to write too 
         try: 
             #Open the CSV file in append mode to be written to 
-            with open("KNNResults.csv",mode = "a") as file: 
+            with open(filename ,mode = "a") as file: 
                 count = 0 
                 #For each of the data points stored in the metadata 
                 for i in MetaData: 
@@ -106,7 +106,6 @@ class Results:
                         continue 
                     #Write the loss function data to the file 
                     file.write(str(j) + ',')
-                file.write("\n")
                 file.write("\n")
                 file.close() 
         #If we cannot print a message to the screen 

@@ -169,6 +169,15 @@ class DataUtility:
         # save the new normalized dataset to file
         normalized_df.to_csv(f"./NormalizedData/{data_set}.csv", index=False)
 
+    def get_tuning_data(self, data_set:str) -> np.ndarray:
+        # read in data set
+        df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
+        # extract data from dataset to tune parameters
+        data_and_remainder = self.TuningData(df)
+        # convert the tuning data set to numpy array
+        tuning_data = data_and_remainder[0].to_numpy()
+        return tuning_data
+
     # this function takes in experiment ready data and returns all forms of data required for the experiment 
     def generate_experiment_data(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
         # read in data set
@@ -185,6 +194,7 @@ class DataUtility:
         full_set = remainder.to_numpy()
         # return the headers, full set, tuning, and 10fold data
         return headers, full_set, tuning_data, tenFolds 
+
     # this function takes in experiment ready data and returns all forms of data required for the experiment 
     def generate_experiment_data_Categorical(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
         # read in data set
