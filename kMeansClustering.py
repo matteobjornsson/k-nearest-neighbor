@@ -30,26 +30,27 @@ class kMeansClustering:
         name: str):
 
         # create a Nearest Neighbor object to single nearest neighbor to input data point
-        self.nn = kNN.kNN(1, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
-        self.categorical_features = categorical_features
-        # save which features are real as well by deleting categorical indices from a new list
-        real_features = list(range(d))
-        for i in categorical_features:
-            real_features.remove(i)
-        self.real_features = real_features
+        self.nn = kNN.kNN(1, data_type, [], regression_data_set, alpha, beta, h, d)
+        self.categorical_features = []
+
         self.kValue = kValue
         
 
         for j in range(len(dataSet)):
             dataSet[j] = self.ConvertData(dataSet[j],name)
         self.dataSet = dataSet
-        
-        if name == "machine": 
-            print(self.dataSet)
-            self.dataSet = self.dataSet[:2:]
-            print(self.dataSet)
-        # dimensionality of data set
         self.d = d
+        if name == "machine": 
+            print(self.dataSet, self.dataSet.shape)
+            self.dataSet = self.dataSet[:,2:]
+            print(self.dataSet, self.dataSet.shape)
+            self.d = d-2
+        # dimensionality of data set
+        # save which features are real as well by deleting categorical indices from a new list
+        real_features = list(range(d))
+        for i in categorical_features:
+            real_features.remove(i)
+        self.real_features = real_features
 
 
     def ConvertData(self,data_set_row, Name):
@@ -157,23 +158,11 @@ class kMeansClustering:
 
     # randomly generate kvalue centroids by randomly generating an appropriate value per feature
     def create_random_centroids(self) -> np.ndarray:
-        # first save all the unique values in the categorical features
-        feature_values = [None] * self.d
-        for i in self.categorical_features:
-            # print(self.dataSet[:,i])
-            feature_values[i] = np.unique(self.dataSet[:,i]).tolist()
-            # print("distinct features:", feature_values[i])
-        # create a blank list to append new points to
         points = []
         for k in range(self.kValue):
-            # create a blank new point with the same dimensionality as data set
-            new_point = [None] * self.d
-            # assign categorical features first as a random selection of observed features per attribute
-            for l in self.categorical_features:
-                new_point[l] = random.choice(feature_values[l])
-            # assign real value between 0 and 1 (as all real values are 0-1 normalized)
-            for m in self.real_features:
-                new_point[m] = random.uniform(0,1)
+            new_point = []
+            for m in range(self.d):
+                new_point.append(random.uniform(0,1))
             # append the new point to the points list
             points.append(new_point)
         # return all points as a numpy array    
@@ -207,7 +196,7 @@ class kMeansClustering:
             #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
             #For each of the centroids 
-            for j in centroid_assignment:
+            for j in centroid_assignments:
                 #If the assignment is in a given centroid  
                 if centroids[i] == j: 
                     #Append the value to the list 
