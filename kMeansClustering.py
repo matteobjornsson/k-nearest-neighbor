@@ -145,56 +145,66 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
-        #TODO: write centroid update method (drop categorical values?)
+        #Create a new list for mediod mean values 
         New_centroid = list() 
-        #For each of the medoids 
+        #For each of the centroid 
         for i in range(len(centroids)): 
-            #Loop through Medoid assignments and store each index that belongs to an associated medoids 
+            #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
-            for j in centroid_assignment: 
+            #For each of the centroids 
+            for j in centroid_assignment:
+                #If the assignment is in a given centroid  
                 if centroids[i] == j: 
+                    #Append the value to the list 
                     centroidTuples.append(i)
-            #Now we have a list of all records in the data array that belong to a specific medoid 
+            #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
             Rows = len(data[0])
+            #Create a new list to store row mean 
             Row_Mean = list()
+            #For each of the rows in the dataset 
             for j in Rows: 
+                #Set the row count to 0 
                 rowcount = 0 
+                #Store the total number of rows in the dataset 
                 total = len(centroidTuples)
+                #Loop through all of the rows in the data set 
                 for z in range(len(centroidTuples)): 
+                    #Add the value to the row count
                     rowcount += data[centroidTuples[z]][j]
+                #Take the row count and divide by the total number of rows in the data set
                 rowcount = rowcount / total 
+                #Append the value to the list to store 
                 Row_Mean.append(rowcount)
+            #Add the entire mediods mean data to a centroid value
             New_centroid.append(Row_Mean)
-
+        #Return the mean values for each feature for each centroid its a lists of lists of lists 
         return New_centroid
-        # for each centroid
-            # identify the members of the cluster ()
-            #centroids:
-            #    0       1       2
-            #[ (1,2), (1, 5), (4,5)]
-
-            #centroid assignments
-            # 0  1  2  3 ...n 
-            #[0, 1, 0, 2, 2, 1, 0, 1, 2, 1, 0, 2, 0]
-
-            # index 3 having value 2 in centroid assignments means data point 3 belongs to cluster 2
-
-            
-        return centroids
 
     def generate_cluster_centroids(self):
+        #Store the centroid from a random centroid value generated 
         centroids = self.create_random_centroids()
+        #Store the first assignment to a given variable 
         first_assignment = self.assign_all_points_to_closest_centroid(centroids, self.dataSet)
+        #Store the updated centroids for later recall 
         updated_centroids = self.update_centroid_positions(centroids, first_assignment, self.dataSet)
+        #Set a counter variable to 0 
         count = 0
+        #Continue to loop until we explicitly say break 
         while True:
+            #Store the second assignment from the updated centroids and a given data set 
             second_assignment = self.assign_all_points_to_closest_centroid(updated_centroids, self.dataSet)
+            #Store the updated centroids from the values above
             updated_centroids = self.update_centroid_positions(updated_centroids, second_assignment, self.dataSet)
+            #Increment Count 
             count += 1
+            #If the frist assignment is equal to the second assignment or the count is greater than the iteration limit set for a given object
             if first_assignment == second_assignment or count > self.itermax:
+                #Break out of the loop
                 break
+            #Set the frist assignment to the second assignment 
             first_assignment = second_assignment
+        #Return the updated centroids 
         return updated_centroids
 
 if __name__ == '__main__':
