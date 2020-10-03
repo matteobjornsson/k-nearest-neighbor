@@ -243,6 +243,7 @@ class kMeansClustering:
 
                 #Append the value to the list to store 
                 Mean.append(count)
+            
             Mean.append(1)
             Mean = np.array(Mean)
             #Add the entire mediods mean data to a centroid value
@@ -285,8 +286,13 @@ class kMeansClustering:
         for i in centroids: 
             print(i)
         return self.knn.classify(centroids, self.Testdata)
-    def CentroidClass(self,centroids):
-        pass
+
+
+    def CentroidClassify(centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
+        
+        
+
+        return centroids
 
 
 
