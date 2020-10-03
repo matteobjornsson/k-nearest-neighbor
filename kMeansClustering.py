@@ -45,7 +45,22 @@ class kMeansClustering:
         self.d = d
 
 
-    def ConvertData(self,data_set_row):
+    def ConvertData(self,data_set_row, Name):
+
+        #If the dataset is machine 
+        if Name == 'machine': 
+            #Drop the first 2 columns
+            data_sets = deepcopy(data_set)
+            data_sets = [None * len(data_set)]
+            count = 0 
+            for i in range(len(data_set)): 
+                if count == 0 or count == 1: 
+                    count+=1 
+                    continue
+                data_sets[i] = data_set[i]
+            data_set = data_sets 
+
+
         #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
             #if the value is a N or an n from the vote data cast to a 1 
