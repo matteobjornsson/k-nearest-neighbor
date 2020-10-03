@@ -124,17 +124,29 @@ class kMedoidsClustering:
         return medoids
 
     def generate_cluster_medoids(self):
+        #Choose a random medoid and store the value 
         medoids = self.choose_random_medoids()
+        #Store off the first assignment value 
         first_assignment = self.assign_all_points_to_closest_medoid(medoids, self.dataSet)
+        #Store the update medoids value based on the first assignment 
         updated_medoids = self.update_medoids(medoids, first_assignment, self.dataSet)
+        #Set a count to be 0
         count = 0
+        #Continue to loop until we specify to stop 
         while True:
+            #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)
+            #Store the updated medoids from the second assignment values calculated above 
             updated_medoids = self.update_medoids(updated_medoids, second_assignment, self.dataSet)
+            #Increment count 
             count += 1
+            #IF the first assignemnt is equal to the second assignment or the count is greater than the limited count 
             if first_assignment == second_assignment or count > self.itermax:
+                #Break 
                 break
+            #SEt the first assignment equal to the second assignment 
             first_assignment = second_assignment
+        #Return the updated medoids 
         return updated_medoids
 
 
