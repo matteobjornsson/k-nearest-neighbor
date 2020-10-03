@@ -93,6 +93,9 @@ class EditedKNN:
         edited_training = self.reduce_data_set(training)
         return self.knn.classify(edited_training, test)
 
+
+
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],
@@ -169,3 +172,4 @@ if __name__ == '__main__':
         stats = eknn.results.LossFunctionPerformance(regression, classifications)
         total_stats.append([data_set, stats])
     print(total_stats)
+####################################### UNIT TESTING #################################################

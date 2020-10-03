@@ -25,6 +25,9 @@ class ValueDifferenceMetric:
         print("returning distance based on FDM")
         return 8.5
 
+
+####################################### UNIT TESTING #################################################
+
 if __name__ == '__main__':
     df = pd.read_csv("./ProcessedData/vote.csv")
     data = df.to_numpy()
@@ -57,5 +60,5 @@ if __name__ == '__main__':
     pprint.pprint(count)
     print()
     pprint.pprint(class_count)
-
+####################################### UNIT TESTING #################################################
 

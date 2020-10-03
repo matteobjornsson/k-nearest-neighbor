@@ -45,15 +45,29 @@ class kMedoidsClustering:
 
 
     def choose_random_medoids(self):
+        #Create a new empty array 
         indices = []
+        #Loop through the number of neighbros we are looking at 
         for k in range(self.kValue):
+            #SEt te index to be a random value within the dataset 
             index = random.randint(0, len(self.dataSet)-1)
+            #Loop through each of the indexs in the indices list 
             while index in indices:
+                #Set the index to a random value in the data set 
                 index = random.randint(0, len(self.dataSet)-1)
+            #Append the index to the arary 
             indices.append(index)
+        #Create an empty list 
         medoids = []
+        #For each of the indices 
         for i in indices:
+<<<<<<< HEAD
             medoids.append(self.dataSet[i].reshape(1, self.dataSet.shape[1]))
+=======
+            #Append to medoids the value of the indicies 
+            medoids.append([i, self.dataSet[i]].reshape(1, self.dataSet.shape[1]))
+        #Return the numpy array 
+>>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         return np.concatenate(medoids)
 
     # find the nearest medoid to given sample, return the medoid index
@@ -76,53 +90,96 @@ class kMedoidsClustering:
         return medoid_assignments
 
     def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> float:
+        #Set the distortion value to 0
         distortion = 0
+        #Loop through the number of indices in the medoids array 
         for i in range(len(medoids)):
+            #Store the current medoid we are looking at 
             m = medoids[i]
+<<<<<<< HEAD
             points_in_cluster = []
             for n in range(len(medoid_assignments)):
                 x_assignment = medoid_assignments[n]
                 if x_assignment == i:
                     points_in_cluster.append(data[n].reshape(1, data.shape[1]))
+=======
+            #Set a value to be the NP array of the data points that are in the medoids cluster 
+            points_in_cluster = np.concatenate([data[x].reshape(1, data.shape[1]) for x, j in enumerate(medoid_assignments) if j == i])
+            #Set the point distances from the neighbors that the given point is looking at 
+>>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
             point_distances = self.nn.get_k_neighbors(points_in_cluster, m, len(points_in_cluster))
+            #For each of the points above 
             for point in point_distances:
+                #Add the distortion value to the variable for each of the points 
                 distortion += (point[0])**2
+        #Return the distortion 
         return distortion
             
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
+        #Loop through the nunmber of indicies in the medoids array (Total number of medoids )
         for i in range(len(medoids)):
+            #Store off the distortion value calculated in the above functions 
             distortion = self.distortion(medoids, medoid_assignments, data)
+            #For each of the data points 
             for x in data:
+                #Set a copy of the medoids above 
                 new_medoids = copy.deepcopy(medoids)
+                #Story off a given array to be a copy of the value x in data 
                 new_medoids[i] = copy.deepcopy(x)
+                #Calculate a new distortion from the copies above 
                 new_distortion = self.distortion(new_medoids, medoid_assignments, data)
+                #If the new distortion is less than the distortion calculated above 
                 if new_distortion < distortion:
+                    #Store off a deep copy of the dataset 
                     medoids[i] = copy.deepcopy(x)
+<<<<<<< HEAD
             print("updating medoid for cluster", i)
+=======
+        #Return the medoids array 
+>>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         return medoids
 
     def generate_cluster_medoids(self):
+        #Choose a random medoid and store the value 
         medoids = self.choose_random_medoids()
+        #Store off the first assignment value 
         first_assignment = self.assign_all_points_to_closest_medoid(medoids, self.dataSet)
+        #Store the update medoids value based on the first assignment 
         updated_medoids = self.update_medoids(medoids, first_assignment, self.dataSet)
+        #Set a count to be 0
         count = 0
+<<<<<<< HEAD
         print("count: ", count)
+=======
+        #Continue to loop until we specify to stop 
+>>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
         while True:
+            #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)
+            #Store the updated medoids from the second assignment values calculated above 
             updated_medoids = self.update_medoids(updated_medoids, second_assignment, self.dataSet)
+            #Increment count 
             count += 1
+<<<<<<< HEAD
             changing_assignments = []
             for i in range(len(first_assignment)):
                 if first_assignment[i] != second_assignment[i]:
                     changing_assignments.append(i)
             print(changing_assignments)
+=======
+            #IF the first assignemnt is equal to the second assignment or the count is greater than the limited count 
+>>>>>>> d74a28d71e206ec90e55eb6a771a7fe598449fef
             if first_assignment == second_assignment or count > self.itermax:
+                #Break 
                 break
+            #SEt the first assignment equal to the second assignment 
             first_assignment = second_assignment
+        #Return the updated medoids 
         return updated_medoids
 
 
 
+####################################### UNIT TESTING #################################################
 
 if __name__ == '__main__':
     print("program Start")
@@ -173,3 +230,4 @@ if __name__ == '__main__':
         print(kMC.dataSet)
 
     print("program end ")
+    ####################################### UNIT TESTING #################################################

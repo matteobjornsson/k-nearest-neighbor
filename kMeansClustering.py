@@ -46,57 +46,105 @@ class kMeansClustering:
 
 
     def ConvertData(self,data_set_row):
+        #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
+            #if the value is a N or an n from the vote data cast to a 1 
             if data_set_row[i] == 'N' or data_set_row[i] == 'n': 
+                #Conver the value to 1 
                 data_set_row[i] = 1
+            #If the value that we are taking in from the vote data is a y 
             if data_set_row[i] == 'Y' or data_set_row[i] == 'y': 
+                #Set the value to be a 0 
                 data_set_row[i] = 0 
+            #If the data from the forest fire is jan 
             if data_set_row[i] == 'jan': 
+                #Set the value to 0 
                 data_set_row[i] = 0/11
+            #If the data from the forest fire is feb
             if data_set_row[i] == 'feb' : 
+                #Set the value to be the value of the month divided by the total number of months starting from 0 
                 data_set_row[i] = 1/11
+            #If the data from the forest fire is mar
             if data_set_row[i] == 'mar': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 2/11
+            #If the data from the forest fire is apr
             if data_set_row[i] == 'apr': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 3/11
+            #If the data from the forest fire is may
             if data_set_row[i] == 'may': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 4/11
+            #If the data from the forest fire is jun
             if data_set_row[i] == 'jun': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 5/11
+            #If the data from the forest fire is jul
             if data_set_row[i] == 'jul': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 6 /11
+            #If the data from the forest fire is aug
             if data_set_row[i] == 'aug': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 7 /11
+            #If the data from the forest fire is sep
             if data_set_row[i] == 'sep': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 8 /11
+            #If the data from the forest fire is oct
             if data_set_row[i] == 'oct':
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 9 /11
+            #If the data from the forest fire is nov
             if data_set_row[i] == 'nov': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 10/11
+            #If the data from the forest fire is dec
             if data_set_row[i] == 'dec': 
+                #Set the value to be the value of the month divided by the total number of months starting from 0
                 data_set_row[i] = 11/11
+            #If the day of the week is Monday
             if data_set_row[i] == 'mon' : 
+                #Set the value to be 0  
                 data_set_row[i] = 0/6
+            #If the day of the week is Tuesday
             if data_set_row[i] == 'tue': 
+                #Set the value to be the 1st day divide by 6 days 
                 data_set_row[i] = 1/6
+            #If the day of the week is Wednesdayu
             if data_set_row[i] == 'wed': 
+                #Set the value to be the 2nd day divide by 6 days 
                 data_set_row[i] = 2/6
+            #If the day of the week is Thursday
             if data_set_row[i] == 'thu': 
+                #Set the value to be the 3rd day divide by 6 days 
                 data_set_row[i] = 3/6
+            #If the day of the week is Friday
             if data_set_row[i] == 'fri': 
+                #Set the value to be the 4th day divide by 6 days 
                 data_set_row[i] = 4/6
-            if data_set_row[i] == 'sat': 
+            #If the day of the week is Saturday
+            if data_set_row[i] == 'sat':
+                #Set the value to be the 5th day divide by 6 days  
                 data_set_row[i] = 5 /6
-            if data_set_row[i] == 'sun': 
+            #If the value is sunday 
+            if data_set_row[i] == 'sun':
+                #Set the value to 1  
                 data_set_row[i] = 6 /6
+            #If the value is male 
             if data_set_row[i] == 'M':
+                #Set the value to be .5
                 data_set_row[i] = 1 /2
-            if data_set_row[i] == 'F': 
+            #If the value if female 
+            if data_set_row[i] == 'F':
+                #Set the value to be 1  
                 data_set_row[i] = 2 /2
-            if data_set_row[i] == 'I': 
+            #if the value is infant 
+            if data_set_row[i] == 'I':
+                #Set the value to 0  
                 data_set_row[i] = 0  /2
-
-
+        #Return the updated dataset 
         return data_set_row
 
 
@@ -145,58 +193,72 @@ class kMeansClustering:
         return centroid_assignments
 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
-        #TODO: write centroid update method (drop categorical values?)
+        #Create a new list for mediod mean values 
         New_centroid = list() 
-        #For each of the medoids 
+        #For each of the centroid 
         for i in range(len(centroids)): 
-            #Loop through Medoid assignments and store each index that belongs to an associated medoids 
+            #Loop through centroid assignments and store each index that belongs to an associated centroids 
             centroidTuples = list() 
-            for j in centroid_assignment: 
+            #For each of the centroids 
+            for j in centroid_assignment:
+                #If the assignment is in a given centroid  
                 if centroids[i] == j: 
+                    #Append the value to the list 
                     centroidTuples.append(i)
-            #Now we have a list of all records in the data array that belong to a specific medoid 
+            #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
             Rows = len(data[0])
+            #Create a new list to store row mean 
             Row_Mean = list()
+            #For each of the rows in the dataset 
             for j in Rows: 
+                #Set the row count to 0 
                 rowcount = 0 
+                #Store the total number of rows in the dataset 
                 total = len(centroidTuples)
+                #Loop through all of the rows in the data set 
                 for z in range(len(centroidTuples)): 
+                    #Add the value to the row count
                     rowcount += data[centroidTuples[z]][j]
+                #Take the row count and divide by the total number of rows in the data set
                 rowcount = rowcount / total 
+                #Append the value to the list to store 
                 Row_Mean.append(rowcount)
+            #Add the entire mediods mean data to a centroid value
             New_centroid.append(Row_Mean)
-
+        #Return the mean values for each feature for each centroid its a lists of lists of lists 
         return New_centroid
-        # for each centroid
-            # identify the members of the cluster ()
-            #centroids:
-            #    0       1       2
-            #[ (1,2), (1, 5), (4,5)]
-
-            #centroid assignments
-            # 0  1  2  3 ...n 
-            #[0, 1, 0, 2, 2, 1, 0, 1, 2, 1, 0, 2, 0]
-
-            # index 3 having value 2 in centroid assignments means data point 3 belongs to cluster 2
-
-            
-        return centroids
 
     def generate_cluster_centroids(self):
+        #Store the centroid from a random centroid value generated 
         centroids = self.create_random_centroids()
+        #Store the first assignment to a given variable 
         first_assignment = self.assign_all_points_to_closest_centroid(centroids, self.dataSet)
+        #Store the updated centroids for later recall 
         updated_centroids = self.update_centroid_positions(centroids, first_assignment, self.dataSet)
+        #Set a counter variable to 0 
         count = 0
+        #Continue to loop until we explicitly say break 
         while True:
+            #Store the second assignment from the updated centroids and a given data set 
             second_assignment = self.assign_all_points_to_closest_centroid(updated_centroids, self.dataSet)
+            #Store the updated centroids from the values above
             updated_centroids = self.update_centroid_positions(updated_centroids, second_assignment, self.dataSet)
+            #Increment Count 
             count += 1
+            #If the frist assignment is equal to the second assignment or the count is greater than the iteration limit set for a given object
             if first_assignment == second_assignment or count > self.itermax:
+                #Break out of the loop
                 break
+            #Set the frist assignment to the second assignment 
             first_assignment = second_assignment
+        #Return the updated centroids 
         return updated_centroids
 
+
+
+
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],
@@ -243,3 +305,5 @@ if __name__ == '__main__':
         kMC = kMeansClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
         print(kMC.generate_cluster_centroids())
         print(kMC.dataSet)
+
+####################################### UNIT TESTING #################################################

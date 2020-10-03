@@ -186,7 +186,7 @@ class kNN:
 
 
 
-#TESTING THE KNN DATA OBJECT 
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],
@@ -239,3 +239,4 @@ if __name__ == '__main__':
         classifications = knn.classify(training, test)
         for c in classifications:
             print(c)
+####################################### UNIT TESTING #################################################
