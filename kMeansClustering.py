@@ -302,10 +302,10 @@ class kMeansClustering:
                 owner = centroid_assignments[j]
                 centroid_members[owner].append(data[j])
         for k in range(len(centroids)):
-            centroids[k] = np.array(centroids[k])
+            centroid_members[k] = np.array(centroid_members[k])
 
         for i in range(len(centroids)):
-            centroid = centroids[i] 
+            centroid = centroids[i].reshape(1,17)
             members = centroid_members[i]
 
             member_knn = copy.deepcopy(self.knn)
