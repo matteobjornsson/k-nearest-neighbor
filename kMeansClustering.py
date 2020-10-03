@@ -38,14 +38,16 @@ class kMeansClustering:
             real_features.remove(i)
         self.real_features = real_features
         self.kValue = kValue
-       
+        
+
         for j in range(len(dataSet)):
             dataSet[j] = self.ConvertData(dataSet[j],name)
         self.dataSet = dataSet
+        
         if name == "machine": 
-            self.dataSet = np.delete(dataSet,0,axis=1)
-            self.dataSet = np.delete(dataSet,0,axis=1)
-
+            print(self.dataSet)
+            self.dataSet = self.dataSet[:2:]
+            print(self.dataSet)
         # dimensionality of data set
         self.d = d
 
