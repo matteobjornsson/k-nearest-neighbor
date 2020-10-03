@@ -50,15 +50,15 @@ class kMeansClustering:
         #If the dataset is machine 
         if Name == 'machine': 
             #Drop the first 2 columns
-            data_sets = deepcopy(data_set)
-            data_sets = [None * len(data_set)]
+            data_sets = deepcopy(data_set_row)
+            data_sets = [None * len(data_set_row)]
             count = 0 
-            for i in range(len(data_set)): 
+            for i in range(len(data_set_row)): 
                 if count == 0 or count == 1: 
                     count+=1 
                     continue
-                data_sets[i] = data_set[i]
-            data_set = data_sets 
+                data_sets[i] = data_set_row[i]
+            data_set_row = data_sets 
 
 
         #For each of the indexes in the data_set_row 
