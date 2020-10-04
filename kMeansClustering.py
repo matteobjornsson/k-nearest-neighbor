@@ -174,7 +174,7 @@ class kMeansClustering:
             for feature in range(self.d):
                 new_point[feature] = random.uniform(0,1)
             points.append(new_point)
-        centroid_array = np.concatenate(points).reshape(self.kValue, len(points))
+        centroid_array = np.concatenate(points).reshape(self.kValue, self.d+1)
         return centroid_array
 
 
@@ -245,11 +245,11 @@ class kMeansClustering:
 
                 #Append the value to the list to store 
                 Mean.append(count)
-            
-            Mean.append(1)
-            Mean = np.array(Mean)
+            new_centroid = copy.deepcopy(centroids[i])    
+            for c in range(self.d):
+                new_centroid[c] = Mean[c]
             #Add the entire mediods mean data to a centroid value
-            centroids[i] = Mean
+            centroids[i] = new_centroid
         #Return the mean values for each feature for each centroid its a lists of lists of lists         
         return centroids
 
