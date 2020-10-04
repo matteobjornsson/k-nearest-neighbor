@@ -176,14 +176,7 @@ class kMeansClustering:
             points.append(new_point)
         centroid_array = np.concatenate(points).reshape(self.kValue, len(points))
         return centroid_array
-        # for k in range(self.kValue):
-        #     # generate a new vector of dimension d, values randomly assigned between 0 and 1
-        #     new_point = [random.uniform(0,1) for f in range(self.d)]
-        #     new_point.append("1")
-        #     # append that new centroid vector to the list of points
-        #     points.append(new_point)
-        # # return all points as a numpy array    
-        return np.array(points)
+
 
     # find the nearest centroid to given sample, return the centroid index
     def closest_centroid_to_point(self, point: list, centroids: np.ndarray) -> list:
