@@ -278,38 +278,39 @@ class kMeansClustering:
             first_assignment = second_assignment
         #Return the updated centroids 
         updated_centroids = self.CentroidClassify(updated_centroids, second_assignment, self.dataSet)
+        for i in range(len(updated_centroids)): 
+            updated_centroids[i][len(updated_centroids[i])-1] = self.CountCentroidClasses(i, second_assignment,self.dataSet)
+        
         return updated_centroids
 
     # simple classify method that mirrors KNN, exept with the centroids as training set
     def classify(self):
         centroids = self.generate_cluster_centroids()
+        #for i in range(len(centroids)): 
+        #    centroids[i] = self.CountCentroidClasses(centroids, )
         return self.knn.classify(centroids, self.Testdata)
+
+    def CountCentroidClasses(self,centroid, centroid_assignments,data): 
+    
+            centroidTuples = list() 
+            #For each of the centroids 
+            for j in range(len(centroid_assignments)):
+                #If the assignment is in a given range  
+                if centroid == centroid_assignments[j]: 
+                    #Append the value to the list 
+                    centroidTuples.append(j)
+            #Now we have a list of all records in the data array that belong to a specific centroid 
+            #Get the total number of rows in each of the data points 
+            # Rows = len(data[0])-1
+            classes = list()
+            for z in centroidTuples: 
+                classes.append(data[z][len(data[0])-1])
+            return max(classes,key=classes.count)
+                
+           
 
 
     def CentroidClassify(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
-        # for c in centroids:
-        #     centroid = c.tolist()[:-1]
-        #     assert len(centroid == self.d)
-        #     neighbor = self.nn.get_k_neighbors(self.dataSet, centroid, 1)
-        
-        #get all centroid members
-        centroid_members = [[] for i in range(len(centroids))]
-        for i in range(len(centroids)):
-            for j in range(len(centroid_assignments)):
-                owner = centroid_assignments[j]
-                centroid_members[owner].append(data[j])
-        for k in range(len(centroids)):
-            centroid_members[k] = np.array(centroid_members[k])
-
-        for i in range(len(centroids)):
-            centroid = centroids[i].reshape(1,17)
-            members = centroid_members[i]
-
-            member_knn = copy.deepcopy(self.knn)
-            member_knn.k = len(members)
-            classifications = member_knn.classify(members, centroid)
-            ground_truth, guess = classifications[0]
-            centroids[i][-1] = guess
         return centroids
 
 
@@ -359,7 +360,6 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
         d = len(headers)-1
         kMC = kMeansClustering(kNeighbors=d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
-        print(kMC.generate_cluster_centroids())
         print(kMC.classify())
         #print(kMC.dataSet)
 
