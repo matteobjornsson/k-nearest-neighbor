@@ -101,12 +101,13 @@ class Results:
                 count = 0 
                 #For each of the loss functions calculated (2)
                 for j in DataPackage: 
+                    count += 1 
                     if count == len(DataPackage): 
                         file.write(str(j))
                         continue 
                     #Write the loss function data to the file 
                     file.write(str(j) + ',')
-                    count += 1 
+                    
                 file.write("\n")
                 file.close() 
         #If we cannot print a message to the screen 
