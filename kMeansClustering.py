@@ -277,18 +277,24 @@ class kMeansClustering:
             #Set the frist assignment to the second assignment 
             first_assignment = second_assignment
         #Return the updated centroids 
-        updated_centroids = self.CentroidClassify(updated_centroids, second_assignment, self.dataSet)
+
         for i in range(len(updated_centroids)): 
-            updated_centroids[i][len(updated_centroids[i])-1] = self.CountCentroidClasses(i, second_assignment,self.dataSet)
-        
+            updated_centroids[i][len(updated_centroids[i])-1] = self.CountCentroidClasses(i, second_assignment,self.dataSet)        
         return updated_centroids
 
     # simple classify method that mirrors KNN, exept with the centroids as training set
     def classify(self):
         centroids = self.generate_cluster_centroids()
-        #for i in range(len(centroids)): 
-        #    centroids[i] = self.CountCentroidClasses(centroids, )
-        return self.knn.classify(centroids, self.Testdata)
+        test = self.assign_all_points_to_closest_centroid(centroids,self.Testdata)
+        Hypothesis = list() 
+        for i in range(len(test)):
+            verifier = list() 
+            guess = centroids[test[i]][len(centroids[test[i]])-1]
+            real = self.Testdata[i][len(self.Testdata[i])-1]
+            verifier.append(real)
+            verifier.append(guess)
+            Hypothesis.append(verifier)
+        return Hypothesis
 
     def CountCentroidClasses(self,centroid, centroid_assignments,data): 
     
@@ -305,13 +311,11 @@ class kMeansClustering:
             classes = list()
             for z in centroidTuples: 
                 classes.append(data[z][len(data[0])-1])
+            if not classes:
+                return 0 
             return max(classes,key=classes.count)
                 
-           
 
-
-    def CentroidClassify(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray):
-        return centroids
 
 
 
@@ -360,6 +364,7 @@ if __name__ == '__main__':
         training = np.concatenate(tenFolds[1:])
         d = len(headers)-1
         kMC = kMeansClustering(kNeighbors=d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
+        #kMC.classify()
         print(kMC.classify())
         #print(kMC.dataSet)
 
