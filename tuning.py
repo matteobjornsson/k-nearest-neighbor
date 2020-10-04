@@ -39,8 +39,8 @@ feature_data_types = {
     "abalone": 'mixed'
 }
 
-data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
-
+data_sets = ["segmentation", "vote"]
+#  "glass", "fire", "machine", "abalone"
 data_utility = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
 results = Results.Results()
 
