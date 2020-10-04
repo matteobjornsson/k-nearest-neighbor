@@ -260,7 +260,6 @@ class kMeansClustering:
         first_assignment = self.assign_all_points_to_closest_centroid(centroids, self.dataSet)
         #Store the updated centroids for later recall 
         updated_centroids = self.update_centroid_positions(centroids, first_assignment, self.dataSet)
-        print(updated_centroids)
         #Set a counter variable to 0 
         count = 0
         #Continue to loop until we explicitly say break 
@@ -271,7 +270,6 @@ class kMeansClustering:
             updated_centroids = self.update_centroid_positions(updated_centroids, second_assignment, self.dataSet)
             #Increment Count 
             count += 1
-            print(count)
             #If the frist assignment is equal to the second assignment or the count is greater than the iteration limit set for a given object
             if first_assignment == second_assignment or count > self.itermax:
                 #Break out of the loop
