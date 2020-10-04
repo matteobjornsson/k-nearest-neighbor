@@ -47,7 +47,7 @@ for ds in data_sets:
 bin_values = [.1, .25, .5, 1, 2, 4, 8]
 delta_values = [.1, .25, .5, 1, 2, 4, 10]
 
-def tune_knn(how_many_values_of_k: int, delta_values: list, bin_values: list):
+def tune_knn_synchronously(how_many_values_of_k: int, delta_values: list, bin_values: list):
     for ds in data_sets:
         data_dimension = tuning_data[ds].shape[1]-1
         last_k = len(tuning_data[ds])
@@ -92,7 +92,7 @@ def tune_knn(how_many_values_of_k: int, delta_values: list, bin_values: list):
                     break
 
 
-def tune_knn_parallel(q, data_set: str, k_value: int,  delta_value: int, bin_value: int):
+def tune_knn_parallel_worker(q, data_set: str, k_value: int,  delta_value: int, bin_value: int):
     # print('inside function', data_set, k_value)
     data_dimension = tuning_data[data_set].shape[1]-1
     if feature_data_types[data_set] != "mixed":
@@ -164,7 +164,7 @@ for ds in data_sets:
     for k in k_values:
         for delta in delta_values:
             for b in bin_values:
-                pool.apply_async(tune_knn_parallel, args=(q, ds, k, delta, b))
+                pool.apply_async(tune_knn_parallel_worker, args=(q, ds, k, delta, b))
                 if not regression_data_set[ds]:
                     break
             if feature_data_types[ds] != "mixed":
