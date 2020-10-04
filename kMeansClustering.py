@@ -283,9 +283,6 @@ class kMeansClustering:
     # simple classify method that mirrors KNN, exept with the centroids as training set
     def classify(self):
         centroids = self.generate_cluster_centroids()
-        print("CLASSIFICATION RESULTS ======================================")
-        for i in centroids: 
-            print(i)
         return self.knn.classify(centroids, self.Testdata)
 
 
