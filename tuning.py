@@ -39,7 +39,7 @@ feature_data_types = {
     "abalone": 'mixed'
 }
 
-data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+data_sets = ["segmentation", "vote"]
 #  
 data_utility = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
 results = Results.Results()
@@ -135,7 +135,9 @@ def tune_knn_parallel(data_set: str, k_value: int,  delta_value: int, bin_value:
 pool = multiprocessing.Pool()
 for ds in data_sets:
     tuning_length = len(tuning_data[ds])
-    if 0 < tuning_length < 50:
+    if tuning_length < 30:
+        k_values = [i for i in range(1, tuning_length)]
+    elif 0 < tuning_length < 50:
         k_values = [i for i in range(1,30)]
     else: 
         remainder = tuning_length - 30
