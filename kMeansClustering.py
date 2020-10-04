@@ -363,7 +363,7 @@ if __name__ == '__main__':
         test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
         d = len(headers)-1
-        kMC = kMeansClustering(d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
+        kMC = kMeansClustering(kNeighbors=d,kValue=d, dataSet=training, data_type="real", categorical_features=[], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d,name=name,Testdata = training)
         print(kMC.generate_cluster_centroids())
         print(kMC.classify())
         #print(kMC.dataSet)
