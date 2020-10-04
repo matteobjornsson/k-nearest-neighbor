@@ -106,6 +106,7 @@ class Results:
                         continue 
                     #Write the loss function data to the file 
                     file.write(str(j) + ',')
+                    count += 1 
                 file.write("\n")
                 file.close() 
         #If we cannot print a message to the screen 
