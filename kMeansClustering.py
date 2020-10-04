@@ -1,6 +1,7 @@
 #Written By Matteo Bjornsson Edited by Nick Stone 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
+from random import sample
 import numpy as np
 import DataUtility, kNN, Results
 import copy, random
@@ -166,14 +167,22 @@ class kMeansClustering:
 
     # randomly generate kvalue centroids by randomly generating an appropriate value per feature
     def create_random_centroids(self) -> np.ndarray:
+        sample_point = copy.deepcopy(self.Testdata[0,:])
         points = []
         for k in range(self.kValue):
-            # generate a new vector of dimension d, values randomly assigned between 0 and 1
-            new_point = [random.uniform(0,1) for f in range(self.d)]
-            new_point.append(1.1)
-            # append that new centroid vector to the list of points
+            new_point = copy.deepcopy(sample_point)
+            for feature in range(self.d):
+                new_point[feature] = random.uniform(0,1)
             points.append(new_point)
-        # return all points as a numpy array    
+        centroid_array = np.concatenate(points).reshape(self.kValue, len(points))
+        return centroid_array
+        # for k in range(self.kValue):
+        #     # generate a new vector of dimension d, values randomly assigned between 0 and 1
+        #     new_point = [random.uniform(0,1) for f in range(self.d)]
+        #     new_point.append("1")
+        #     # append that new centroid vector to the list of points
+        #     points.append(new_point)
+        # # return all points as a numpy array    
         return np.array(points)
 
     # find the nearest centroid to given sample, return the centroid index
