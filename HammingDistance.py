@@ -1,6 +1,7 @@
 #Written by Matteo Bjornsson Edited by Nick Stone 
 #################################################################### MODULE COMMENTS ############################################################################
 #The purpose of this class is to calculate the hamming distance between two vectors of features, this will be used in KNN to find distance between neighbots    #
+#This algorithm is meant ot be used on data sets with only categorical values.                                                                                  #
 #################################################################### MODULE COMMENTS ############################################################################
 
 class HammingDistance:

@@ -1,5 +1,6 @@
 #Written by Matteo Bjornsson edited by Nick Stone 
 #################################################################### MODULE COMMENTS ############################################################################
+#The purpose of this class is to create an object that can calculate the distance between two neighbors with real valued data sets.                             # 
 #################################################################### MODULE COMMENTS ############################################################################
 class RealDistance:
 
@@ -14,7 +15,7 @@ class RealDistance:
         distance = distance**(1/p)
         return distance
 
-        
+
 ####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     rd = RealDistance()

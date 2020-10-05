@@ -27,6 +27,10 @@ class DataProcessor:
         #SEt the missing value column index to an empty set 
         self.MissingColumnNameList = set()
 
+
+    #Parameters: 
+    #Returns: 
+    #Function: 
     def ReplaceMissingValue(self,df:pd.DataFrame) -> pd.DataFrame: 
          #Get a deep copy of the dataframe 
         df1 = copy.deepcopy(df)
