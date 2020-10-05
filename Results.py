@@ -51,7 +51,7 @@ class Results:
         return DataPackage
 
 
-    def StartLossFunction(self,Regression,Datalist,MetaData, filename):
+    def StartLossFunction(self,Regression,Datalist,MetaData, filename='experimental_results.csv'):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
         #The data set is categorical in value run F1 and Zero one loss functions 

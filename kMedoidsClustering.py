@@ -150,8 +150,8 @@ class kMedoidsClustering:
                 #If the new distortion is less than the distortion calculated above 
                 if new_distortion < distortion:
                     #Store off a deep copy of the sample x that is the new medoid
-                    print("old medoid:", medoids[i])
-                    print("new medoid:", x)
+                    # print("old medoid:", medoids[i])
+                    # print("new medoid:", x)
                     #Copy x and assign to the medoid 
                     medoids[i] = copy.deepcopy(x)
             print("updating medoid for cluster", i)
@@ -169,7 +169,7 @@ class kMedoidsClustering:
         updated_medoids = self.update_medoids(medoids, first_assignment, self.dataSet)
         #Set a count to be 0
         count = 0
-        print("count: ", count)
+        # print("count: ", count)
         while True:
             #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)

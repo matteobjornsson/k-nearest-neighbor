@@ -68,6 +68,17 @@ tuned_error_value = {
     "machine":2
 }
 
+tuned_cluster_number = {
+    "segmentation": 80,
+    "vote": 15,
+    "glass": 60,
+    # not sure about fire, weird behavior
+    "fire": 60,
+    "machine": 50,
+    "abalone": 60
+
+}
+
 regression_variable_mean = {
     "abalone": 9.9,
     "machine": 105,
