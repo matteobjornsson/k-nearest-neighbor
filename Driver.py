@@ -326,27 +326,29 @@ def main():
     q = manager.Queue()
     start = time.time()
 
-    # writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    # writer.start()
-    # pool = multiprocessing.Pool()
+    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer.start()
+    pool = multiprocessing.Pool()
     
-    # results = []
-    # for ds in data_sets:
-    #     for i in range(1):
-    #         results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
+    results = []
+    for ds in data_sets:
+        for i in range(1):
+            results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
    
-    # pool.close()
-    # pool.join()
-    # q.put('kill')
-    # writer.join()
-    # for r in results:
-    #     print(r.get())
-    # elapsed_time = time.time() - start
-    # print("Elapsed time: ", elapsed_time, 's')
+    pool.close()
+    pool.join()
+    q.put('kill')
+    writer.join()
+    for r in results:
+        print(r.get())
+    elapsed_time = time.time() - start
+    print("Elapsed time: ", elapsed_time, 's')
 
+    #########################   SEPARATE OUT MEDOIDS THEY TAKE FOREVER  ########
+    
     q2 = manager.Queue()
     start = time.time()
 
@@ -372,16 +374,4 @@ def main():
 
 main()
 
-# print("Program Start")
-# filename = "experimental_data.csv"
-# manager = multiprocessing.Manager()
-# q = manager.Queue()
-# start = time.time()
 
-# writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-# writer.start()
-
-# kmedoids_worker(q, 1, "fire")
-
-# q.put('kill')
-# writer.join()
