@@ -1,5 +1,11 @@
 #Written by Matteo Bjornsson edited by Nick Stone 
 #################################################################### MODULE COMMENTS ############################################################################
+# The k nearest neighbor algorithm plots all of the points by a given distance function then plots all of the data onto some sort of plain. A data point is then#
+#Going to look at its K neighbors and based on these neighbor values such as distance and classification decide what the new data point should be based on the  #
+#Value of all of the neighbors. So think if we plot a new point on a given graph and identify that we are looking at 4 neighbors and 3 of the neighbors have a  #
+#Classification of 1 then we will assign the new data points classification to be 1 since most of its neighbors also shared that same classifcation value.      #
+#Of course tuning this algorithm requires a programmer to change the number of neighbors that the algorithm should look at, of course this number should be tune#
+#-d to the data set since in some cases having more neighbors could lead to better performance but could lead to worse performance as well.                     #
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, math
 from collections import Counter
@@ -55,7 +61,9 @@ class kNN:
     #     # last remaining option, all features are real
     #     else:
     #         return "real"
-
+    #Parameters: Take in the example data and the new sample list and the number of neighbors 
+    #Returns:  A list of nearest neighbors 
+    #Function: Generate a list of the K nearest neighbors from a given data point 
     def get_k_neighbors(self, exampleData: np.ndarray, new_sample: list, k) -> list:
         #If the dataset has both categorical and real values 
         if self.data_type == "mixed":
@@ -95,7 +103,9 @@ class kNN:
         kNeighbors = heapq.nsmallest(k, neighbors)
         #Return the neighbors with the smallest distance 
         return kNeighbors
-
+    #Parameters: Take in the example data and the test data  
+    #Returns:  Return the classification array of ground truth and hypothesis 
+    #Function: Classify the test data set that we are given based on the classifcation data set 
     def classify(self, exampleData: np.ndarray, testData: np.ndarray) -> list:
         #Create a new list 
         classifications = []
@@ -161,7 +171,9 @@ class kNN:
         #Return the classification list of ground truth and the estimate 
         return classifications
 
-
+    #Parameters: Take in a list of votes 
+    #Returns:  Return the most common neighbor 
+    #Function: Get the most common classed based on all of the neighbors the point is looing at 
     def most_common_class(self, votes: list) -> list:
         #Get a dictionary of most common classes based on the list that we are passed in 
         freqDict = Counter(votes)
