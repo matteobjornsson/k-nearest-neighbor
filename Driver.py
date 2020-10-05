@@ -289,7 +289,7 @@ def kmedoids_worker(q, fold, data_set:str):
 
     kmedoids = kMedoids_parallel.kMedoids_parallel(
         kNeighbors=tuned_k[data_set],
-        kValue=tuned_cluster_number[data_set],
+        kValue=15,
         dataSet=experimental_data_sets[data_set][1],
         data_type=feature_data_types[data_set],
         categorical_features=categorical_attribute_indices[data_set],
@@ -355,8 +355,9 @@ def main():
     results2 = []
 
     for ds in data_sets:
-        for j in range(10):
-            results2.append(kmedoids_worker(q2,j, ds))
+        if ds == "fire" or ds == "machine":
+            for j in range(10):
+                results2.append(kmedoids_worker(q2,j, ds))
 
     q2.put('kill')
     writer2.join()

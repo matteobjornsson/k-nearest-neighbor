@@ -50,7 +50,7 @@ class kMedoids_parallel:
         self.dataSet = dataSet
         # dimensionality of data set
         self.d = d
-        self.itermax = 6 
+        self.itermax = 10 
         self.Testdata = Testdata
         self.initial_medoids = self.choose_random_medoids()
         self.assignments = []
