@@ -51,7 +51,7 @@ feature_data_types = {
         "abalone": 'mixed'
 }
 
-data_sets = [ "segmentation", "vote", "glass", "fire", "machine", "abalone"]
+data_sets = ["abalone", "segmentation", "vote", "glass", "fire", "machine"]
 
 
 tuned_k = {
@@ -96,19 +96,18 @@ tuned_cluster_number = {
     "abalone": 50
 
 }
-this_ds = "fire"
+
 experimental_data_sets = {}
 #For ecah of the data set names that we have stored in a global variable 
 for data_set in data_sets:
-    if data_set == this_ds:
-        #Create a data utility to track some metadata about the class being Examined
-        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-        #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-        # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
-        if regression_data_set.get(data_set) == False: 
-            experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
-        else:
-            experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
+    #Create a data utility to track some metadata about the class being Examined
+    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+    # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
+    if regression_data_set.get(data_set) == False: 
+        experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
+    else:
+        experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
 
 results = Results.Results()
 
@@ -289,7 +288,7 @@ def kmedoids_worker(q, fold, data_set:str):
         alpha = 1
         beta = alpha * tuned_delta_value[data_set]
 
-    kmedoids = kMedoids_parallel.kMedoids_parallel(
+    kmedoids = kMedoidsClustering.kMedoidsClustering(
         kNeighbors=tuned_k[data_set],
         kValue=tuned_cluster_number[data_set],
         dataSet=experimental_data_sets[data_set][1],
@@ -352,23 +351,21 @@ def main():
     q2 = manager.Queue()
     start = time.time()
 
-    writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer2 = multiprocessing.Process(target=data_writer, args=(q2,filename))
     writer2.start()
     pool2 = multiprocessing.Pool()
     results2 = []
 
-    kmedoids_worker(q2, 1, this_ds)
+    for ds in data_sets:
+            for j in range(10):
+                results2.append(pool2.apply_async(kmedoids_worker, args=(q2, j, ds)))
 
-    # for ds in data_sets:
-    #     for j in range(1):
-    #         res = pool2.apply_async(kmedoids_worker, args=(q2, j, ds))
-    #     results2.append(res)
     pool2.close()
     pool2.join()
     q2.put('kill')
     writer2.join()
-    for r2 in results2:
-        print(r2.get())
+    for r in results2:
+        print(r.get())
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
