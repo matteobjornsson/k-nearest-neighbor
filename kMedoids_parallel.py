@@ -170,10 +170,10 @@ class kMedoids_parallel:
         accumulator.start()
 
         pool = multiprocessing.Pool()
-        new_distortions = []
+        results = []
         for j in range(len(medoids)):
             for i in range(len(data)):
-                pool.apply_async(self.queue_new_medoid_i_distortion, args=(q, j, i, initial_distortion[j], medoid_assignments))
+                results.append(pool.apply_async(self.queue_new_medoid_i_distortion, args=(q, j, i, initial_distortion[j], medoid_assignments)))
         # for j in range(len(medoids)):
         #     for i in range(len(data)):
         #         medoid_index, new_distortion = self.per_medoid_distortion(j, self.dataSet[i], medoid_assignments)
@@ -189,6 +189,8 @@ class kMedoids_parallel:
         updated_medoids = q.get()
         # print("updated medoids", updated_medoids)
         accumulator.join()
+        for r in results:
+            r = r.get()
         print("Medoids updated")
 
         return updated_medoids
