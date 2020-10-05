@@ -96,18 +96,19 @@ tuned_cluster_number = {
     "abalone": 50
 
 }
-
+this_ds = "fire"
 experimental_data_sets = {}
 #For ecah of the data set names that we have stored in a global variable 
 for data_set in data_sets:
-    #Create a data utility to track some metadata about the class being Examined
-    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-    # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
-    if regression_data_set.get(data_set) == False: 
-        experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
-    else:
-        experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
+    if data_set == this_ds:
+        #Create a data utility to track some metadata about the class being Examined
+        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+        #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+        # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
+        if regression_data_set.get(data_set) == False: 
+            experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
+        else:
+            experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
 
 results = Results.Results()
 
@@ -292,8 +293,8 @@ def kmedoids_worker(q, fold, data_set:str):
         kNeighbors=tuned_k[data_set],
         kValue=tuned_cluster_number[data_set],
         dataSet=experimental_data_sets[data_set][1],
-        data_type="real",
-        categorical_features=[],
+        data_type=feature_data_types[data_set],
+        categorical_features=categorical_attribute_indices[data_set],
         regression_data_set=regression_data_set[data_set],
         alpha=alpha,
         beta=beta,
@@ -327,49 +328,49 @@ def main():
     q = manager.Queue()
     start = time.time()
 
-    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer.start()
-    pool = multiprocessing.Pool()
+    # writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    # writer.start()
+    # pool = multiprocessing.Pool()
     
-    results = []
-    for ds in data_sets:
-        for i in range(1):
-            results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
-            results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
-            results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
-            results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
+    # results = []
+    # for ds in data_sets:
+    #     for i in range(1):
+    #         results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
+    #         results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
+    #         results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
+    #         results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
    
-    pool.close()
-    pool.join()
-    q.put('kill')
-    writer.join()
-    for r in results:
-        print(r.get())
-    elapsed_time = time.time() - start
-    print("Elapsed time: ", elapsed_time, 's')
-
-    # q2 = manager.Queue()
-    # start = time.time()
-
-    # writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
-    # writer2.start()
-    # pool2 = multiprocessing.Pool()
-    # results2 = []
-
-
-
-    # # for ds in data_sets:
-    # #     for j in range(1):
-    # #         res = pool2.apply_async(kmedoids_worker, args=(q2, j, ds))
-    # #     results2.append(res)
-    # pool2.close()
-    # pool2.join()
-    # q2.put('kill')
-    # writer2.join()
-    # for r2 in results2:
-    #     print(r2.get())
+    # pool.close()
+    # pool.join()
+    # q.put('kill')
+    # writer.join()
+    # for r in results:
+    #     print(r.get())
     # elapsed_time = time.time() - start
     # print("Elapsed time: ", elapsed_time, 's')
+
+    q2 = manager.Queue()
+    start = time.time()
+
+    writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer2.start()
+    pool2 = multiprocessing.Pool()
+    results2 = []
+
+    kmedoids_worker(q2, 1, this_ds)
+
+    # for ds in data_sets:
+    #     for j in range(1):
+    #         res = pool2.apply_async(kmedoids_worker, args=(q2, j, ds))
+    #     results2.append(res)
+    pool2.close()
+    pool2.join()
+    q2.put('kill')
+    writer2.join()
+    for r2 in results2:
+        print(r2.get())
+    elapsed_time = time.time() - start
+    print("Elapsed time: ", elapsed_time, 's')
 
     #Print some meta data to the screen letting the user know the program is ending 
     print("Program End")

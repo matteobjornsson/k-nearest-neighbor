@@ -154,7 +154,6 @@ class kMedoids_parallel:
             medoid_index, new_distortion = q.get()
             # medoid_index, new_distortion = res.get()
             distortion[medoid_index] = new_distortion
-        print("Distortion", distortion, len(distortion), len(medoids))
         return distortion
 
         
@@ -162,10 +161,8 @@ class kMedoids_parallel:
     #Returns: return the list of updated medoid values 
     #Function: Update all of th emedoid feature values 
     def update_medoids_parallel(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
-        initial_distortion = self.distortion(medoids, medoid_assignments, self.dataSet)
-        parallel_distortion = self.distortion_parallel(medoids, medoid_assignments)
-        print("total_distortion:", sum(initial_distortion))
-        print("total_distortion parallel:", sum(initial_distortion))
+        initial_distortion = self.distortion_parallel(medoids, medoid_assignments)
+
         
         manager = multiprocessing.Manager()
         q = manager.Queue()
@@ -232,7 +229,6 @@ class kMedoids_parallel:
             distortion_element = q.get()
             if distortion_element == 'kill':
                 q.put(medoids)
-                print("kill on ", count, "count")
                 break
             count += 1
             medoid_index, new_distortion_i, new_x_index = distortion_element
