@@ -298,22 +298,22 @@ class kMeansClustering:
 
     def CountCentroidClasses(self,centroid, centroid_assignments,data): 
     
-            centroidTuples = list() 
-            #For each of the centroids 
-            for j in range(len(centroid_assignments)):
-                #If the assignment is in a given range  
-                if centroid == centroid_assignments[j]: 
-                    #Append the value to the list 
-                    centroidTuples.append(j)
-            #Now we have a list of all records in the data array that belong to a specific centroid 
-            #Get the total number of rows in each of the data points 
-            # Rows = len(data[0])-1
-            classes = list()
-            for z in centroidTuples: 
-                classes.append(data[z][len(data[0])-1])
-            if not classes:
-                return 0 
-            return max(classes,key=classes.count)
+        centroidTuples = list() 
+        #For each of the centroids 
+        for j in range(len(centroid_assignments)):
+            #If the assignment is in a given range  
+            if centroid == centroid_assignments[j]: 
+                #Append the value to the list 
+                centroidTuples.append(j)
+        #Now we have a list of all records in the data array that belong to a specific centroid 
+        #Get the total number of rows in each of the data points 
+        # Rows = len(data[0])-1
+        classes = list()
+        for z in centroidTuples: 
+            classes.append(data[z][len(data[0])-1])
+        if not classes:
+            return 0 
+        return max(classes,key=classes.count)
                 
 
 
