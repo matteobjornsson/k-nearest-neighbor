@@ -55,10 +55,8 @@ class kMeansClustering:
         self.d = d
         #If the data set is machine 
         if name == "machine": 
-            print(self.dataSet, self.dataSet.shape)
             self.dataSet = self.dataSet[:,2:]
             self.Testdata = self.Testdata[:,2:]
-            print(self.dataSet, self.dataSet.shape)
             self.d = d-2
         # dimensionality of data set
         # save which features are real as well by deleting categorical indices from a new list

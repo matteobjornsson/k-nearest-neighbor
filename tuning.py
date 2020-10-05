@@ -4,7 +4,7 @@ import multiprocessing
 
 from pandas.core.arrays import categorical
 import DataUtility
-import kNN, EditedKNN, CondensedKNN
+import kNN, EditedKNN, CondensedKNN, kMeansClustering, kMedoidsClustering
 import Results
 import numpy as np
 
@@ -196,7 +196,39 @@ def tune_cknn_parallel_worker(q, data_set:str, error_value: float):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    
+def tune_kmeans_parallel_worker(q, data_set:str, kNeighbors: int, kClusters: int):
+    data_dimension = tuning_data_dict[data_set].shape[1]-1
+    data_type = feature_data_types[data_set]
 
+    if data_type != "mixed":
+        alpha = 1
+        beta = 1
+    else: 
+        alpha = 1
+        beta = alpha * tuned_delta_value[data_set]
+
+    kmeans = kMeansClustering.kMeansClustering(
+        kNeighbors=kNeighbors,
+        kValue=kClusters,
+        dataSet=full_data_dict[data_set],
+        data_type="real",
+        categorical_features=[],
+        regression_data_set=regression_data_set[data_set],
+        alpha=alpha,
+        beta=beta,
+        h=tuned_bin_value[data_set], 
+        d=data_dimension,
+        name=data_set,
+        Testdata=tuning_data_dict[data_set]
+        )
+
+    classifications = kmeans.classify()
+    metadata = [data_set, kNeighbors, kClusters]
+    results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
+    data_point = metadata + results_set
+    data_point_string = ','.join([str(x) for x in data_point])
+    q.put(data_point_string)
 
 # source of data writer asynch code 'data_writer'
 # https://stackoverflow.com/questions/13446445/python-multiprocessing-safely-writing-to-a-file
@@ -312,10 +344,33 @@ def cknn_asynch_error_tuner(filename):
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
+def kmeans_asynch_error_tuner(filename):
+    manager = multiprocessing.Manager()
+    q = manager.Queue()
+    start = time.time()
+    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer.start()
+
+    pool = multiprocessing.Pool()
+    
+    for ds in data_sets:
+        for i in range(1,30):
+            for j in range(1,30):
+                pool.apply_async(tune_kmeans_parallel_worker, args=(q, ds, i, j))
+
+    pool.close()
+    pool.join()
+    q.put('kill')
+    writer.join()
+    elapsed_time = time.time() - start
+    print("Elapsed time: ", elapsed_time, 's')
+
+
 
 #knn_asynch_tuner('knn_tuning2.csv')
 
 # eknn_asynch_error_tuner('edited_error_full.csv')
 
-cknn_asynch_error_tuner('condensed_error_full.csv')
+# cknn_asynch_error_tuner('condensed_error_full.csv')
 
+kmeans_asynch_error_tuner('kmeans_clustering_full.csv')
