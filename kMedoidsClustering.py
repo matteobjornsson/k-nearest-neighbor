@@ -99,6 +99,8 @@ class kMedoidsClustering:
             medoid_assignments[i] = self.closest_medoid_to_point(x, medoids)
         # return the list of indices
         return medoid_assignments
+
+        
     #Parameters: Take in the medoids, the medoid assignments and the data array 
     #Returns:  Returns the distorion value 
     #Function: Generate and return the distortion value based on the given points in the medoids 
@@ -108,7 +110,7 @@ class kMedoidsClustering:
         #Loop through the number of indices in the medoids array 
         for i in range(len(medoids)):
             #Store the current medoid we are looking at 
-            m = medoids[i]
+            m = medoids[i].tolist()[:-1]
             points_in_cluster = []
             # for the current medoid, look up all examples x that are assigned
             # to that medoid (have a value at their index position in the medoid
@@ -131,6 +133,8 @@ class kMedoidsClustering:
                     distortion += (distance_from_m)**2
         #Return the distortion 
         return distortion
+
+
     #Parameters: Take in the medoids, the medoid assignments and the data 
     #Returns: return the list of updated medoid values 
     #Function: Update all of th emedoid feature values 
@@ -157,6 +161,8 @@ class kMedoidsClustering:
             print("updating medoid for cluster", i)
         #Return meoids 
         return medoids
+
+
     #Parameters: N/a
     #Returns:  Return the list of updated medoid values 
     #Function: Generate and update the feature mean values for each medoids 
@@ -196,6 +202,8 @@ class kMedoidsClustering:
             first_assignment = second_assignment
         #Return the updated medoids 
         return updated_medoids
+
+
     #Parameters: N/a
     #Returns:  Return the classification list 
     #Function: Return the classifcation of the test data based on the medoids 

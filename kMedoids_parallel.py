@@ -7,11 +7,11 @@
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, random
 import multiprocessing
-import kNN, DataUtility
+import kNN, DataUtility, kMedoidsClustering
 import numpy as np
 
 
-class kMedoidsClustering:
+class kMedoidsClustering_P:
     #on the creation of a given object run the following 
     def __init__(self,
         # number of neighbors in knn
@@ -50,8 +50,10 @@ class kMedoidsClustering:
         self.dataSet = dataSet
         # dimensionality of data set
         self.d = d
-        self.itermax = 5 
+        self.itermax = 6 
         self.Testdata = Testdata
+        self.initial_medoids = self.choose_random_medoids()
+        self.assignments = []
 
  
 
@@ -100,6 +102,7 @@ class kMedoidsClustering:
             medoid_assignments[i] = self.closest_medoid_to_point(x, medoids)
         # return the list of indices
         return medoid_assignments
+
     #Parameters: Take in the medoids, the medoid assignments and the data array 
     #Returns:  Returns the distorion value 
     #Function: Generate and return the distortion value based on the given points in the medoids 
@@ -133,30 +136,34 @@ class kMedoidsClustering:
         #Return the distortion 
         return distortion
 
-    def distortion_parallel(self, medoids, medoid_assignments, data):
-        pool = multiprocessing.Pool()
-        results = []
-        
-        for i in len(medoids):
-            res = pool.apply_async(self.per_medoid_distortion(i, medoids[i], medoid_assignments))
-            results.append(res)
-        pool.close()
-        pool.join()
-        assert len(results) > 0
-        
-        distortion = [0] * len(medoids)
-        for res in results:
-            medoid_index, new_distortion = res.get()
-            distortion[medoid_index] = new_distortion
-        return distortion
+    # def distortion_parallel(self, medoids, medoid_assignments):
+    #     manager = multiprocessing.Manager()
+    #     q = manager.Queue()
+    #     pool = multiprocessing.Pool()
+
+    #     for i in range(len(medoids)):
+    #         pool.apply_async(
+    #                 self.per_medoid_distortion(i, medoids[i], medoid_assignments, q)
+    #                 # callback=log_results
+    #                 )
+    #     pool.close()
+    #     pool.join()
+
+    #     distortion = [0] * len(medoids)
+    #     while not q.empty():
+    #         medoid_index, new_distortion = q.get()
+    #         # medoid_index, new_distortion = res.get()
+    #         distortion[medoid_index] = new_distortion
+    #     print("Distortion", distortion, len(distortion), len(medoids))
+    #     return distortion
 
         
-
     #Parameters: Take in the medoids, the medoid assignments and the data 
     #Returns: return the list of updated medoid values 
     #Function: Update all of th emedoid feature values 
     def update_medoids_parallel(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
-        initial_distortion = self.distortion_parallel(medoids, medoid_assignments, data)
+        initial_distortion = self.distortion_parallel(medoids, medoid_assignments)
+        print("total_distortion:", sum(initial_distortion))
         
         manager = multiprocessing.Manager()
         q = manager.Queue()
@@ -184,47 +191,56 @@ class kMedoidsClustering:
             q.put([index, new_distortion_i, data_index])
 
 
-    def per_medoid_distortion(self, medoid_index, medoid, medoid_assignments):
+    def per_medoid_distortion(self, medoid_index, medoid, medoid_assignments, q=None):
         medoid_position = medoid.tolist()[:-1]
         distortion_i = 0
         cluster_members = []
         for j in range(len(medoid_assignments)):
             assignment = medoid_assignments[j]
             if assignment == medoid_index:
-                cluster_members.append(self.data[j].reshape(1, self.data.shape[1]))
+                print("point belongs to ", assignment)
+                cluster_members.append(self.dataSet[j].reshape(1, self.dataSet.shape[1]))
         if len(cluster_members) > 0:
+            print("cluster members:", len(cluster_members))
             cluster_members = np.concatenate(cluster_members)
             cluster_point_distances = self.nn.get_k_neighbors(cluster_members, medoid_position, len(cluster_members))
+            print("cluster point distances", cluster_point_distances)
             for cluster_point in cluster_point_distances:
+                
                 distance_to_proposed_medoid = cluster_point[0]
                 distortion_i += (distance_to_proposed_medoid)**2
-        return [medoid_index, distortion_i]
+        if q is None:
+            return[medoid_index, distortion_i]
+        else:
+            q.put([medoid_index, distortion_i])
 
     def update_processor(self, q, current_medoids, initial_distortion):
         medoids = copy.deepcopy(current_medoids)
         # distortion element: [medoid_parent, distortion, x_index]
+        count = 0
         while True:
             distortion_element = q.get()
             if distortion_element == 'kill':
                 q.put(medoids)
+                print("kill on ", count, "count")
                 break
 
             medoid_index, new_distortion_i, new_x_index = distortion_element[0]
             initial_distortion_i = initial_distortion[medoid_index]
-            
+            print("new_distortion < initial_distortion", new_distortion_i < initial_distortion_i)
             if new_distortion_i < initial_distortion_i:
+                assert medoids[medoid_index] != self.dataSet[new_x_index]
                 medoids[medoid_index] = self.dataSet[new_x_index]
+                assert medoids[medoid_index] == self.dataSet[new_x_index]
 
     #Parameters: N/a
     #Returns:  Return the list of updated medoid values 
     #Function: Generate and update the feature mean values for each medoids 
     def generate_cluster_medoids(self):
-        #Choose a random medoid and store the value 
-        medoids = self.choose_random_medoids()
         #Store off the first assignment value 
-        first_assignment = self.assign_all_points_to_closest_medoid(medoids, self.dataSet)
+        first_assignment = self.assign_all_points_to_closest_medoid(self.initial_medoids, self.dataSet)
         #Store the update medoids value based on the first assignment 
-        updated_medoids = self.update_medoids(medoids, first_assignment, self.dataSet)
+        updated_medoids = self.update_medoids_parallel(self.initial_medoids, first_assignment, self.dataSet)
         #Set a count to be 0
         count = 0
         # print("count: ", count)
@@ -232,7 +248,7 @@ class kMedoidsClustering:
             #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)
             #Store the updated medoids from the second assignment values calculated above 
-            updated_medoids = self.update_medoids(updated_medoids, second_assignment, self.dataSet)
+            updated_medoids = self.update_medoids_parallel(updated_medoids, second_assignment, self.dataSet)
             #Increment count 
 
             # code for indicating if the medoid assignments are changing
@@ -245,7 +261,6 @@ class kMedoidsClustering:
                 if first_assignment[i] != second_assignment[i]:
                     #Store thevalue off 
                     changing_assignments.append(i)
-            print("medoid assignments that are changing", changing_assignments)
             #If the first is equal to the second or we are beyond the iteration limit set 
             if first_assignment == second_assignment or count > self.itermax:
                 #Break 
@@ -266,35 +281,77 @@ class kMedoidsClustering:
 if __name__ == '__main__':
     print("program Start")
     categorical_attribute_indices = {
-        "segmentation": [],
-        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-        "glass": [],
-        "fire": [0,1,2,3],
-        "machine": [0,1],
-        "abalone": [0]
+            "segmentation": [],
+            "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+            "glass": [],
+            "fire": [0,1,2,3],
+            "machine": [0,1],
+            "abalone": [0]
     }
 
     regression_data_set = {
-        "segmentation": False,
-        "vote": False,
-        "glass": False,
-        "fire": True,
-        "machine": True,
-        "abalone": True
+            "segmentation": False,
+            "vote": False,
+            "glass": False,
+            "fire": True,
+            "machine": True,
+            "abalone": True
     }
 
     feature_data_types = {
-        "segmentation": 'real',
-        "vote": 'categorical',
-        "glass": 'real',
-        "fire": 'mixed',
-        "machine": 'mixed',
-        "abalone": 'mixed'
+            "segmentation": 'real',
+            "vote": 'categorical',
+            "glass": 'real',
+            "fire": 'mixed',
+            "machine": 'mixed',
+            "abalone": 'mixed'
     }
 
-    data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+    data_sets = [ "segmentation", "vote", "glass", "fire", "machine", "abalone"]
 
-    regression = [x for x in data_sets if regression_data_set[x]]
+
+    tuned_k = {
+        "segmentation": 2,
+        "vote": 5,
+        "glass": 2,
+        "fire": 2,
+        "machine": 5,
+        "abalone": 12
+    }
+    tuned_bin_value = {
+        "segmentation": .25,
+        "vote": .25,
+        "glass": .25,
+        "fire": .1,
+        "machine": .25,
+        "abalone": .1
+    }
+
+    tuned_delta_value = {
+        "segmentation": .25,
+        "vote": .25,
+        "glass": .25,
+        "fire": .5,
+        "machine": .1,
+        "abalone": .5
+    }
+
+    tuned_error_value = {
+        "fire": 1,
+        "abalone": 1,
+        "machine":2
+    }
+
+    tuned_cluster_number = {
+        "segmentation": 80,
+        "vote": 15,
+        "glass": 60,
+        # not sure about fire, weird behavior
+        "fire": 60,
+        "machine": 50,
+        "abalone": 50
+
+    }
 
     for i in range(1):
         data_set = "vote"
@@ -302,15 +359,45 @@ if __name__ == '__main__':
         print("Data set: ", data_set)
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         headers, full_set, tuning_data, tenFolds = du.generate_experiment_data(data_set)
-        # print("headers: ", headers, "\n", "tuning data: \n",tuning_data)
         test = copy.deepcopy(tenFolds[0])
         training = np.concatenate(tenFolds[1:])
 
         d = len(headers)-1
-        kMC = kMedoidsClustering(kValue=d, dataSet=training, data_type=feature_data_types[data_set], categorical_features=categorical_attribute_indices[data_set], regression_data_set=regression_data_set[data_set], alpha=1, beta=1, h=.5, d=d)
-        medoids = kMC.generate_cluster_medoids()
-        print("dataset medoids: ", medoids, f"(length: {len(medoids)})")
-        print("original dataset: ", kMC.dataSet, f"(length: {len(kMC.dataSet)}")
+        kMC_p = kMedoidsClustering_P(
+            kNeighbors=tuned_k[data_set],
+            kValue=5,
+            dataSet=training,
+            data_type=feature_data_types[data_set],
+            categorical_features=categorical_attribute_indices[data_set],
+            regression_data_set=regression_data_set[data_set],
+            alpha=1,
+            beta=1,
+            h=tuned_bin_value[data_set],
+            d=d,
+            Testdata=test
+        )
+        # kMC = kMedoidsClustering.kMedoidsClustering(
+        #     kNeighbors=tuned_k[data_set],
+        #     kValue=5,
+        #     dataSet=training,
+        #     data_type=feature_data_types[data_set],
+        #     categorical_features=categorical_attribute_indices[data_set],
+        #     regression_data_set=regression_data_set[data_set],
+        #     alpha=1,
+        #     beta=1,
+        #     h=tuned_bin_value[data_set],
+        #     d=d,
+        #     Testdata=test
+        # )
+        # kMC.initial_medoids = kMC_p.initial_medoids
+        medoids_p = kMC_p.generate_cluster_medoids()
+        # medoids = kMC.generate_cluster_medoids()
+        print("medoids_p", medoids_p)
+        # print("medoids", medoids)
+
+        # print( medoids_p == medoids)
+        # print("dataset medoids: ", medoids, f"(length: {len(medoids)})")
+        # print("original dataset: ", kMC.dataSet, f"(length: {len(kMC.dataSet)}")
 
     print("program end ")
     ####################################### UNIT TESTING #################################################
