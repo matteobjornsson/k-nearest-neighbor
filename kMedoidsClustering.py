@@ -192,10 +192,11 @@ class kMedoidsClustering:
             first_assignment = second_assignment
         #Return the updated medoids 
         return updated_medoids
-    #Parameters: 
-    #Returns:  
-    #Function: 
+    #Parameters: N/a
+    #Returns:  Return the classification list 
+    #Function: Return the classifcation of the test data based on the medoids 
     def classify(self):
+        #Store the generated random medoids 
         medoids = self.generate_cluster_medoids()
         return self.knn.classify(medoids, self.Testdata)
 

@@ -55,7 +55,9 @@ class kNN:
     #     # last remaining option, all features are real
     #     else:
     #         return "real"
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def get_k_neighbors(self, exampleData: np.ndarray, new_sample: list, k) -> list:
         #If the dataset has both categorical and real values 
         if self.data_type == "mixed":
@@ -95,7 +97,9 @@ class kNN:
         kNeighbors = heapq.nsmallest(k, neighbors)
         #Return the neighbors with the smallest distance 
         return kNeighbors
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def classify(self, exampleData: np.ndarray, testData: np.ndarray) -> list:
         #Create a new list 
         classifications = []
@@ -161,7 +165,9 @@ class kNN:
         #Return the classification list of ground truth and the estimate 
         return classifications
 
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def most_common_class(self, votes: list) -> list:
         #Get a dictionary of most common classes based on the list that we are passed in 
         freqDict = Counter(votes)
