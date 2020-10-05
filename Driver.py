@@ -327,46 +327,49 @@ def main():
     q = manager.Queue()
     start = time.time()
 
-    # writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    # writer.start()
-    # pool = multiprocessing.Pool()
+    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer.start()
+    pool = multiprocessing.Pool()
     
-    # results = []
-    # for ds in data_sets:
-    #     for i in range(1):
-    #         results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
-    #         results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
-   
-    # pool.close()
-    # pool.join()
-    # q.put('kill')
-    # writer.join()
-    # for r in results:
-    #     print(r.get())
-    # elapsed_time = time.time() - start
-    # print("Elapsed time: ", elapsed_time, 's')
-
-    q2 = manager.Queue()
-    start = time.time()
-
-    writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer2.start()
-    pool2 = multiprocessing.Pool()
-    results2 = []
+    results = []
     for ds in data_sets:
-        for j in range(1):
-            res = pool2.apply_async(kmedoids_worker, args=(q2, j, ds))
-        results2.append(res)
-    pool2.close()
-    pool2.join()
-    q2.put('kill')
-    writer2.join()
-    for r2 in results2:
-        print(r2.get())
+        for i in range(1):
+            results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
+   
+    pool.close()
+    pool.join()
+    q.put('kill')
+    writer.join()
+    for r in results:
+        print(r.get())
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
+
+    # q2 = manager.Queue()
+    # start = time.time()
+
+    # writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
+    # writer2.start()
+    # pool2 = multiprocessing.Pool()
+    # results2 = []
+
+
+
+    # # for ds in data_sets:
+    # #     for j in range(1):
+    # #         res = pool2.apply_async(kmedoids_worker, args=(q2, j, ds))
+    # #     results2.append(res)
+    # pool2.close()
+    # pool2.join()
+    # q2.put('kill')
+    # writer2.join()
+    # for r2 in results2:
+    #     print(r2.get())
+    # elapsed_time = time.time() - start
+    # print("Elapsed time: ", elapsed_time, 's')
 
     #Print some meta data to the screen letting the user know the program is ending 
     print("Program End")

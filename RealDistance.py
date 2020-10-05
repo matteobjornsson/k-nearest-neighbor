@@ -16,10 +16,14 @@ class RealDistance:
         p = self.pValue
         #Set a distance variable to be 0 
         distance = 0
+        print("x1,", x1, "\nx2,", x2)
         #For each of the features in the feature vector x1 
         for i in range(len(x1)):
             #Add the absolute value from x1 - x2 to the power p 
+            print()
+            print('x1[i]', x1[i], 'x2[i]', x2[i])
             distance += (abs(x1[i] - x2[i])**p)
+
         #Set distance to be the distance to the 1/2 power 
         distance = distance**(1/p)
         #Return the distance value 
