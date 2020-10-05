@@ -1,5 +1,8 @@
 #Written By Nick Stone and Matteo Bjornsson 
 #################################################################### MODULE COMMENTS ############################################################################
+#The Kmeans clustering builds off of the KNN algorithm by creating centroids and trying to group large numbers of data points together. By doing this the algo. #
+#can cluster data points together and can classify data points by looking at an entire neighborhood instead of an arbitrarily defined K for the number of neighb#
+#Of course the tuning data for this algorithm is the number of neighbors as well as a few other data points that should be tuned to each of the given data sets #
 #################################################################### MODULE COMMENTS ############################################################################
 from random import sample
 import numpy as np
@@ -32,7 +35,6 @@ class kMeansClustering:
         d: int,
         name: str, 
         Testdata: np.ndarray):
-
         # create a Nearest Neighbor object to single nearest neighbor to input data point
         self.nn = kNN.kNN(1, data_type, [], regression_data_set, alpha, beta, h, d)
         self.knn = kNN.kNN(kNeighbors, data_type, [], regression_data_set, alpha, beta, h, d)
@@ -67,9 +69,9 @@ class kMeansClustering:
         #SEt the real features object variable 
         self.real_features = real_features
 
-    #Parameters: 
-    #Returns:  
-    #Function: 
+    #Parameters: take in a data set and the name of a given data set 
+    #Returns:  Return the new data set with all categorical values conveted 
+    #Function: Convery all of the categorical features to a integrer or real value 
     def ConvertData(self,data_set_row, Name):
         #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
@@ -172,10 +174,9 @@ class kMeansClustering:
         #Return the updated dataset 
         return data_set_row
 
-    #Parameters: 
-    #Returns:  
-    #Function: 
-    # randomly generate kvalue centroids by randomly generating an appropriate value per feature
+    #Parameters: N/a
+    #Returns:  Return the centroid aray 
+    #Function: randomly generate kvalue centroids by randomly generating an appropriate value per feature
     def create_random_centroids(self) -> np.ndarray:
         #Create a copy of the test data 
         sample_point = copy.deepcopy(self.Testdata[0,:])
@@ -185,11 +186,15 @@ class kMeansClustering:
         for k in range(self.kValue):
             #Copy a new point 
             new_point = copy.deepcopy(sample_point)
-            #
+            #for each of the features in the dimensionality 
             for feature in range(self.d):
+                #Set the new poiunt at a specific feature value 
                 new_point[feature] = random.uniform(0,1)
+            #Append the new point to the list of points 
             points.append(new_point)
+        #Add the points to the centroid array 
         centroid_array = np.concatenate(points).reshape(self.kValue, self.d+1)
+        #Return the centroid array 
         return centroid_array
 
     #Parameters: Take in a given data point and the list of centroids 
