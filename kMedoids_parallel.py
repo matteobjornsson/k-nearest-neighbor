@@ -103,13 +103,13 @@ class kMedoidsClustering:
     #Parameters: Take in the medoids, the medoid assignments and the data array 
     #Returns:  Returns the distorion value 
     #Function: Generate and return the distortion value based on the given points in the medoids 
-    def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> float:
+    def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> list:
         #Set the distortion value to 0
-        distortion = 0
+        distortion = [0] * len(medoids)
         #Loop through the number of indices in the medoids array 
         for i in range(len(medoids)):
             #Store the current medoid we are looking at 
-            m = medoids[i]
+            m = medoids[i].tolist()[:-1]
             points_in_cluster = []
             # for the current medoid, look up all examples x that are assigned
             # to that medoid (have a value at their index position in the medoid
@@ -129,35 +129,92 @@ class kMedoidsClustering:
                 for point in point_distances:
                     distance_from_m = point[0]
                     #Add the distortion value to the variable for each of the points 
-                    distortion += (distance_from_m)**2
+                    distortion[i] += (distance_from_m)**2
         #Return the distortion 
         return distortion
+
+    def distortion_parallel(self, medoids, medoid_assignments, data):
+        pool = multiprocessing.Pool()
+        results = []
+        
+        for i in len(medoids):
+            res = pool.apply_async(self.per_medoid_distortion(i, medoids[i], medoid_assignments))
+            results.append(res)
+        pool.close()
+        pool.join()
+        assert len(results) > 0
+        
+        distortion = [0] * len(medoids)
+        for res in results:
+            medoid_index, new_distortion = res.get()
+            distortion[medoid_index] = new_distortion
+        return distortion
+
+        
+
     #Parameters: Take in the medoids, the medoid assignments and the data 
     #Returns: return the list of updated medoid values 
     #Function: Update all of th emedoid feature values 
-    def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
-        #Loop through the nunmber of indicies in the medoids array (Total number of medoids )
-        for i in range(len(medoids)):
-            #Store off the distortion value calculated in the above functions 
-            distortion = self.distortion(medoids, medoid_assignments, data)
-            #For each of the data points 
-            for x in data:
-                #Set a copy of the medoids above 
-                new_medoids = copy.deepcopy(medoids)
-                #Story off a given array to be a copy of the value x in data 
-                new_medoids[i] = copy.deepcopy(x)
-                #Calculate a new distortion from the copies above 
-                new_distortion = self.distortion(new_medoids, medoid_assignments, data)
-                #If the new distortion is less than the distortion calculated above 
-                if new_distortion < distortion:
-                    #Store off a deep copy of the sample x that is the new medoid
-                    # print("old medoid:", medoids[i])
-                    # print("new medoid:", x)
-                    #Copy x and assign to the medoid 
-                    medoids[i] = copy.deepcopy(x)
-            print("updating medoid for cluster", i)
-        #Return meoids 
-        return medoids
+    def update_medoids_parallel(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
+        initial_distortion = self.distortion_parallel(medoids, medoid_assignments, data)
+        
+        manager = multiprocessing.Manager()
+        q = manager.Queue()
+        accumulator = multiprocessing.Process(target=self.update_processor, args=(q, medoids, initial_distortion))
+        accumulator.start()
+
+        pool = multiprocessing.Pool()
+
+        for j in range(len(medoids)):
+            for i in range(len(data)):
+                pool.apply_async(self.queue_new_medoid_i_distortion, args=(q, j, i, initial_distortion[j], medoid_assignments))
+
+        pool.close()
+        pool.join()
+        q.put('kill')
+        updated_medoids = q.get()
+        accumulator.join()
+        print("Medoids updated")
+
+        return updated_medoids
+
+    def queue_new_medoid_i_distortion(self, q, medoid_index, data_index, initial_distortion_i, medoid_assignments):
+        index, new_distortion_i = self.per_medoid_distortion(medoid_index, data_index, medoid_assignments)
+        if new_distortion_i < initial_distortion_i:
+            q.put([index, new_distortion_i, data_index])
+
+
+    def per_medoid_distortion(self, medoid_index, medoid, medoid_assignments):
+        medoid_position = medoid.tolist()[:-1]
+        distortion_i = 0
+        cluster_members = []
+        for j in range(len(medoid_assignments)):
+            assignment = medoid_assignments[j]
+            if assignment == medoid_index:
+                cluster_members.append(self.data[j].reshape(1, self.data.shape[1]))
+        if len(cluster_members) > 0:
+            cluster_members = np.concatenate(cluster_members)
+            cluster_point_distances = self.nn.get_k_neighbors(cluster_members, medoid_position, len(cluster_members))
+            for cluster_point in cluster_point_distances:
+                distance_to_proposed_medoid = cluster_point[0]
+                distortion_i += (distance_to_proposed_medoid)**2
+        return [medoid_index, distortion_i]
+
+    def update_processor(self, q, current_medoids, initial_distortion):
+        medoids = copy.deepcopy(current_medoids)
+        # distortion element: [medoid_parent, distortion, x_index]
+        while True:
+            distortion_element = q.get()
+            if distortion_element == 'kill':
+                q.put(medoids)
+                break
+
+            medoid_index, new_distortion_i, new_x_index = distortion_element[0]
+            initial_distortion_i = initial_distortion[medoid_index]
+            
+            if new_distortion_i < initial_distortion_i:
+                medoids[medoid_index] = self.dataSet[new_x_index]
+
     #Parameters: N/a
     #Returns:  Return the list of updated medoid values 
     #Function: Generate and update the feature mean values for each medoids 

@@ -92,7 +92,7 @@ tuned_cluster_number = {
     # not sure about fire, weird behavior
     "fire": 60,
     "machine": 50,
-    "abalone": 60
+    "abalone": 50
 
 }
 
