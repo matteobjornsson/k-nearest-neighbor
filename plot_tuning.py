@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax1 = fig.add_subplot(111,projection='3d')
 
-x, y, z = np.loadtxt('./tuning/kmeans_clustering_glass.csv', delimiter=',', unpack=True)
+x, y, z = np.loadtxt('./tuning/kmeans_vote.csv', delimiter=',', unpack=True)
 col = np.arange(len(x))
 ax1.set_xlabel('neighbors')
 ax1.set_ylabel('clusters')
