@@ -324,11 +324,11 @@ def main():
     results = []
     for ds in data_sets:
         for i in range(1):
-            res1 = pool.apply_async(knn_worker, args=(q, i, ds))
-            res2 = pool.apply_async(eknn_worker, args=(q, i, ds))
-            res3 = pool.apply_async(cknn_worker, args=(q, i, ds))
-            res4 = pool.apply_async(kmeans_worker, args=(q, i, ds))
-        results.append(res1, res2, res3, res4)    
+            results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
+            results.append(pool.apply_async(kmeans_worker, args=(q, i, ds)))
+   
     pool.close()
     pool.join()
     q.put('kill')
