@@ -291,9 +291,9 @@ def cknn_asynch_error_tuner(filename):
 
             regression_mean = regression_variable_mean[ds]
             small_step = .001*regression_mean
-            small_error_values = [small_step + small_step*i for i in range(5)]
+            small_error_values = [small_step + small_step*i for i in range(100)]
             big_step = 100*small_step
-            large_error_values = [big_step + big_step*j for j in range(5)]
+            large_error_values = [big_step + big_step*j for j in range(30)]
             error_values = small_error_values + large_error_values
 
             for e in error_values:
