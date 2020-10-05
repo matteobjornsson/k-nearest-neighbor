@@ -100,14 +100,15 @@ tuned_cluster_number = {
 experimental_data_sets = {}
 #For ecah of the data set names that we have stored in a global variable 
 for data_set in data_sets:
-    #Create a data utility to track some metadata about the class being Examined
-    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-    # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
-    if regression_data_set.get(data_set) == False: 
-        experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
-    else:
-        experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
+    if data_set == 'abalone':
+        #Create a data utility to track some metadata about the class being Examined
+        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+        #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+        # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
+        if regression_data_set.get(data_set) == False: 
+            experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
+        else:
+            experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
 
 results = Results.Results()
 
@@ -288,9 +289,9 @@ def kmedoids_worker(q, fold, data_set:str):
         alpha = 1
         beta = alpha * tuned_delta_value[data_set]
 
-    kmedoids = kMedoidsClustering.kMedoidsClustering(
+    kmedoids = kMedoids_parallel.kMedoids_parallel(
         kNeighbors=tuned_k[data_set],
-        kValue=tuned_cluster_number[data_set],
+        kValue=3,
         dataSet=experimental_data_sets[data_set][1],
         data_type=feature_data_types[data_set],
         categorical_features=categorical_attribute_indices[data_set],
@@ -353,19 +354,17 @@ def main():
 
     writer2 = multiprocessing.Process(target=data_writer, args=(q2,filename))
     writer2.start()
-    pool2 = multiprocessing.Pool()
     results2 = []
 
     for ds in data_sets:
+        if ds == 'abalone':
             for j in range(10):
-                results2.append(pool2.apply_async(kmedoids_worker, args=(q2, j, ds)))
+                results2.append(kmedoids_worker(q2,j, ds))
 
-    pool2.close()
-    pool2.join()
     q2.put('kill')
     writer2.join()
     for r in results2:
-        print(r.get())
+        print(r)
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
