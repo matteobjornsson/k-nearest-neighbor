@@ -162,6 +162,11 @@ def eknn_worker(q, fold, data_set: str):
     data_dimension = len(experimental_data_sets[data_set][0]) - 1
     data_type = feature_data_types[data_set]
 
+    if regression_data_set[data_set]:
+        error = tuned_error_value[data_set]
+    else:
+        error = 1
+
     if data_type != "mixed":
         alpha = 1
         beta = 1
@@ -170,7 +175,7 @@ def eknn_worker(q, fold, data_set: str):
         beta = alpha * tuned_delta_value[data_set]
 
     eknn = EditedKNN.EditedKNN(
-        error=tuned_error_value[data_set],
+        error=error,
         k=tuned_k[data_set],
         data_type=feature_data_types[data_set],
         categorical_features=categorical_attribute_indices[data_set],
@@ -198,6 +203,11 @@ def cknn_worker(q, fold, data_set: str):
 
     data_dimension = len(experimental_data_sets[data_set][0]) - 1
     data_type = feature_data_types[data_set]
+    
+    if regression_data_set[data_set]:
+        error = tuned_error_value[data_set]
+    else:
+        error = 1
     if data_type != "mixed":
         alpha = 1
         beta = 1
@@ -206,7 +216,7 @@ def cknn_worker(q, fold, data_set: str):
         beta = alpha * tuned_delta_value[data_set]
 
     cknn = CondensedKNN.CondensedKNN(
-        error=tuned_error_value[data_set],
+        error=error,
         k=tuned_k[data_set],
         data_type=feature_data_types[data_set],
         categorical_features=categorical_attribute_indices[data_set],
