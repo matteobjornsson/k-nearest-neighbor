@@ -1,6 +1,9 @@
 #Written by Matteo Bjornsson Edited by Nick Stone 
-#################################################################### MODULE COMMENTS ############################################################################4
-##
+#################################################################### MODULE COMMENTS ############################################################################
+#The edited KNN algorithm is an extension on the KNN algorithm that is found within this class. The difference between edited and regular Knn is that eidted knn#
+#Removes all of the outliars in the data that lead to a decrease in the overall error performance. By doing this we can better remove all out liars such that   #
+#Our data set is only looking at relevant values and can lead to better classifcation results. Of course to tune this class one should tune the error as well   #
+#as the number of neighbors that are being looked at for each classification                                                                                    #
 #################################################################### MODULE COMMENTS ############################################################################
 
 import kNN, Results, DataUtility
