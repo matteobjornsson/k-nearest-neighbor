@@ -5,12 +5,10 @@ from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax1 = fig.add_subplot(111,projection='3d')
 
-x, y, z = np.loadtxt('./knn_tuning/knn_tuning_abalone(ratio-bin).csv',skiprows=1, delimiter=',', unpack=True)
-x = np.log(x)
-y = np.log(y)
+x, y, z = np.loadtxt('./tuning/kmeans_clustering_glass.csv', delimiter=',', unpack=True)
 col = np.arange(len(x))
-ax1.set_xlabel('ratio')
-ax1.set_ylabel('bin_with')
+ax1.set_xlabel('neighbors')
+ax1.set_ylabel('clusters')
 ax1.scatter(x,y,z, c=col)
 plt.show()
 

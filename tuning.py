@@ -262,7 +262,7 @@ def knn_asynch_tuner(filename):
         if tuning_length < 30:
             k_values = [i for i in range(2, tuning_length)]
         elif 0 < tuning_length < 50:
-            k_values = [i for i in range(2,30)]
+            k_values = [1+ i*7 for i in range(2,14)]
         else: 
             remainder = tuning_length - 30
             init_k = [i for i in range(2,30)]
@@ -345,25 +345,27 @@ def cknn_asynch_error_tuner(filename):
     print("Elapsed time: ", elapsed_time, 's')
 
 def kmeans_asynch_error_tuner(filename):
-    manager = multiprocessing.Manager()
-    q = manager.Queue()
-    start = time.time()
-    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer.start()
-
-    pool = multiprocessing.Pool()
-    
     for ds in data_sets:
+        filename = f"kmeans_{ds}.csv"
+        manager = multiprocessing.Manager()
+        q = manager.Queue()
+        start = time.time()
+        writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+        writer.start()
+
+        pool = multiprocessing.Pool()
+        
+        
         for i in range(1,30):
-            for j in range(1,30):
+            for j in [1+ x*7 for x in range(15)]:
                 pool.apply_async(tune_kmeans_parallel_worker, args=(q, ds, i, j))
 
-    pool.close()
-    pool.join()
-    q.put('kill')
-    writer.join()
-    elapsed_time = time.time() - start
-    print("Elapsed time: ", elapsed_time, 's')
+        pool.close()
+        pool.join()
+        q.put('kill')
+        writer.join()
+        elapsed_time = time.time() - start
+        print("Elapsed time: ", elapsed_time, 's')
 
 
 
@@ -373,4 +375,4 @@ def kmeans_asynch_error_tuner(filename):
 
 # cknn_asynch_error_tuner('condensed_error_full.csv')
 
-kmeans_asynch_error_tuner('kmeans_clustering_full.csv')
+kmeans_asynch_error_tuner(f'kmeans_dada.csv')
