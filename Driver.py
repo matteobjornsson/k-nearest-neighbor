@@ -19,6 +19,7 @@ import EditedKNN
 import CondensedKNN
 import kMeansClustering
 import kMedoidsClustering
+import kMedoids_parallel
 import multiprocessing
 #TESTING LIBRARY 
 import time 
@@ -271,7 +272,7 @@ def kmedoids_worker(q, fold, data_set:str):
         alpha = 1
         beta = alpha * tuned_delta_value[data_set]
 
-    kmedoids = kMedoidsClustering.kMedoidsClustering(
+    kmedoids = kMedoids_parallel.kMedoids_parallel(
         kNeighbors=tuned_k[data_set],
         kValue=tuned_cluster_number[data_set],
         dataSet=experimental_data_sets[data_set][1],
@@ -318,7 +319,24 @@ def main():
             pool.apply_async(eknn_worker, args=(q, i, ds))
             pool.apply_async(cknn_worker, args=(q, i, ds))
             pool.apply_async(kmeans_worker, args=(q, i, ds))
-            pool.apply_async(kmedoids_worker, args=(q, i, ds))
+            
+    pool.close()
+    pool.join()
+    q.put('kill')
+    writer.join()
+    elapsed_time = time.time() - start
+    print("Elapsed time: ", elapsed_time, 's')
+
+    q2 = manager.Queue()
+    start = time.time()
+
+    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer.start()
+    pool = multiprocessing.Pool()
+    
+    for ds in data_sets:
+        for i in range(10):
+            pool.apply_async(kmedoids_worker, args=(q2, i, ds))
             
     pool.close()
     pool.join()
