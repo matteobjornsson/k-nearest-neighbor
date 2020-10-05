@@ -9,7 +9,7 @@ import copy, math
 
 
 class EditedKNN:
-
+    #On the iniatilization of every object 
     def __init__(self, error: float, k: int, data_type: str, categorical_features: list, regression_data_set: bool, alpha:float, beta:float, h:float, d:int):
         # initialize a knn object
         self.knn = kNN.kNN(k, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
@@ -17,18 +17,29 @@ class EditedKNN:
         self.error = error
         # store if this data set is a regression data set (True) or not (False)
         self.regression_data_set = regression_data_set
+        #Save a results object 
         self.results = Results.Results()
 
+    #Parameters:  Take in a numpy array of the data 
+    #Returns: Return the classifcation of the results 
+    #Function: Classify the data with the reduced set data 
     def classify_in_place(self, data: np.ndarray):
+        #Create an empty array 
         results = []
+        #For each of the data points in the array 
         for i in range(len(data)):
+            #Set the sample data 
             sample = data[i,:].reshape(1,data.shape[1])
+            #Remove a data point from the data set 
             set_minus_sample = np.delete(data,i,0)
             # print("sample: ", sample, type(sample), '\n', "Remainder: ", set_minus_sample, type(set_minus_sample))
+            #Add the data point to the reuslts 
             results.append(self.knn.classify(set_minus_sample, sample )[0])
+        #Return the results 
         return results
-
-    # top level function called to create an edited knn dataset
+    #Parameters:  Take in the data set 
+    #Returns: Returns a copy of the reduced data set 
+    #Function: top level function called to create an edited knn dataset
     def reduce_data_set(self, data_set:np.ndarray) -> np.ndarray:
         # array to keep track of edits
         reduction_record = []
@@ -61,8 +72,11 @@ class EditedKNN:
         # return the next-to-last edited data set
         return copy.deepcopy(reduction_record[-2][0])
 
-    # remove all missclassified examples until performance degrades or no more examples are removed
+    #Parameters:  Take in the data set and the results list 
+    #Returns: Return the data set with incorrect estimates removed 
+    #Function: remove all missclassified examples until performance degrades or no more examples are removed
     def remove_incorrect_estimates(self, data_set: np.ndarray, results: list) -> np.ndarray:
+        #Create an empty array 
         indices_to_remove = []
         # inspect every example. If it is incorrectly classified (or not estimated
         # correctly within a margin of error) record its index for deletion.
@@ -70,28 +84,39 @@ class EditedKNN:
             ground_truth, estimate = results[i]
             # if regression, remove examples outside of error threshold
             if self.regression_data_set:
+                #Set the lower bound based on the ground truth subtracted from error 
                 lower_bound = ground_truth - self.error
+                #Set the upper bound based on the ground truth plus error 
                 upper_bound = ground_truth + self.error
+                #If the lower bound is less than the estimate and the estimate is less than the upper bound 
                 if not (lower_bound <= estimate <= upper_bound):
+                    #Add the value to the list 
                     indices_to_remove.append(i)
             # otherwise just remove any misclassified
             else:
+                #If the ground truth is not equal to the estimate 
                 if ground_truth != estimate:
+                    #Append the value in the list 
                     indices_to_remove.append(i)
         # remove all the examples marked for deletion
         data_set = np.delete(data_set, indices_to_remove, 0)
+        #Return the data set 
         return data_set
-
-    # given a set of estimates, evaluate the performance with F1 for classification
-    # or MAE for regression. 
+    #Parameters:  
+    #Returns: 
+    #Function: given a set of estimates, evaluate the performance with F1 for classificationor MAE for regression. 
     def evaluate_performance(self, classified_examples: list, regression: bool)-> float:
+        #Generate the loss function results for the gieven data set 
         loss= self.results.LossFunctionPerformance(regression, classified_examples)
+        #return the first value from the loss function generated above 
         return loss[0]
-    
-    # simple classify method that mirrors KNN, exept with an edited training set
+    #Parameters:  Take in the training and testing data sets 
+    #Returns: Return the ground truth and the hypothesis for each data point in the test set 
+    #Function: simple classify method that mirrors KNN, exept with an edited training set
     def classify(self, training, test):
+        #Set the edited training set to the reduced set 
         edited_training = self.reduce_data_set(training)
-        #print("edited training set", len(edited_training), edited_training)
+        #Return the classification of the reduced set and the testing set 
         return self.knn.classify(edited_training, test)
 
 
