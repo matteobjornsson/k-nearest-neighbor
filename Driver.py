@@ -312,13 +312,13 @@ def main():
     writer.start()
     pool = multiprocessing.Pool()
     
-    ds = 'fire'
-    for i in range(1):
-        pool.apply_async(knn_worker, args=(q, i, ds))
-        pool.apply_async(eknn_worker, args=(q, i, ds))
-        pool.apply_async(cknn_worker, args=(q, i, ds))
-        pool.apply_async(kmeans_worker, args=(q, i, ds))
-        pool.apply_async(kmedoids_worker, args=(q, i, ds))
+    for ds in data_sets:
+        for i in range(10):
+            pool.apply_async(knn_worker, args=(q, i, ds))
+            pool.apply_async(eknn_worker, args=(q, i, ds))
+            pool.apply_async(cknn_worker, args=(q, i, ds))
+            pool.apply_async(kmeans_worker, args=(q, i, ds))
+            pool.apply_async(kmedoids_worker, args=(q, i, ds))
             
     pool.close()
     pool.join()
@@ -330,17 +330,19 @@ def main():
     #Print some meta data to the screen letting the user know the program is ending 
     print("Program End")
 #On invocation run the main method
-# main()
-print("Program Start")
-filename = "experimental_data.csv"
-manager = multiprocessing.Manager()
-q = manager.Queue()
-start = time.time()
 
-writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-writer.start()
+main()
 
-kmedoids_worker(q, 1, "fire")
+# print("Program Start")
+# filename = "experimental_data.csv"
+# manager = multiprocessing.Manager()
+# q = manager.Queue()
+# start = time.time()
 
-q.put('kill')
-writer.join()
+# writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+# writer.start()
+
+# kmedoids_worker(q, 1, "fire")
+
+# q.put('kill')
+# writer.join()
