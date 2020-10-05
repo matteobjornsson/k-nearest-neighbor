@@ -1,19 +1,36 @@
+#Written By Matteo Bjornsson and Nick Stone  
+#################################################################### MODULE COMMENTS ############################################################################
+#This algorithm is designed to take in a given data set and generate a condensed data set of K nearest neighbors such that it is the lowest number of point need#
+#-ed to classify all of the data points in the data set. This class builds off of the KNN algorithm and should be tuned by checking the error threshold as well #
+# as find and tune the K number of neighbors that are most optimal that yield the greatest performance for a given data set. No one set of K values will be grea#
+#-t for all data sets, since the model should be tuned to each data set independently.                                                                          #
+#################################################################### MODULE COMMENTS ############################################################################
 import random, copy, math
 import numpy as np
 import kNN, Results, DataUtility
+
 class CondensedKNN:
-
+    
+    #Initiliazation function, for each object that is created assign the following values 
     def __init__(self, 
+        #Set an error value 
         error: float,
+        #Set the k number of neighbors
         k: int,
+        #Pass in the data type 
         data_type: str,
+        #Set the categorical features 
         categorical_features: list,
+        #Set a list of features in the regression data set 
         regression_data_set: bool,
+        #Set the alpha float 
         alpha:float,
+        #Set the beta float 
         beta:float,
+        #set the width value 
         h:float,
+        #Set the dimensionality 
         d:int):
-
         # initialize a knn object
         self.knn = kNN.kNN(k, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
         self.nn = kNN.kNN(1, data_type, categorical_features, regression_data_set, alpha, beta, h, d)
@@ -22,13 +39,15 @@ class CondensedKNN:
         # store if this data set is a regression data set (True) or not (False)
         self.regression_data_set = regression_data_set
         self.results = Results.Results()
-
+   
+    #Parameters: Take in a numpy array of a data set 
+    #Returns: Return a numpy array of a given data set condensed 
+    #Function: Take in a numpy array and convert the numpy array into a condensed numpy array 
     def condense_data_set(self, data: np.ndarray) -> np.ndarray:
         # pick a random sample and initialize Z and X \ Z
         i = random.randint(0, len(data)-1)
         Z = data[i,:].reshape(1,data.shape[1])
         X = np.delete(data,i,0)
-
         indices = list(range(len(X)))
         random.shuffle(indices)
         # for every example in X, randomly selected, find its nearest neighbor in Z. If their 
@@ -42,7 +61,6 @@ class CondensedKNN:
             compare = self.nn.classify(Z, x)
             x_value = compare[0][0]
             nearest_neighbor_in_Z = compare[0][1]
-
             # if new sample x is not valued the same as the nearest neighbor in Z
             # within some error tolerance, add it set Z
             if self.regression_data_set:
@@ -54,14 +72,19 @@ class CondensedKNN:
             else:
                 if x_value != nearest_neighbor_in_Z:
                     Z = np.concatenate((Z, x), axis=0)
+        #Return the concatanated Numpy array 
         return Z
 
-    # classify the test data against a condensed training set using KNN
+    #Parameters: a list of training data , a list of testing data 
+    #Returns: Return a list of ground truth and hypothesis truth values for the data set  
+    #Function: Classify the test data against a condensed training set using KNN
     def classify(self, training, test):
+        #Set the condensed training set from the class variable 
         condensed_training = self.condense_data_set(training)
+        #Return the classification of the condensed training set and the test data 
         return self.knn.classify(condensed_training, test)
 
-# test code
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],

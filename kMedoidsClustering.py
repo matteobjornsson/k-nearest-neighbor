@@ -1,4 +1,4 @@
-#Written by Nick Stone and Matteo Bjornsson 
+#Written by Matteo Bjornsson and Nick Stone  
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, math, random
@@ -184,7 +184,6 @@ class kMedoidsClustering:
         return self.knn.classify(medoids, self.Testdata)
 
 ####################################### UNIT TESTING #################################################
-
 if __name__ == '__main__':
     print("program Start")
     categorical_attribute_indices = {

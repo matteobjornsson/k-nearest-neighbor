@@ -17,33 +17,33 @@ import kMedoidsClustering
 import time 
 
 categorical_attribute_indices = {
-    
-    "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-   
-    "fire": [0,1,2,3],
-    "machine": [0,1],
-    "abalone": [0]
+        "segmentation": [],
+        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        "glass": [],
+        "fire": [0,1,2,3],
+        "machine": [0,1],
+        "abalone": [0]
 }
 
 regression_data_set = {
-    
-    "vote": False,
-
-    "fire": True,
-    "machine": True,
-    "abalone": True
+        "segmentation": False,
+        "vote": False,
+        "glass": False,
+        "fire": True,
+        "machine": True,
+        "abalone": True
 }
 
 feature_data_types = {
-    
-    "vote": 'categorical',
-    
-    "fire": 'mixed',
-    "machine": 'mixed',
-    "abalone": 'mixed'
+        "segmentation": 'real',
+        "vote": 'categorical',
+        "glass": 'real',
+        "fire": 'mixed',
+        "machine": 'mixed',
+        "abalone": 'mixed'
 }
 
-data_sets = [ "vote",  "fire", "machine", "abalone"]
+data_sets = [ "segmentation", "vote", "glass", "fire", "machine", "abalone"]
 
 def PlotCSV():
     pass
