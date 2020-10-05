@@ -339,10 +339,7 @@ start = time.time()
 
 writer = multiprocessing.Process(target=data_writer, args=(q,filename))
 writer.start()
-knn_worker(q, 1, "fire")
-eknn_worker(q, 1, "fire")
-cknn_worker(q, 1, "fire")
-kmeans_worker(q, 1, "fire")
+
 kmedoids_worker(q, 1, "fire")
 
 q.put('kill')
