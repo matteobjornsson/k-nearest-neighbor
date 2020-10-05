@@ -87,13 +87,13 @@ tuned_error_value = {
 }
 
 tuned_cluster_number = {
-    "segmentation": 80,
+    "segmentation": 15,
     "vote": 15,
-    "glass": 60,
+    "glass": 15,
     # not sure about fire, weird behavior
-    "fire": 60,
-    "machine": 50,
-    "abalone": 50
+    "fire": 15,
+    "machine": 15,
+    "abalone": 15
 
 }
 
