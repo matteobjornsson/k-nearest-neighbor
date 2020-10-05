@@ -91,7 +91,7 @@ class EditedKNN:
     # simple classify method that mirrors KNN, exept with an edited training set
     def classify(self, training, test):
         edited_training = self.reduce_data_set(training)
-        print("edited training set", len(edited_training), edited_training)
+        #print("edited training set", len(edited_training), edited_training)
         return self.knn.classify(edited_training, test)
 
 
