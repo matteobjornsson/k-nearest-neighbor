@@ -184,7 +184,6 @@ class kMedoidsClustering:
         return self.knn.classify(medoids, self.Testdata)
 
 ####################################### UNIT TESTING #################################################
-
 if __name__ == '__main__':
     print("program Start")
     categorical_attribute_indices = {

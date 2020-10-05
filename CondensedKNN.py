@@ -1,3 +1,6 @@
+#Written By Nick Stone and Matteo Bjornsson 
+#################################################################### MODULE COMMENTS ############################################################################
+#################################################################### MODULE COMMENTS ############################################################################
 import random, copy, math
 import numpy as np
 import kNN, Results, DataUtility
@@ -61,7 +64,7 @@ class CondensedKNN:
         condensed_training = self.condense_data_set(training)
         return self.knn.classify(condensed_training, test)
 
-# test code
+####################################### UNIT TESTING #################################################
 if __name__ == '__main__':
     categorical_attribute_indices = {
         "segmentation": [],
