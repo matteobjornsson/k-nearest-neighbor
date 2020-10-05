@@ -126,7 +126,7 @@ def tune_knn_parallel_worker(q, data_set: str, k_value: int,  delta_value: int, 
         #Set the dimensionality of the data set in KNN
         data_dimension
     )
-    classifications = knn.classify(full_data_dict[data_set], tuning_data_dict[data_set])
+    classifications = knn.classify(tuning_data_dict[data_set], tuning_data_dict[data_set])
     metadata = [data_set, k_value, beta/alpha, bin_value]
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
@@ -137,29 +137,29 @@ def tune_knn_parallel_worker(q, data_set: str, k_value: int,  delta_value: int, 
 
 # TODO: figure out what these values are with knn output
 tuned_k = {
-    "segmentation": 3,
-    "vote": 3,
-    "glass": 3,
-    "fire": 3,
-    "machine": 3,
-    "abalone": 3
+    "segmentation": 2,
+    "vote": 5,
+    "glass": 2,
+    "fire": 2,
+    "machine": 5,
+    "abalone": 12
 }
 tuned_bin_value = {
     "segmentation": .25,
     "vote": .25,
     "glass": .25,
-    "fire": .25,
+    "fire": .1,
     "machine": .25,
-    "abalone": .25
+    "abalone": .1
 }
 
 tuned_delta_value = {
     "segmentation": .25,
     "vote": .25,
     "glass": .25,
-    "fire": .25,
-    "machine": .25,
-    "abalone": .25
+    "fire": .5,
+    "machine": .1,
+    "abalone": .5
 }
 
 regression_variable_mean = {
@@ -170,7 +170,6 @@ regression_variable_mean = {
     
 
 def tune_eknn_parallel_worker(q, data_set: str, error_value: float):
-    print("received: ", data_set, error_value)
     data_dimension = tuning_data_dict[data_set].shape[1]-1
     data_type = feature_data_types[data_set]
 
@@ -199,7 +198,6 @@ def tune_eknn_parallel_worker(q, data_set: str, error_value: float):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
-    print("calculated:",data_set, error_value)
 
 
 # source of data writer asynch code 'data_writer'
@@ -265,14 +263,12 @@ def eknn_asynch_error_tuner(filename):
 
             regression_mean = regression_variable_mean[ds]
             small_step = .001*regression_mean
-            small_error_values = [small_step + small_step*i for i in range(5)]
+            small_error_values = [small_step + small_step*i for i in range(100)]
             big_step = 100*small_step
-            large_error_values = [big_step + big_step*j for j in range(5)]
+            large_error_values = [big_step + big_step*j for j in range(30)]
             error_values = small_error_values + large_error_values
 
-            print(ds, len(error_values), '\n', error_values)
             for e in error_values:
-                print(ds, e, "dispatched")
                 pool.apply_async(tune_eknn_parallel_worker, args=(q, ds, e))
 
     pool.close()
@@ -284,9 +280,9 @@ def eknn_asynch_error_tuner(filename):
 
 
 
-knn_asynch_tuner('knn_tuning_full.csv')
+#knn_asynch_tuner('knn_tuning2.csv')
 
-#eknn_asynch_error_tuner('edited_error_tuning.csv')
+eknn_asynch_error_tuner('edited_error_tuning.csv')
 
 
 
