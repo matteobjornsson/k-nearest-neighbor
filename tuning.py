@@ -192,7 +192,7 @@ def tune_eknn_parallel_worker(q, data_set: str, error_value: float):
         d=data_dimension
         )
 
-    classifications = eknn.classify(tuning_data_dict[data_set], tuning_data_dict[data_set])
+    classifications = eknn.classify(full_data_dict[data_set], tuning_data_dict[data_set])
     metadata = [data_set, error_value]
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
@@ -282,7 +282,7 @@ def eknn_asynch_error_tuner(filename):
 
 #knn_asynch_tuner('knn_tuning2.csv')
 
-eknn_asynch_error_tuner('edited_error_tuning.csv')
+eknn_asynch_error_tuner('edited_error_full.csv')
 
 
 
