@@ -28,9 +28,9 @@ class DataProcessor:
         self.MissingColumnNameList = set()
 
 
-    #Parameters: 
-    #Returns: 
-    #Function: 
+    #Parameters: Take in a pandas data frame of the given data set  
+    #Returns: Returns a data frame with all missing values replaced 
+    #Function: Go throguh and remove all missing attributes with a value 
     def ReplaceMissingValue(self,df:pd.DataFrame) -> pd.DataFrame: 
          #Get a deep copy of the dataframe 
         df1 = copy.deepcopy(df)
