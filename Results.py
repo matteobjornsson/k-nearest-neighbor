@@ -111,8 +111,8 @@ class Results:
             #Print some output to the user so they can check whether the file is in use 
             print("An Error Occured Trying to read the File KNNResults.csv")
 
-    #Parameters: DataFrames
-    #Returns: List 
+    #Parameters: List of data set 
+    #Returns: the float for the mean absolute error 
     #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
     def MAE(self,Data_set: list())-> float: 
         #Create an absolute value list
