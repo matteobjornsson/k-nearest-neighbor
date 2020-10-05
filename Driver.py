@@ -1,6 +1,12 @@
 #Written by Nick Stone edited by Matteo Bjornsson 
-#################################################################### MODULE COMMENTS ############################################################################
-#################################################################### MODULE COMMENTS ############################################################################
+##################################################################### MODULE COMMENTS #####################################################################
+# This is the main function for the Naive Bayes project that was created by Nick Stone and Matteo Bjornsson. The purpose of this class is to import all of #
+# The other classes and objects that were created and tie them together to run a series of experiments about the outcome stats on the data sets in question#
+# The following program is just intended to run as an experiment and hyper parameter tuning will need to be done in each of the respective classes.        #
+# It is important to note that the main datastructure that is used by these classes and objects is the pandas dataframe and numpy arrays, and lists, and   #
+#is used to pass the datasets                                                                                                                              #
+# Between all of the objects and functions that have been created. The classes are set up for easy modification for hyper parameter tuning.                #
+##################################################################### MODULE COMMENTS #####################################################################
 
 import copy
 from numpy.lib.type_check import real

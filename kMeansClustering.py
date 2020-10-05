@@ -8,7 +8,7 @@ import copy, random
 
 
 class kMeansClustering:
-    
+    #On initialization 
     def __init__(self,
         # number of neighbors in knn
         kNeighbors: int,
@@ -39,15 +39,19 @@ class kMeansClustering:
         self.categorical_features = []
         self.itermax = 5
         self.kValue = kValue
-        
+        #Convert the data such that no categorical values are in the data set  
         for j in range(len(Testdata)): 
             Testdata[j] = self.ConvertData(Testdata[j],name)
+        #Set the test set value 
         self.Testdata = Testdata
-
+        #Convert the data such that no categorical values are in the data set  
         for j in range(len(dataSet)):
             dataSet[j] = self.ConvertData(dataSet[j],name)
+        #Set the data set value 
         self.dataSet = dataSet
+        #Set the dimensionality 
         self.d = d
+        #If the data set is machine 
         if name == "machine": 
             print(self.dataSet, self.dataSet.shape)
             self.dataSet = self.dataSet[:,2:]
@@ -57,11 +61,15 @@ class kMeansClustering:
         # dimensionality of data set
         # save which features are real as well by deleting categorical indices from a new list
         real_features = list(range(d))
+        #Remove all of the categorical values 
         for i in categorical_features:
             real_features.remove(i)
+        #SEt the real features object variable 
         self.real_features = real_features
 
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def ConvertData(self,data_set_row, Name):
         #For each of the indexes in the data_set_row 
         for i in range(len(data_set_row)): 
@@ -164,30 +172,38 @@ class kMeansClustering:
         #Return the updated dataset 
         return data_set_row
 
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     # randomly generate kvalue centroids by randomly generating an appropriate value per feature
     def create_random_centroids(self) -> np.ndarray:
+        #Create a copy of the test data 
         sample_point = copy.deepcopy(self.Testdata[0,:])
+        #Create an empty list 
         points = []
+        #For each of the neighbors 
         for k in range(self.kValue):
+            #Copy a new point 
             new_point = copy.deepcopy(sample_point)
+            #
             for feature in range(self.d):
                 new_point[feature] = random.uniform(0,1)
             points.append(new_point)
         centroid_array = np.concatenate(points).reshape(self.kValue, self.d+1)
         return centroid_array
 
-
-    # find the nearest centroid to given sample, return the centroid index
+    #Parameters: Take in a given data point and the list of centroids 
+    #Returns: Return the nearest centroid 
+    #Function: find the nearest centroid to given sample, return the centroid index
     def closest_centroid_to_point(self, point: list, centroids: np.ndarray) -> list:
         # use the knn get_neighor class method to find the closest centroid 
         centroid = self.nn.get_k_neighbors(centroids, point, 1)
         # return the centroid index, element 1 of [distance, index, response var]
         # print(centroid)
         return centroid[0][1]
-    
-    # assign each data point in data set to the nearest centroid. This is stored in an array
-    # as an integer representing the centroid index at the index of the point belonging to it. 
+    #Parameters: Take in the list of centroids and the data 
+    #Returns:  Return the centroid assignments 
+    #Function: assign each data point in data set to the nearest centroid. This is stored in an array as an integer representing the centroid index at the index of the point belonging to it. 
     def assign_all_points_to_closest_centroid(self, centriods: np.ndarray, data: np.ndarray) -> list:
         centroid_assignments = [None] * len(data)
         # for each data point
@@ -197,7 +213,9 @@ class kMeansClustering:
             centroid_assignments[i] = self.closest_centroid_to_point(x, centriods)
         # return the list of indices
         return centroid_assignments
-
+    #Parameters: Take in the list of centroids, the centroid assignmnets and the data 
+    #Returns:  Return an updated list of centroids 
+    #Function: The purpose of this function is to generate new centroid values and change the feature means to be the center of the data points assigned 
     def update_centroid_positions(self, centroids: np.ndarray, centroid_assignments: list, data: np.ndarray) -> np.ndarray:
         # centroids    
         #[c0, c1, c2, c3]
@@ -226,12 +244,10 @@ class kMeansClustering:
             #Now we have a list of all records in the data array that belong to a specific centroid 
             #Get the total number of rows in each of the data points 
             # Rows = len(data[0])-1
-           
             #Create a new list to store row mean 
             Mean = list()
             #For each of the features in the dataset 
             for j in range(self.d): 
-                
                 #Set the row count to 0 
                 count = 0 
                 #Store the total number of rows in the dataset 
@@ -239,10 +255,8 @@ class kMeansClustering:
                 #Loop through all of the rows in the data set 
                 for z in centroidTuples: 
                     count += data[z][j]
-            
                 #Take the row count and divide by the total number of rows in the data set
                 count = count / total 
-
                 #Append the value to the list to store 
                 Mean.append(count)
             new_centroid = copy.deepcopy(centroids[i])    
@@ -252,7 +266,9 @@ class kMeansClustering:
             centroids[i] = new_centroid
         #Return the mean values for each feature for each centroid its a lists of lists of lists         
         return centroids
-
+    #Parameters: N/a
+    #Returns:  Return the updated centroids list
+    #Function: Generate all of the cluster centroids and update them 
     def generate_cluster_centroids(self):
         #Store the centroid from a random centroid value generated 
         centroids = self.create_random_centroids()
@@ -276,13 +292,15 @@ class kMeansClustering:
                 break
             #Set the frist assignment to the second assignment 
             first_assignment = second_assignment
-        #Return the updated centroids 
-
-        for i in range(len(updated_centroids)): 
+        #For each of th eupdated centroids 
+        for i in range(len(updated_centroids)):
+            #Change the classification of the centroid with the most common classes  
             updated_centroids[i][len(updated_centroids[i])-1] = self.CountCentroidClasses(i, second_assignment,self.dataSet)        
+        #Return the updated centroids 
         return updated_centroids
-
-    # simple classify method that mirrors KNN, exept with the centroids as training set
+    #Parameters: N/a
+    #Returns:  Return the ground truth and the hypothesised truth 
+    #Function:simple classify method that mirrors KNN, exept with the centroids as training set
     def classify(self):
         centroids = self.generate_cluster_centroids()
         test = self.assign_all_points_to_closest_centroid(centroids,self.Testdata)
@@ -295,9 +313,10 @@ class kMeansClustering:
             verifier.append(guess)
             Hypothesis.append(verifier)
         return Hypothesis
-
+    #Parameters: Take in the centroid list, list of each data points centroid, the data set 
+    #Returns:  Return the value that occured the most times 
+    #Function: Find each of the classes that belong to a given centroid and return the classification value for a centroid with the most class occurences 
     def CountCentroidClasses(self,centroid, centroid_assignments,data): 
-    
             centroidTuples = list() 
             #For each of the centroids 
             for j in range(len(centroid_assignments)):
@@ -309,10 +328,15 @@ class kMeansClustering:
             #Get the total number of rows in each of the data points 
             # Rows = len(data[0])-1
             classes = list()
+            #For each of the data points in the centroid tuples 
             for z in centroidTuples: 
+                #Add the classifcation value to the list 
                 classes.append(data[z][len(data[0])-1])
+            #If the list is empty 
             if not classes:
+                #Return 0 
                 return 0 
+            #Return the value with the most occurrences 
             return max(classes,key=classes.count)
                 
 

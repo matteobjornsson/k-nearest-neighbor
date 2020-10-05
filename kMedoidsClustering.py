@@ -50,7 +50,9 @@ class kMedoidsClustering:
 
  
 
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def choose_random_medoids(self):
         #Create a new empty array 
         indices = []
@@ -70,7 +72,10 @@ class kMedoidsClustering:
         for i in indices:
             medoids.append(self.dataSet[i].reshape(1, self.dataSet.shape[1]))
         return np.concatenate(medoids)
-
+    
+    #Parameters: 
+    #Returns:  
+    #Function: 
     # find the nearest medoid to given sample, return the medoid index
     def closest_medoid_to_point(self, point: list, medoids: np.ndarray) -> list:
         # use the knn get_neighor class method to find the closest medoid 
@@ -78,6 +83,9 @@ class kMedoidsClustering:
         # return the medoid index, element 1 of [distance, index, response var]
         return medoid[0][1]
     
+    #Parameters: 
+    #Returns:  
+    #Function: 
     # assign each data point in data set to the nearest medoid. This is stored in an array
     # as an integer representing the medoid index at the index of the point belonging to it. 
     def assign_all_points_to_closest_medoid(self, medoids: np.ndarray, data: np.ndarray) -> list:
@@ -89,7 +97,9 @@ class kMedoidsClustering:
             medoid_assignments[i] = self.closest_medoid_to_point(x, medoids)
         # return the list of indices
         return medoid_assignments
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def distortion(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> float:
         #Set the distortion value to 0
         distortion = 0
@@ -119,7 +129,9 @@ class kMedoidsClustering:
                     distortion += (distance_from_m)**2
         #Return the distortion 
         return distortion
-            
+    #Parameters: 
+    #Returns:  
+    #Function:    
     def update_medoids(self, medoids: np.ndarray, medoid_assignments: list, data: np.ndarray) -> np.ndarray:
         #Loop through the nunmber of indicies in the medoids array (Total number of medoids )
         for i in range(len(medoids)):
@@ -141,7 +153,9 @@ class kMedoidsClustering:
                     medoids[i] = copy.deepcopy(x)
             print("updating medoid for cluster", i)
         return medoids
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def generate_cluster_medoids(self):
         #Choose a random medoid and store the value 
         medoids = self.choose_random_medoids()
@@ -178,7 +192,9 @@ class kMedoidsClustering:
             first_assignment = second_assignment
         #Return the updated medoids 
         return updated_medoids
-
+    #Parameters: 
+    #Returns:  
+    #Function: 
     def classify(self):
         medoids = self.generate_cluster_medoids()
         return self.knn.classify(medoids, self.Testdata)
