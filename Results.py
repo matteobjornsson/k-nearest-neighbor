@@ -14,10 +14,6 @@ import numpy as np
 
 class Results: 
     
-    def __init__(self):
-        print("Results Object Created")
-
-
     """
     loss functions 
 
@@ -138,7 +134,7 @@ class Results:
             #Add the value to the variable 
             mean += i
         #Generate the mean from the list 
-        mean = mean / len(MeanAbs)
+        mean = mean / (len(MeanAbs)+ .0000000001)
         #Return the mean 
         return mean 
 
@@ -190,7 +186,7 @@ class Results:
             #Add the value to the overall mean 
             Mean +=i 
         #Divide out by the total number of entries 
-        Mean = Mean / len(SquaredError)
+        Mean = Mean / (len(SquaredError)+ .0000000001)
         #Return the mean 
         return Mean 
          

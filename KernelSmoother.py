@@ -18,10 +18,13 @@ class KernelSmoother:
         for i in range(N):
             neighbor = neighborStats[i]
             distance, responseVariable = neighbor[0], neighbor [2]
+            u = distance / self.h
 
-            numerator += self.gaussian_kernel(distance / self.h) * responseVariable
-            denominator += self.gaussian_kernel(distance / self.h)
-        return numerator/denominator
+            numerator += self.gaussian_kernel(u) * responseVariable
+            denominator += self.gaussian_kernel(u)
+
+        return numerator/(denominator + .0000000000000000001)
 
     def gaussian_kernel(self, u) -> float:
-        return (1/(math.sqrt(2 * math.pi)))**(self.d) * math.exp(-.5 * (u**2))
+        kernel_weight = (1/(math.sqrt(2 * math.pi)))**(self.d) * math.exp(-.5 * (u**2))
+        return kernel_weight
