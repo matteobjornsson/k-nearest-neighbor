@@ -333,7 +333,7 @@ def main():
     
     results = []
     for ds in data_sets:
-        for i in range(1):
+        for i in range(10):
             results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
             results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
             results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
