@@ -150,6 +150,7 @@ def knn_worker(q, fold, data_set):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    return(data_point_string)
 
 def eknn_worker(q, fold, data_set: str):
     tenFolds = experimental_data_sets[data_set][3]
@@ -186,6 +187,7 @@ def eknn_worker(q, fold, data_set: str):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    return(data_point_string)
 
 def cknn_worker(q, fold, data_set: str):
     tenFolds = experimental_data_sets[data_set][3]
@@ -221,6 +223,8 @@ def cknn_worker(q, fold, data_set: str):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    return(data_point_string)
+
 
 def kmeans_worker(q, fold, data_set:str):
     tenFolds = experimental_data_sets[data_set][3]
@@ -257,6 +261,8 @@ def kmeans_worker(q, fold, data_set:str):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    return(data_point_string)
+
 
 def kmedoids_worker(q, fold, data_set:str):
     tenFolds = experimental_data_sets[data_set][3]
@@ -292,6 +298,8 @@ def kmedoids_worker(q, fold, data_set:str):
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
+    return(data_point_string)
+
 
 def data_writer(q, filename):
     while True:
@@ -313,35 +321,40 @@ def main():
     writer.start()
     pool = multiprocessing.Pool()
     
+    results = []
     for ds in data_sets:
-        for i in range(10):
-            pool.apply_async(knn_worker, args=(q, i, ds))
-            pool.apply_async(eknn_worker, args=(q, i, ds))
-            pool.apply_async(cknn_worker, args=(q, i, ds))
-            pool.apply_async(kmeans_worker, args=(q, i, ds))
-            
+        for i in range(1):
+            res1 = pool.apply_async(knn_worker, args=(q, i, ds))
+            res2 = pool.apply_async(eknn_worker, args=(q, i, ds))
+            res3 = pool.apply_async(cknn_worker, args=(q, i, ds))
+            res4 = pool.apply_async(kmeans_worker, args=(q, i, ds))
+        results.append(res1, res2, res3, res4)    
     pool.close()
     pool.join()
     q.put('kill')
     writer.join()
+    for r in results:
+        print(r.get())
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
     q2 = manager.Queue()
     start = time.time()
 
-    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer.start()
-    pool = multiprocessing.Pool()
-    
+    writer2 = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer2.start()
+    pool2 = multiprocessing.Pool()
+    results2 = []
     for ds in data_sets:
-        for i in range(10):
-            pool.apply_async(kmedoids_worker, args=(q2, i, ds))
-            
-    pool.close()
-    pool.join()
-    q.put('kill')
-    writer.join()
+        for j in range(1):
+            res = pool.apply_async(kmedoids_worker, args=(q2, j, ds))
+        results2.append(res)
+    pool2.close()
+    pool2.join()
+    q2.put('kill')
+    writer2.join()
+    for r2 in results2:
+        print(r2.get())
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
