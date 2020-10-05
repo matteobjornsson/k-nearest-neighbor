@@ -1,6 +1,9 @@
 #Written by Matteo Bjornsson and Nick Stone  
 #################################################################### MODULE COMMENTS ############################################################################
-#
+#This algorithm is an enhanced version of kmeans clustering and still has the fundemental portion of the algorithm generated based on the knn algoruthm.        #
+#This function will create a series of moving data points that will constantly re align themselves such that they are in the middle of a given neighbor of data #
+#Points. The medoids hopefully will continue to move until they are all aligned on a indpependent cluster set inside the data set.                              #
+#As with all other algorithms we tune this algorithm by tuning the number of neighbors as well as each algorithm should be tuned to meet a specific data set    # 
 #################################################################### MODULE COMMENTS ############################################################################
 import copy, math, random
 import kNN, DataUtility
