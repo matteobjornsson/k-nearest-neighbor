@@ -87,28 +87,26 @@ tuned_error_value = {
 }
 
 tuned_cluster_number = {
-    "segmentation": 15,
+    "segmentation": 80,
     "vote": 15,
-    "glass": 15,
+    "glass": 60,
     # not sure about fire, weird behavior
-    "fire": 15,
-    "machine": 15,
-    "abalone": 15
-
+    "fire": 60,
+    "machine": 50,
+    "abalone": 20
 }
 
 experimental_data_sets = {}
 #For ecah of the data set names that we have stored in a global variable 
 for data_set in data_sets:
-    if data_set == 'abalone':
-        #Create a data utility to track some metadata about the class being Examined
-        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-        #Store off the following values in a particular order for tuning, and 10 fold cross validation 
-        # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
-        if regression_data_set.get(data_set) == False: 
-            experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
-        else:
-            experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
+    #Create a data utility to track some metadata about the class being Examined
+    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+    #Store off the following values in a particular order for tuning, and 10 fold cross validation 
+    # return from generate experiment data: [headers, full_set, tuning_data, tenFolds]
+    if regression_data_set.get(data_set) == False: 
+        experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
+    else:
+        experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
 
 results = Results.Results()
 
@@ -291,7 +289,7 @@ def kmedoids_worker(q, fold, data_set:str):
 
     kmedoids = kMedoids_parallel.kMedoids_parallel(
         kNeighbors=tuned_k[data_set],
-        kValue=3,
+        kValue=tuned_cluster_number[data_set],
         dataSet=experimental_data_sets[data_set][1],
         data_type=feature_data_types[data_set],
         categorical_features=categorical_attribute_indices[data_set],
@@ -323,7 +321,7 @@ def data_writer(q, filename):
 
 def main(): 
     print("Program Start")
-    filename = "experimental_data.csv"
+    filename = "experimental_data-medoid_fix.csv"
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
@@ -357,9 +355,8 @@ def main():
     results2 = []
 
     for ds in data_sets:
-        if ds == 'abalone':
-            for j in range(10):
-                results2.append(kmedoids_worker(q2,j, ds))
+        for j in range(10):
+            results2.append(kmedoids_worker(q2,j, ds))
 
     q2.put('kill')
     writer2.join()

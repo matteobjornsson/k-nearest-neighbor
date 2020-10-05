@@ -258,9 +258,7 @@ class kMedoids_parallel:
         while True:
             #Set a second assignment and store the value 
             second_assignment = self.assign_all_points_to_closest_medoid(updated_medoids, self.dataSet)
-            #Store the updated medoids from the second assignment values calculated above 
-            updated_medoids = self.update_medoids_parallel(updated_medoids, second_assignment, self.dataSet)
-            #Increment count 
+
 
             # code for indicating if the medoid assignments are changing
             count += 1
@@ -277,6 +275,9 @@ class kMedoids_parallel:
             if first_assignment == second_assignment or count > self.itermax:
                 #Break 
                 break
+            #Store the updated medoids from the second assignment values calculated above 
+            updated_medoids = self.update_medoids_parallel(updated_medoids, second_assignment, self.dataSet)
+            #Increment count 
             #SEt the first assignment equal to the second assignment 
             first_assignment = second_assignment
         #Return the updated medoids 
