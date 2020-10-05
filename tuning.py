@@ -62,6 +62,12 @@ tuned_delta_value = {
     "abalone": .5
 }
 
+tuned_error_value = {
+    "fire": 1,
+    "abalone": 1,
+    "machine":2
+}
+
 regression_variable_mean = {
     "abalone": 9.9,
     "machine": 105,
