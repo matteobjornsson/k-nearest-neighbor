@@ -224,9 +224,9 @@ def tune_kmeans_parallel_worker(q, data_set:str, kNeighbors: int, kClusters: int
         )
 
     classifications = kmeans.classify()
-    metadata = [data_set, kNeighbors, kClusters]
+    metadata = [kNeighbors, kClusters]
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
-    data_point = metadata + results_set
+    data_point = metadata + [results_set[0]]
     data_point_string = ','.join([str(x) for x in data_point])
     q.put(data_point_string)
 
