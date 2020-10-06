@@ -1,3 +1,7 @@
+##################################################################### MODULE COMMENTS ####################################################################
+# tuning module written for parallel computation. These functions and worker functions can be used to feed in new values for hyperparameters
+#################################################################### MODULE COMMENTS ####################################################################
+
 import time
 from numpy.lib.type_check import real
 import multiprocessing
@@ -35,6 +39,16 @@ feature_data_types = {
     "machine": 'mixed',
     "abalone": 'mixed'
 }
+
+regression_variable_mean = {
+    "abalone": 9.9,
+    "machine": 105,
+    "fire": 12.8
+}
+
+data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
+############### tuning results: #####################################
 
 tuned_k = {
     "segmentation": 2,
@@ -79,14 +93,8 @@ tuned_cluster_number = {
 
 }
 
-regression_variable_mean = {
-    "abalone": 9.9,
-    "machine": 105,
-    "fire": 12.8
-}
-    
 
-data_sets = ["segmentation", "vote", "glass", "fire", "machine", "abalone"]
+
 
 #################################################################################
 
@@ -108,7 +116,7 @@ for ds in data_sets:
 
 ##################### WORKER METHODS FOR MULTIPROCESSING ########################
 
-
+# given a particular value for k, delta, and bin width, classify the module test set
 def tune_knn_parallel_worker(q, data_set: str, k_value: int,  delta_value: int, bin_value: int):
     # print('inside function', data_set, k_value)
     data_dimension = tuning_data_dict[data_set].shape[1]-1
@@ -137,17 +145,18 @@ def tune_knn_parallel_worker(q, data_set: str, k_value: int,  delta_value: int, 
         #Set the dimensionality of the data set in KNN
         data_dimension
     )
+
     classifications = knn.classify(tuning_data_dict[data_set], tuning_data_dict[data_set])
     metadata = [data_set, k_value, beta/alpha, bin_value]
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
-    # print(data_point_string)
+    # put the result on the multiprocessing queue
     q.put(data_point_string)
     # print("q.get(): ", q.get())
 
 
-
+# function takes given error value hyperparameter and runs the Edited KNN algorithm
 def tune_eknn_parallel_worker(q, data_set: str, error_value: float):
     data_dimension = tuning_data_dict[data_set].shape[1]-1
     data_type = feature_data_types[data_set]
@@ -170,14 +179,17 @@ def tune_eknn_parallel_worker(q, data_set: str, error_value: float):
         h=tuned_bin_value[data_set], 
         d=data_dimension
         )
-
+    # run the classifier
     classifications = eknn.classify(full_data_dict[data_set], tuning_data_dict[data_set])
     metadata = [data_set, error_value]
+    # Calculate performance
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
+    # put the result on the multiprocessing queue
     q.put(data_point_string)
 
+# function takes given error value hyperparameter and runs the Condensed KNN algorithm
 def tune_cknn_parallel_worker(q, data_set:str, error_value: float):
     data_dimension = tuning_data_dict[data_set].shape[1]-1
     data_type = feature_data_types[data_set]
@@ -188,7 +200,7 @@ def tune_cknn_parallel_worker(q, data_set:str, error_value: float):
     else: 
         alpha = 1
         beta = alpha * tuned_delta_value[data_set]
-
+    # create a cknn instance
     cknn = CondensedKNN.CondensedKNN(
         error=error_value,
         k=tuned_k[data_set],
@@ -200,14 +212,17 @@ def tune_cknn_parallel_worker(q, data_set:str, error_value: float):
         h=tuned_bin_value[data_set], 
         d=data_dimension
         )
-
+    # classify the data 
     classifications = cknn.classify(full_data_dict[data_set], tuning_data_dict[data_set])
     metadata = [data_set, error_value]
+    # calculate performance
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
+    # queue results
     q.put(data_point_string)
     
+# generate kmeans instance, hyperparameters are number of neighbors and number of clusters
 def tune_kmeans_parallel_worker(q, data_set:str, kNeighbors: int, kClusters: int):
     data_dimension = tuning_data_dict[data_set].shape[1]-1
     data_type = feature_data_types[data_set]
@@ -233,7 +248,7 @@ def tune_kmeans_parallel_worker(q, data_set:str, kNeighbors: int, kClusters: int
         name=data_set,
         Testdata=tuning_data_dict[data_set]
         )
-
+    # you get the idea
     classifications = kmeans.classify()
     metadata = [kNeighbors, kClusters]
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
@@ -243,6 +258,9 @@ def tune_kmeans_parallel_worker(q, data_set:str, kNeighbors: int, kClusters: int
 
 # source of data writer asynch code 'data_writer'
 # https://stackoverflow.com/questions/13446445/python-multiprocessing-safely-writing-to-a-file
+
+# this is target function that listens for classification results from workers and
+# writes them to disk
 def data_writer(q, filename):
     while True:
         with open(filename, 'a') as f:
@@ -259,13 +277,16 @@ def data_writer(q, filename):
 bin_values = [.1, .25, .5, 1, 2, 4, 8]
 delta_values = [.1, .25, .5, 1, 2, 4, 10]
 
+# a framework to fire off KNN jobs each with different hyperparameters
 def knn_asynch_tuner(filename):
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
+    # this is the aggregator that writes results to disk
     writer = multiprocessing.Process(target=data_writer, args=(q,filename))
     writer.start()
-
+    # make a pool to hand the tasks to
+    # this code uses as many cpu threads as available
     pool = multiprocessing.Pool()
 
     for ds in data_sets:
@@ -283,6 +304,7 @@ def knn_asynch_tuner(filename):
         for k in k_values:
             for delta in delta_values:
                 for b in bin_values:
+                    # pop off a new instance of KNN for each combination of the last four for loops
                     pool.apply_async(tune_knn_parallel_worker, args=(q, ds, k, delta, b))
                     if not regression_data_set[ds]:
                         break
@@ -295,7 +317,7 @@ def knn_asynch_tuner(filename):
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
-
+# same as before but for EKNN and different hyperparameters
 def eknn_asynch_error_tuner(filename):
 
     manager = multiprocessing.Manager()
@@ -326,6 +348,7 @@ def eknn_asynch_error_tuner(filename):
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
+# ditto
 def cknn_asynch_error_tuner(filename):
     manager = multiprocessing.Manager()
     q = manager.Queue()

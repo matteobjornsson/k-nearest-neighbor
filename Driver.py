@@ -1,11 +1,14 @@
-#Written by Nick Stone edited by Matteo Bjornsson 
+#Written by Nick Stone Matteo Bjornsson 
 ##################################################################### MODULE COMMENTS #####################################################################
 # This is the main function for the Naive Bayes project that was created by Nick Stone and Matteo Bjornsson. The purpose of this class is to import all of #
 # The other classes and objects that were created and tie them together to run a series of experiments about the outcome stats on the data sets in question#
 # The following program is just intended to run as an experiment and hyper parameter tuning will need to be done in each of the respective classes.        #
 # It is important to note that the main datastructure that is used by these classes and objects is the pandas dataframe and numpy arrays, and lists, and   #
 #is used to pass the datasets                                                                                                                              #
-# Between all of the objects and functions that have been created. The classes are set up for easy modification for hyper parameter tuning.                #
+# Between all of the objects and functions that have been created. The classes are set up for easy modification for hyper parameter tuning.       
+# 
+# 
+# This module was heavily edited for parallelism  after it was built                                                                                      #
 ##################################################################### MODULE COMMENTS #####################################################################
 
 import copy
@@ -23,6 +26,8 @@ import kMedoids_parallel
 import multiprocessing
 #TESTING LIBRARY 
 import time 
+
+##################### DATA SET METADATA ###########################################
 
 categorical_attribute_indices = {
         "segmentation": [],
@@ -53,6 +58,7 @@ feature_data_types = {
 
 data_sets = ["abalone", "segmentation", "vote", "glass", "fire", "machine"]
 
+############### tuned hyperparameters: #####################################
 
 tuned_k = {
     "segmentation": 2,
@@ -96,6 +102,10 @@ tuned_cluster_number = {
     "abalone": 20
 }
 
+#################################################################################
+
+##################### GET DATA FOR EXPERIMENT ###################################
+
 experimental_data_sets = {}
 #For ecah of the data set names that we have stored in a global variable 
 for data_set in data_sets:
@@ -107,11 +117,19 @@ for data_set in data_sets:
         experimental_data_sets[data_set]= du.generate_experiment_data_Categorical(data_set)
     else:
         experimental_data_sets[data_set] = du.generate_experiment_data(data_set)
-
+# create a results object used to process all classification outcomes
 results = Results.Results()
 
+
+#################################################################################
+
+##################### WORKER METHODS FOR MULTIPROCESSING ########################
+
+# target function to run one 10fold instance of KNN, given the fold and data set
 def knn_worker(q, fold, data_set):
+    # get the ten folds
     tenFolds = experimental_data_sets[data_set][3]
+    # pick the fold according to this run
     test = copy.deepcopy(tenFolds[fold])
     #Append all data folds to the training data set
     remaining_folds = [x for i, x in enumerate(tenFolds) if i!=fold]
@@ -143,14 +161,18 @@ def knn_worker(q, fold, data_set):
         #Set the dimensionality of the data set in KNN
         d=data_dimension
     )
+    # Classify the fold against the remaining training data
     classifications = knn.classify(training, test)
     metadata = ["KNN", data_set]
+    # calculate the performance
     results_set = results.LossFunctionPerformance(regression_data_set[data_set], classifications)
     data_point = metadata + results_set
     data_point_string = ','.join([str(x) for x in data_point])
+    # queue the results and return them 
     q.put(data_point_string)
     return(data_point_string)
 
+# same notes as above but for EKNN
 def eknn_worker(q, fold, data_set: str):
     tenFolds = experimental_data_sets[data_set][3]
     test = copy.deepcopy(tenFolds[fold])
@@ -193,6 +215,7 @@ def eknn_worker(q, fold, data_set: str):
     q.put(data_point_string)
     return(data_point_string)
 
+# same notes as KNN but for cKNN
 def cknn_worker(q, fold, data_set: str):
     tenFolds = experimental_data_sets[data_set][3]
     test = copy.deepcopy(tenFolds[fold])
@@ -234,7 +257,7 @@ def cknn_worker(q, fold, data_set: str):
     q.put(data_point_string)
     return(data_point_string)
 
-
+# Same notes as KNN but for kmeans
 def kmeans_worker(q, fold, data_set:str):
     tenFolds = experimental_data_sets[data_set][3]
     test = copy.deepcopy(tenFolds[fold])
@@ -253,7 +276,9 @@ def kmeans_worker(q, fold, data_set:str):
         kNeighbors=tuned_k[data_set],
         kValue=tuned_cluster_number[data_set],
         dataSet=experimental_data_sets[data_set][1],
+        # note all instances assume real values
         data_type="real",
+        # and no categorical features
         categorical_features=[],
         regression_data_set=regression_data_set[data_set],
         alpha=alpha,
@@ -272,7 +297,7 @@ def kmeans_worker(q, fold, data_set:str):
     q.put(data_point_string)
     return(data_point_string)
 
-
+# same as above but for kmedoids
 def kmedoids_worker(q, fold, data_set:str):
     tenFolds = experimental_data_sets[data_set][3]
     test = copy.deepcopy(tenFolds[fold])
@@ -309,7 +334,11 @@ def kmedoids_worker(q, fold, data_set:str):
     q.put(data_point_string)
     return(data_point_string)
 
+#################################################################################
 
+#####################    EXPERIMENT DRIVER    ########################
+
+# target function to start a process that writes all results to file
 def data_writer(q, filename):
     while True:
         with open(filename, 'a') as f:
@@ -319,20 +348,27 @@ def data_writer(q, filename):
                 break
             f.write(data_string + '\n')
 
+# main function, drives the entire 10 fold cross validation across all 6 data sets
+# for each of the five algorithms
 def main(): 
     print("Program Start")
+    # specify the filename
     filename = "experimental_data-medoid_fix.csv"
+    # start the multiprocessing helpers 
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
 
+    # start a file writer to save results
     writer = multiprocessing.Process(target=data_writer, args=(q,filename))
     writer.start()
     pool = multiprocessing.Pool()
     
+    # fire off an instance of each algorithm (minus medoids) for each data set and each fold
     results = []
     for ds in data_sets:
-        for i in range(1):
+        # one for each fold in 10-fold cross validation
+        for i in range(10):
             results.append(pool.apply_async(knn_worker, args=(q, i, ds)))
             results.append(pool.apply_async(eknn_worker, args=(q, i, ds)))
             results.append(pool.apply_async(cknn_worker, args=(q, i, ds)))
@@ -342,12 +378,15 @@ def main():
     pool.join()
     q.put('kill')
     writer.join()
+    # these two lines are for some notion of what's happening and also r.get() 
+    # forces an exception to be raised if one of the processes failed, otherwise the exception is suprressed
     for r in results:
         print(r.get())
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
 
     #########################   SEPARATE OUT MEDOIDS THEY TAKE FOREVER  ########
+    ######## does the same thing as above but just for medoids
     
     q2 = manager.Queue()
     start = time.time()

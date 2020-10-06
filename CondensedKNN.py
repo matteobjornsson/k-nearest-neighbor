@@ -1,4 +1,4 @@
-#Written By Matteo Bjornsson and Nick Stone  
+#Written By Matteo Bjornsson and Edited by Nick Stone  
 #################################################################### MODULE COMMENTS ############################################################################
 #This algorithm is designed to take in a given data set and generate a condensed data set of K nearest neighbors such that it is the lowest number of point need#
 #-ed to classify all of the data points in the data set. This class builds off of the KNN algorithm and should be tuned by checking the error threshold as well #

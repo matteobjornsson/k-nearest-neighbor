@@ -1,11 +1,12 @@
-
+###########################################################
+# file for generating a uniform array for algorithm testing
+###########################################################
 from mpl_toolkits import mplot3d
 from kNN import kNN
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import savetxt
-import math
-import copy
+
 
 ten = range(10)
 test_array = []
