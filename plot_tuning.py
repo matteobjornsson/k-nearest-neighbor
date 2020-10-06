@@ -5,10 +5,10 @@ from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax1 = fig.add_subplot(111,projection='3d')
 
-x, y, z = np.loadtxt('./tuning/kmeans_abalone.csv', delimiter=',', unpack=True)
+x, y, z = np.loadtxt('./tuning/kmeans_segmentation.csv', skiprows=1, delimiter=',', unpack=True)
 col = np.arange(len(x))
-ax1.set_xlabel('neighbors')
-ax1.set_ylabel('clusters')
+ax1.set_xlabel('Neighbors')
+ax1.set_ylabel('Bin Width')
 ax1.scatter(x,y,z, c=col)
 plt.show()
 
